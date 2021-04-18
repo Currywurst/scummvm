@@ -26,6 +26,7 @@
 #include "backends/graphics/opengl/pipelines/pipeline.h"
 #include "backends/graphics/opengl/pipelines/fixed.h"
 #include "backends/graphics/opengl/pipelines/shader.h"
+#include "backends/graphics/opengl/pipelines/libretro.h"
 #include "backends/graphics/opengl/shader.h"
 
 #include "common/array.h"
@@ -55,6 +56,8 @@
 #ifdef USE_TTS
 #include "common/text-to-speech.h"
 #endif
+
+#include "backends/graphics/opengl/pipelines/libretro/parser.h"
 
 namespace OpenGL {
 
@@ -992,7 +995,8 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 #if !USE_FORCED_GLES
 	if (g_context.shadersSupported) {
 		ShaderMan.notifyCreate();
-		_pipeline = new ShaderPipeline(ShaderMan.query(ShaderManager::kDefault));
+		//_pipeline = new ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)); FIXME
+		_pipeline = new LibRetroPipeline("shaders/glsl/crt/crt-hyllian-glow.glslp");
 	}
 #endif
 
