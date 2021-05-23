@@ -3,6 +3,7 @@ MODULE := engines/clue
 MODULE_OBJS = \
 	clue.o \
 	detection.o \
+	metaengine.o \
 	anim.o \
 	text.o \
 	base/base.o \

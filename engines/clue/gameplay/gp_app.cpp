@@ -679,7 +679,7 @@ bool tcPersonIsHere() {
 		tcMoveAPerson(Person_Thomas_Smith, locNr);
 	} else if (locNr == Location_Holland_Street) {
 		tcMoveAPerson(Person_Frank_Maloya, locNr);
-	} else if (locNr == Location_Policestation) {
+	} else if (locNr == Location_Police_Station) {
 		tcMoveAPerson(Person_John_Gludo, locNr);
 		tcMoveAPerson(Person_Miles_Chickenwing, locNr);
 	} else if (locNr == Location_Hotel) {

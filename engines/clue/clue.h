@@ -52,7 +52,6 @@ private:
 protected:
 	// Engine APIs
 	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
 
 public:
  	ClueEngine(OSystem *syst, const ADGameDescription *gameDesc);

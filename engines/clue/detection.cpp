@@ -151,12 +151,12 @@ static const ADGameDescription gameDescriptions[] = {
 static const char *directoryGlobs[] = {
 	"TEXTS",
 	"SOUNDS",
-	0
+	nullptr
 };
 
-class ClueMetaEngine : public AdvancedMetaEngine {
+class ClueMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	ClueMetaEngine() : AdvancedMetaEngine(Clue::gameDescriptions, sizeof(ADGameDescription), clueGames) {
+    ClueMetaEngineDetection() : AdvancedMetaEngineDetection(Clue::gameDescriptions, sizeof(ADGameDescription), clueGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -172,30 +172,9 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "The Clue! (C) 1994 neo Software Produktions GmbH";
 	}
-
-	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
-
-bool ClueMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
-}
-
-bool Clue::ClueEngine::hasFeature(EngineFeature f) const {
-	return false;
-}
-
-bool ClueMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Clue::ClueEngine(syst, desc);
-	}
-	return desc != 0;
-}
 
 } // End of namespace Clue
 
-#if PLUGIN_ENABLED_DYNAMIC(CLUE)
-REGISTER_PLUGIN_DYNAMIC(CLUE, PLUGIN_TYPE_ENGINE, Clue::ClueMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(CLUE, PLUGIN_TYPE_ENGINE, Clue::ClueMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(CLUE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Clue::ClueMetaEngineDetection);
+
