@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-21 23:35+0000\n"
+"POT-Creation-Date: 2021-05-23 17:28+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -3740,7 +3740,7 @@ msgstr "Не эмуляваць артэфакты NTSC для тэксту"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:51
-#: engines/neverhood/detection.cpp:124 engines/sci/detection.cpp:235
+#: engines/neverhood/detection.cpp:124 engines/sci/detection.cpp:236
 #: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
 #: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:163
 #: engines/zvision/detection_tables.h:50
@@ -3749,7 +3749,7 @@ msgstr "Выкарыстоўваць арыгінальныя экраны за�
 
 #: engines/agi/detection.cpp:88 engines/cine/detection.cpp:53
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:52
-#: engines/neverhood/detection.cpp:125 engines/sci/detection.cpp:236
+#: engines/neverhood/detection.cpp:125 engines/sci/detection.cpp:237
 #: engines/sherlock/detection.cpp:60 engines/toltecs/detection.cpp:214
 #: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:164
 #: engines/zvision/detection_tables.h:51
@@ -5815,127 +5815,127 @@ msgstr "Уключаныя ў зборку опцыі:"
 msgid "Error loading game resources."
 msgstr "Памылка запуску гульні:"
 
-#: engines/sci/detection.cpp:173
+#: engines/sci/detection.cpp:174
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr "Не рабіць апраксімацыю колераў EGA (поўнакаляровыя фоны)"
 
-#: engines/sci/detection.cpp:174
+#: engines/sci/detection.cpp:175
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 "Прапускае праход апраксімацыі колераў EGA, графіка будзе паказана з усімі "
 "колерамі"
 
-#: engines/sci/detection.cpp:183
+#: engines/sci/detection.cpp:184
 msgid "Enable high resolution graphics"
 msgstr "Уключыць адлюстраванне графікі высокага адрознення"
 
-#: engines/sci/detection.cpp:184
+#: engines/sci/detection.cpp:185
 msgid "Enable high resolution graphics/content"
 msgstr "Уключыць графіку і кантэнт высокага адрознення"
 
-#: engines/sci/detection.cpp:193
+#: engines/sci/detection.cpp:194
 msgid "Enable black-lined video"
 msgstr "Уключыць відэа з лініямі"
 
-#: engines/sci/detection.cpp:194
+#: engines/sci/detection.cpp:195
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 "Малюе чорныя лініі па-над відэа, павялічваючы такім чынам бачную выразнасць"
 
-#: engines/sci/detection.cpp:204
+#: engines/sci/detection.cpp:205
 msgid "Use high-quality video scaling"
 msgstr "Ужываць якаснае маштабаванне відэа"
 
-#: engines/sci/detection.cpp:205
+#: engines/sci/detection.cpp:206
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr "Па магчымасці ужывае лінейную інтэрпаляцыю падчас маштабавання відэа"
 
-#: engines/sci/detection.cpp:215
+#: engines/sci/detection.cpp:216
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr "Ужываць высакаякаснае маштабаванне LarryScale"
 
-#: engines/sci/detection.cpp:216
+#: engines/sci/detection.cpp:217
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
 "Ужываць спецыяльнае мультыплікацыйнае маштабаванне для малявання спрайтаў "
 "персанажаў"
 
-#: engines/sci/detection.cpp:225
+#: engines/sci/detection.cpp:226
 msgid "Prefer digital sound effects"
 msgstr "Аддаваць перавагу лічбавым гукавым эфектам"
 
-#: engines/sci/detection.cpp:226
+#: engines/sci/detection.cpp:227
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Аддаваць перавагу лічбавым гукавым эфектам замест сінтэзаваных"
 
-#: engines/sci/detection.cpp:245
+#: engines/sci/detection.cpp:246
 msgid "Use CD audio"
 msgstr "Выкарыстоўваць CD-аўдыё"
 
-#: engines/sci/detection.cpp:246
+#: engines/sci/detection.cpp:247
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
 "Выкарыстоўваць гукавыя дарожкі з CD замест музыкі з файлаў гульні (калі "
 "даступна)"
 
-#: engines/sci/detection.cpp:256
+#: engines/sci/detection.cpp:257
 msgid "Use Windows cursors"
 msgstr "Выкарыстоўваць курсоры Windows"
 
-#: engines/sci/detection.cpp:257
+#: engines/sci/detection.cpp:258
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Выкарыстоўваць курсоры Windows (меншыя па памеры і аднакаляровыя) замест "
 "курсораў DOS"
 
-#: engines/sci/detection.cpp:267
+#: engines/sci/detection.cpp:268
 msgid "Use silver cursors"
 msgstr "Выкарыстоўваць срэбныя курсоры"
 
-#: engines/sci/detection.cpp:268
+#: engines/sci/detection.cpp:269
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Выкарыстоўваць альтэрнатыўны набор срэбных курсораў замест звычайных залатых"
 
-#: engines/sci/detection.cpp:278
+#: engines/sci/detection.cpp:279
 msgid "Enable content censoring"
 msgstr "Уключыць цэнзуру змесціва"
 
-#: engines/sci/detection.cpp:279
+#: engines/sci/detection.cpp:280
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Уключыць убудаванае неабавязковае цэнзураванне змесціва"
 
-#: engines/sci/detection.cpp:289
+#: engines/sci/detection.cpp:290
 msgid "Upscale videos"
 msgstr "Маштабаваць відэа"
 
-#: engines/sci/detection.cpp:290
+#: engines/sci/detection.cpp:291
 msgid "Upscale videos to double their size"
 msgstr "Маштабаваць памеры відэа ўдвая"
 
-#: engines/sci/detection.cpp:300
+#: engines/sci/detection.cpp:301
 msgid "Use RGB rendering"
 msgstr ""
 
-#: engines/sci/detection.cpp:301
+#: engines/sci/detection.cpp:302
 msgid "Use RGB rendering to improve screen transitions"
 msgstr ""
 
-#: engines/sci/detection.cpp:311
+#: engines/sci/detection.cpp:312
 msgid "Use per-resource modified palettes"
 msgstr ""
 
-#: engines/sci/detection.cpp:312
+#: engines/sci/detection.cpp:313
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
 
-#: engines/sci/detection.cpp:342
+#: engines/sci/detection.cpp:343
 msgid "MIDI mode:"
 msgstr "Рэжым MIDI:"
 
-#: engines/sci/detection.cpp:343
+#: engines/sci/detection.cpp:344
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
@@ -5943,15 +5943,15 @@ msgstr ""
 "Калі вы выкарыстоўваеце знешнюю MIDI-прыладу (напрыклад USB-MIDI), выберыце "
 "прыладу тут"
 
-#: engines/sci/detection.cpp:348
+#: engines/sci/detection.cpp:349
 msgid "Standard (GM / MT-32)"
 msgstr "Стандартная (GM / MT-32)"
 
-#: engines/sci/detection.cpp:352
+#: engines/sci/detection.cpp:353
 msgid "Roland D-110 / D-10 / D-20"
 msgstr "Roland D-110 / D-10 / D-20"
 
-#: engines/sci/detection.cpp:356
+#: engines/sci/detection.cpp:357
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
@@ -6014,7 +6014,7 @@ msgstr ""
 "гульні могуць працаваць няправільна. Калі ласка, звярніцеся да кансолі за "
 "далейшай інфармацыяй і праверце, што файлы гульні карэктны."
 
-#: engines/sci/sci.cpp:361
+#: engines/sci/sci.cpp:381
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -6028,7 +6028,7 @@ msgstr ""
 "супадаць з гаворкай персанажаў. Гэта праблема не ScummVM, а зыходных "
 "рэсурсаў гульні."
 
-#: engines/sci/sci.cpp:385
+#: engines/sci/sci.cpp:405
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -6049,7 +6049,7 @@ msgstr ""
 "гульнёй, пераназваўшы яго 4.PAT. Без гэтага патча музыка General MIDI будзе "
 "моцна перакручана."
 
-#: engines/sci/sci.cpp:404
+#: engines/sci/sci.cpp:424
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
@@ -6062,11 +6062,11 @@ msgstr ""
 "памылкі ў ScummVM не ўзнікаюць, таму рэкамендуецца выдаліць іх з тэчкі з "
 "гульнёй, каб вымінуць неспадзяваныя праблемы надалей."
 
-#: engines/sci/sci.cpp:492
+#: engines/sci/sci.cpp:512
 msgid "Download patch"
 msgstr "Спампаваць патч"
 
-#: engines/sci/sci.cpp:493
+#: engines/sci/sci.cpp:513
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -6074,7 +6074,7 @@ msgstr ""
 "(або націсніце кнопку \"Спампаваць патч\". Але заўважце: гэта толькі спампуе "
 "яго, вам трэба будзе працягнуць самастойна)\n"
 
-#: engines/sci/sci.cpp:500
+#: engines/sci/sci.cpp:520
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -6089,7 +6089,7 @@ msgstr ""
 "- спампуйце http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:858
+#: engines/sci/sci.cpp:851
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
@@ -6139,27 +6139,27 @@ msgstr ""
 "Тады вам можа спатрэбіцца ўжыць арыгінальны патч Sierra.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:175
+#: engines/scumm/detection.cpp:176
 msgid "Show Object Line"
 msgstr "Паказваць радок аб'ектаў"
 
-#: engines/scumm/detection.cpp:176
+#: engines/scumm/detection.cpp:177
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Паказваць назвы аб'ектаў унізе экрана"
 
-#: engines/scumm/detection.cpp:182
+#: engines/scumm/detection.cpp:183
 msgid "Use NES Classic Palette"
 msgstr "Выкарыстоўваць класічную палітру NES"
 
-#: engines/scumm/detection.cpp:183
+#: engines/scumm/detection.cpp:184
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "Выкарыстоўваць нейтральнейшую палітру, вельмі блізкую да NES Classic"
 
-#: engines/scumm/detection.cpp:189
+#: engines/scumm/detection.cpp:190
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr ""
 
-#: engines/scumm/detection.cpp:190
+#: engines/scumm/detection.cpp:191
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -7144,11 +7144,11 @@ msgstr "Паказваць назвы аб'ектаў"
 msgid "Show labels for objects on mouse hover"
 msgstr "Паказвае назвы аб'ектаў пры навядзенні курсора мышы"
 
-#: engines/sword25/detection.cpp:49
+#: engines/sword25/detection.cpp:48
 msgid "Use English speech"
 msgstr "Выкарыстоўваць англійскую агучку"
 
-#: engines/sword25/detection.cpp:50
+#: engines/sword25/detection.cpp:49
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
