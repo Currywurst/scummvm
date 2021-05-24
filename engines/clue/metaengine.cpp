@@ -46,6 +46,7 @@ bool ClueMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 Common::Error ClueMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Clue::ClueEngine(syst, desc);
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CLUE)
