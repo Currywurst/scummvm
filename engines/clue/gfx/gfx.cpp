@@ -191,14 +191,15 @@ void gfxSetVideoMode(byte _newMode) {
  */
 
 static void gfxInitCollList() {
-	NewList<NewNode> *tempList = new NewList<NewNode>;
-	_collectionList = new NewList<CollectionNode>;
+	NewList<NewNode> tempList;
+	if( !_collectionList )
+		_collectionList = new NewList<CollectionNode>;
 
 	char pathname[DSK_PATH_MAX];
 	dskBuildPathName(DISK_CHECK_FILE, TEXT_DIRECTORY, COLL_LIST_TXT, pathname);
-	tempList->readList(pathname);
+	tempList.readList(pathname);
 
-	for (NewNode *n = tempList->getListHead(); n->_succ; n = n->_succ) {
+	for (NewNode *n = tempList.getListHead(); n->_succ; n = n->_succ) {
 		CollectionNode *coll = _collectionList->createNode(g_clue->_txtMgr->getKey(2, n->_name.c_str()));
 
 		coll->_collId = (uint16)g_clue->_txtMgr->getKeyAsUint32(1, n->_name);
@@ -213,18 +214,19 @@ static void gfxInitCollList() {
 		coll->_colorRangeEnd = (uint16)g_clue->_txtMgr->getKeyAsUint32(6, n->_name);
 	}
 
-	tempList->removeList();
+	tempList.removeList();
 }
 
 static void gfxInitPictList() {
-	NewList<NewNode> *tempList = new NewList<NewNode>;
-	_pictureList = new NewList<PictureNode>;
+	NewList<NewNode> tempList;
+	if( !_pictureList )
+		_pictureList = new NewList<PictureNode>;
 
 	char pathname[DSK_PATH_MAX];
 	dskBuildPathName(DISK_CHECK_FILE, TEXT_DIRECTORY, PICT_LIST_TXT, pathname);
-	tempList->readList(pathname);
+	tempList.readList(pathname);
 
-	for (NewNode *n = tempList->getListHead(); n->_succ; n = n->_succ) {
+	for (NewNode *n = tempList.getListHead(); n->_succ; n = n->_succ) {
 		PictureNode *pict = _pictureList->createNode(nullptr);
 
 		pict->_pictId = (uint16)g_clue->_txtMgr->getKeyAsUint32(1, n->_name);
@@ -240,7 +242,7 @@ static void gfxInitPictList() {
 		pict->_destY = (uint16)g_clue->_txtMgr->getKeyAsUint32(8, n->_name);
 	}
 
-	tempList->removeList();
+	tempList.removeList();
 }
 
 struct Rectangle {

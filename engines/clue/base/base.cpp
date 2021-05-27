@@ -249,10 +249,10 @@ void ClueEngine::showIntro() {
 
 	XMSHandle = (uint8 *)malloc(818 * 1024);
 
-	MemRastPort* A = new MemRastPort(SCREEN_WIDTH, SCREEN_HEIGHT);
-	MemRastPort* B = new MemRastPort(SCREEN_WIDTH, SCREEN_HEIGHT);
+	MemRastPort A(SCREEN_WIDTH, SCREEN_HEIGHT);
+	MemRastPort B(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	_GC *ScreenGC = new _GC(0, 0, 320, 200, 0, 255, nullptr);
+	_GC ScreenGC(0, 0, 320, 200, 0, 255, nullptr);
 	gfxSetColorRange(0, 255);
 
 	uint8 colorTABLE[GFX_PALETTE_SIZE];
@@ -302,8 +302,8 @@ void ClueEngine::showIntro() {
 			/* copy from file to A & B */
 			gfxSetCMAP(cp);
 			gfxILBMToRAW(cp, ScratchRP->_pixels, SCREEN_SIZE);
-			A->gfxScratchToMem();
-			B->gfxScratchToMem();
+			A.gfxScratchToMem();
+			B.gfxScratchToMem();
 
 			bool endi = false;
 			bool showA;
@@ -313,15 +313,15 @@ void ClueEngine::showIntro() {
 				gfxScreenFreeze();
 
 				if (showA)
-					ScreenGC->gfxBlit(A, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, false);
+					ScreenGC.gfxBlit(&A, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, false);
 				else
-					ScreenGC->gfxBlit(B, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, false);
+					ScreenGC.gfxBlit(&B, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
 				if (t == 0) {
 					gfxChangeColors(nullptr, 4, GFX_BLEND_UP, ScratchRP->_palette);
 				}
 
-				ScreenGC->gfxScreenThaw(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+				ScreenGC.gfxScreenThaw(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 				inpSetWaitTicks(rate[anims]);
 				int32 action = inpWaitFor(INP_TIME | INP_KEYBOARD | INP_BUTTON);
@@ -331,9 +331,9 @@ void ClueEngine::showIntro() {
 				}
 
 				if (showA) {
-					processIntroAnimation(B->_pixels, cp);
+					processIntroAnimation(B._pixels, cp);
 				} else {
-					processIntroAnimation(A->_pixels, cp);
+					processIntroAnimation(A._pixels, cp);
 				}
 
 				for (int s = 0; s < MAX_INTRO_ANIM; s++) {
@@ -380,11 +380,7 @@ endit2:
 		_sndMgr->sndFading(0);
 	}
 
-	delete A;
-	delete B;
-
 	free(XMSHandle);
-	delete ScreenGC;
 }
 	
 bool ClueEngine::tcInit() {

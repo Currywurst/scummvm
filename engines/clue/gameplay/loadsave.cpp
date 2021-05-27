@@ -153,22 +153,22 @@ bool tcLoadTheClou() {
 	dskBuildPathName(DISK_CHECK_FILE, DATADISK, GAMES_LIST_TXT, pathname1);
 	dskBuildPathName(DISK_CHECK_FILE, DATADISK, GAMES_ORIG_TXT, pathname2);
 
-	NewList<NewNode> *games = new NewList<NewNode>;
-	NewList<NewNode> *origin = new NewList<NewNode>;
+	NewList<NewNode> games;
+	NewList<NewNode> origin;
 	bool loaded = false;
-	games->readList(pathname1);
-	origin->readList(pathname2);
+	games.readList(pathname1);
+	origin.readList(pathname2);
 
 	ShowMenuBackground();
 	Common::String line = g_clue->_txtMgr->getFirstLine(THECLOU_TXT, "LoadAGame");
 
 	inpTurnFunctionKey(false);
 	inpTurnESC(true);
-	uint32 activ = (uint32) Menu(games, 15, 0, nullptr, 0);
+	uint32 activ = (uint32) Menu(&games, 15, 0, nullptr, 0);
 	inpTurnFunctionKey(true);
 
 	if ((activ != GET_OUT) 
-		&& strcmp(games->getNthNode((int32) activ)->_name.c_str(), origin->getNthNode((int32) activ)->_name.c_str())) {
+		&& strcmp(games.getNthNode((int32) activ)->_name.c_str(), origin.getNthNode((int32) activ)->_name.c_str())) {
 		loaded = tcLoadIt((byte) activ);
 	} else {
 		ShowMenuBackground();
@@ -180,8 +180,8 @@ bool tcLoadTheClou() {
 		ShowMenuBackground();
 		_film->setLocation((uint32)-1);
 
-		games->removeList();
-		origin->removeList();
+		games.removeList();
+		origin.removeList();
 
 		PlayerNode *player = (PlayerNode *)dbGetObject(Player_Player_1);
 		if (player) {  /* MOD 04-02 */
@@ -194,8 +194,8 @@ bool tcLoadTheClou() {
 
 	tcRefreshAfterLoad(loaded);
 
-	games->removeList();
-	origin->removeList();
+	games.removeList();
+	origin.removeList();
 
 	return loaded;
 }

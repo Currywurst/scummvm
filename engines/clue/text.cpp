@@ -340,6 +340,7 @@ NewList<NewNode> *TextMgr::goKeyAndInsert(uint32 textId, const char *key, ...) {
 	}
 
 	originList->removeList();
+	delete originList;
 
 	va_end(argument);
 	return txtList;
@@ -391,6 +392,7 @@ Common::String TextMgr::getNthString(uint32 textId, const char *key, uint32 nth)
 		dest = src->_name;
 
 	txtList->removeList();
+	delete txtList;
 
 	return dest;
 }

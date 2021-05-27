@@ -228,10 +228,7 @@ void lsBlitOneObject(MemRastPort *rp, uint16 offsetFact, uint16 dx, uint16 dy, u
 	uint16 srcY = (offsetFact / perRow) * size;
 	uint16 srcX = (offsetFact % perRow) * size;
 
-	if (ls->uch_ShowObjectMask)
-		gfxLSPutMsk(rp, srcX, srcY, dx, dy, size, size);
-	else
-		gfxLSPutMsk(rp, srcX, srcY, dx, dy, size, size);
+	gfxLSPutMsk(rp, srcX, srcY, dx, dy, size, size);
 
 }
 

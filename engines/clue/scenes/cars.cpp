@@ -244,7 +244,7 @@ void tcSellCar(uint32 ObjectID) {
 }
 
 void tcRepairCar(CarNode *car, const char *repairWhat) {
-	NewList<PresentationInfoNode> *presentationData = new NewList<PresentationInfoNode>;
+	NewList<PresentationInfoNode> presentationData;
 	bool enough = true;
 	PersonNode *marc = (PersonNode *) dbGetObject(Person_Marc_Smith);
 
@@ -285,21 +285,21 @@ void tcRepairCar(CarNode *car, const char *repairWhat) {
 
 		addVTime(3);
 
-		AddPresentTextLine(presentationData, nullptr, 0, list, line++);
+		AddPresentTextLine(&presentationData, nullptr, 0, list, line++);
 
 		if (item)
-			AddPresentLine(presentationData, PRESENT_AS_BAR, (uint32)(*item), 255, list, line++);
+			AddPresentLine(&presentationData, PRESENT_AS_BAR, (uint32)(*item), 255, list, line++);
 
-		AddPresentLine(presentationData, PRESENT_AS_BAR, (uint32)(car->State),
+		AddPresentLine(&presentationData, PRESENT_AS_BAR, (uint32)(car->State),
 		               255, list, line++);
 
 		uint32 totalCosts = 0;
-		AddPresentLine(presentationData, PRESENT_AS_NUMBER, totalCosts, 0, list, line++);
-		AddPresentLine(presentationData, PRESENT_AS_NUMBER, (uint32) tcGetPlayerMoney, 0, list, line++);
+		AddPresentLine(&presentationData, PRESENT_AS_NUMBER, totalCosts, 0, list, line++);
+		AddPresentLine(&presentationData, PRESENT_AS_NUMBER, (uint32) tcGetPlayerMoney, 0, list, line++);
 
-		DrawPresent(presentationData, 0, _upperGc, (byte)presentationData->getNrOfNodes());
+		DrawPresent(&presentationData, 0, _upperGc, (byte)presentationData.getNrOfNodes());
 
-		presentationData->removeNode(nullptr);
+		presentationData.removeNode(nullptr);
 
 		choice = inpWaitFor(INP_LBUTTONP | INP_TIME);
 
@@ -345,7 +345,7 @@ void tcRepairCar(CarNode *car, const char *repairWhat) {
 	/*gfxShow(26,GFX_NO_REFRESH|GFX_ONE_STEP,0,-1,-1);*/
 	/*gfxShow((uint16)car->PictID,GFX_NO_REFRESH|GFX_OVERLAY,1,-1,-1);*/
 
-	presentationData->removeList();
+	presentationData.removeList();
 	list->removeList();
 }
 

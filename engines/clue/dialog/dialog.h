@@ -28,7 +28,7 @@ namespace Clue {
 class NewNode;
 class NewDynDlgNode : public NewNode {
 public:
-	byte _knownBefore;       /* wie gut Sie bekannt sein müssen */
+	byte _knownBefore;       /* wie gut Sie bekannt sein mÃ¼ssen */
 	byte _knownAfter;        /* wie gut Sie danach bekannt sind ! */
 
 	NewDynDlgNode() { _knownBefore = _knownAfter = 0; }

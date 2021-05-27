@@ -346,13 +346,13 @@ static void livLoadTemplates() {
 	char pathname[DSK_PATH_MAX];
 	dskBuildPathName(DISK_CHECK_FILE, TEXT_DIRECTORY, LIV_ANIM_TEMPLATE_LIST, pathname);
 
-	NewList<NewNode> *l = new NewList<NewNode>;
-	uint16 cnt = l->readList(pathname);
+	NewList<NewNode> l;
+	uint16 cnt = l.readList(pathname);
 	if (!cnt)
 		ErrorMsg(Disk_Defect, ERROR_MODULE_LIVING, 3);
 
 	for (uint16 i = 0; i < cnt; i++) {
-		Common::String line = l->getNthNode(i)->_name;
+		Common::String line = l.getNthNode(i)->_name;
 
 		NewAnimTemplate *tlt = sc->_template->createNode(g_clue->_txtMgr->getKey(1, line.c_str()));
 
@@ -361,20 +361,20 @@ static void livLoadTemplates() {
 		tlt->_frameOffsetNr = (uint16)g_clue->_txtMgr->getKeyAsUint32(4, line);
 	}
 
-	l->removeList();
+	l.removeList();
 }
 
 static void livLoadLivings() {
 	char pathname[DSK_PATH_MAX];
 	dskBuildPathName(DISK_CHECK_FILE, TEXT_DIRECTORY, LIV_LIVINGS_LIST, pathname);
 
-	NewList<NewNode> *l = new NewList<NewNode>;
-	uint16 cnt = l->readList(pathname);
+	NewList<NewNode> l;
+	uint16 cnt = l.readList(pathname);
 	if (!cnt)
 		ErrorMsg(Disk_Defect, ERROR_MODULE_LIVING, 2);
 
 	for (uint16 i = 0; i < cnt; i++) {
-		Common::String line = l->getNthNode(i)->_name;
+		Common::String line = l.getNthNode(i)->_name;
 		Common::String name = g_clue->_txtMgr->getKey(1, line.c_str());
 		Common::String templateName = g_clue->_txtMgr->getKey(2, line.c_str());
 
@@ -386,7 +386,7 @@ static void livLoadLivings() {
 		       (int16)g_clue->_txtMgr->getKeyAsUint32(6, line));
 	}
 
-	l->removeList();
+	l.removeList();
 }
 
 void NewLiving::livHide() {
