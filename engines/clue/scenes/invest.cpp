@@ -57,6 +57,8 @@ void Investigate(const char *location) {
 			SetBubbleType(THINK_BUBBLE);
 			Bubble(bubble_l, 0, nullptr, 0);
 			bubble_l->removeList();
+			delete bubble_l;
+			bubble_l = nullptr;
 			return;
 		}
 	}
@@ -174,9 +176,13 @@ void Investigate(const char *location) {
 		SetBubbleType(THINK_BUBBLE);
 		Bubble(bubble_l, 0, nullptr, 0);
 		bubble_l->removeList();
+		delete bubble_l;
+		bubble_l = nullptr;
 	}
 
 	origin->removeList();
+	delete origin;
+	origin = nullptr;
 
 	Present(buiID, "Building", InitBuildingPresent);
 
@@ -207,7 +213,7 @@ void Investigate(const char *location) {
 
 		inpWaitFor(INP_LBUTTONP);
 
-		gfxChangeColors(_lowerGc, 0, GFX_FADE_OUT, NULL);
+		gfxChangeColors(_lowerGc, 0, GFX_FADE_OUT, nullptr);
 		_lowerGc->gfxClearArea();
 		gfxChangeColors(_lowerGc, 0, GFX_BLEND_UP, palette);
 

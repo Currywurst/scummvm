@@ -65,17 +65,17 @@ void plCloseHandler(dbObjectNode *n) {
 
 /* Preparation & Unpreparation functions */
 void plPrepareData() {
-	for (uint i = 0; i < PLANING_NR_LOOTS; i++)
-		Planing_Loot[i] = 0;
+	for (unsigned char &i : Planing_Loot)
+		i = 0;
 
-	for (uint i = 0; i < PLANING_NR_PERSONS; i++)
-		Planing_Weight[i] = 0;
+	for (unsigned int &i : Planing_Weight)
+		i = 0;
 
-	for (uint i = 0; i < PLANING_NR_PERSONS; i++)
-		Planing_Volume[i] = 0;
+	for (unsigned int &i : Planing_Volume)
+		i = 0;
 
-	for (uint i = 0; i < PLANING_NR_GUARDS; i++)
-		Planing_Guard[i] = 0;
+	for (unsigned char &i : Planing_Guard)
+		i = 0;
 }
 
 void plPrepareSprite(uint32 livNr, uint32 areaId) {

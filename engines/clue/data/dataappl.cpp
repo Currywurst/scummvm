@@ -181,8 +181,8 @@ int32 tcGetCarTraderOffer(CarNode *car) {
 }
 
 uint32 GetObjNrOfLocation(uint32 LocNr) {
-	for (uint8 objHashValue = 0; objHashValue < OBJ_HASH_SIZE; objHashValue++) {
-		for (dbObjectNode *obj = objHash[objHashValue]->getListHead(); obj->_succ; obj = (dbObjectNode *) obj->_succ) {
+	for (auto &objHashValue : objHash) {
+		for (dbObjectNode *obj = objHashValue->getListHead(); obj->_succ; obj = (dbObjectNode *) obj->_succ) {
 			if (obj->_type == Object_Location) {
 				LocationNode *loc = (LocationNode *)obj;
 
@@ -196,8 +196,8 @@ uint32 GetObjNrOfLocation(uint32 LocNr) {
 }
 
 uint32 GetObjNrOfBuilding(uint32 LocNr) {
-	for (short objHashValue = 0; objHashValue < OBJ_HASH_SIZE; objHashValue++) {
-		for (dbObjectNode* obj = objHash[objHashValue]->getListHead(); obj->_succ; obj = (dbObjectNode *) obj->_succ) {
+	for (auto &objHashValue : objHash) {
+		for (dbObjectNode* obj = objHashValue->getListHead(); obj->_succ; obj = (dbObjectNode *) obj->_succ) {
 			if (obj->_type == Object_Building) {
 				BuildingNode *bui = (BuildingNode *)obj;
 
@@ -328,7 +328,7 @@ int32 tcGetTeamMood(uint32 *guyId, uint32 timer) {
 	team /= i;
 	TeamMood = CalcValue(team, 0, 255, (tcIsPlanPerfect(timer) * 20) / 35, 100);
 
-	return (int32) TeamMood;
+	return TeamMood;
 }
 
 /*

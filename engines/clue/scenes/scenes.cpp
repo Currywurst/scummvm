@@ -43,6 +43,8 @@ static byte tcDisplayInfoAboutPerson(uint32 objID) {
 	SetBubbleType(THINK_BUBBLE);
 	Bubble(bubble, 0, nullptr, 0);
 	bubble->removeList();
+	delete bubble;
+	bubble = nullptr;
 
 	return 0;
 }
@@ -128,6 +130,8 @@ void Information() {
 		NewList<NewNode> *bubble = g_clue->_txtMgr->goKey(THECLOU_TXT, "INFORMATION");
 		choice = Bubble(bubble, choice, nullptr, 0);
 		bubble->removeList();
+		delete bubble;
+		bubble = nullptr;
 
 		byte choice1 = 0;
 		switch (choice) {
@@ -264,6 +268,8 @@ void Look(uint32 locNr) {
 		SetBubbleType(THINK_BUBBLE);
 		choice = Bubble(menu, 0, nullptr, 0);
 		menu->removeList();
+		delete menu;
+		menu = nullptr;
 
 		byte choice1 = 0;
 
@@ -274,6 +280,8 @@ void Look(uint32 locNr) {
 			SetBubbleType(THINK_BUBBLE);
 			choice1 = Bubble(bubble, 0, nullptr, 0);
 			bubble->removeList();
+			delete bubble;
+			bubble = nullptr;
 			}
 			break;
 

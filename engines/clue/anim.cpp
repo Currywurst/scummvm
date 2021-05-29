@@ -91,7 +91,7 @@ void AnimManager::prepareAnim(const char *AnimID) {
 /* initializes various values and afterwards copies anim phases into memory */
 	Common::String pict_list = getAnim(AnimID);
 
-	if ((uint32)_vm->_txtMgr->countKey(pict_list) > PIC_1_ID_POS) {
+	if (_vm->_txtMgr->countKey(pict_list) > PIC_1_ID_POS) {
 		CollectionNode* coll = gfxGetCollection(_vm->_txtMgr->getKeyAsUint32(ANIM_COLL_ID_POS, pict_list));
 		_frameCount = _vm->_txtMgr->getKeyAsUint32(PIC_COUNT_POS, pict_list);
 

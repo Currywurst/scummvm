@@ -60,7 +60,7 @@ Common::Platform ClueEngine::getPlatform() const {
 
 static const PlainGameDescriptor clueGames[] = {
 	{"clue", "The Clue!"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const ADGameDescription gameDescriptions[] = {

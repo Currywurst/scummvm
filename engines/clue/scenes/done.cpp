@@ -64,8 +64,10 @@ void DoneTaxi() {
 	_sceneArgs._options = 0;
 
 	locs->removeList();
+	delete locs;
+	locs = nullptr;
 
-	gfxChangeColors(_lowerGc, 2, GFX_FADE_OUT, 0);
+	gfxChangeColors(_lowerGc, 2, GFX_FADE_OUT, nullptr);
 }
 
 void DoneInsideHouse() {
@@ -149,6 +151,8 @@ void DoneInsideHouse() {
 	gfxChangeColors(_lowerGc, 5, GFX_FADE_OUT, nullptr);
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 }
 
 void DoneTools() {
@@ -183,8 +187,10 @@ void DoneTools() {
 	livesInSet(London_London_1, Person_Mary_Bolton);
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 	g_clue->_animMgr->stopAnim();
-	gfxChangeColors(_lowerGc, 5, GFX_FADE_OUT, 0);
+	gfxChangeColors(_lowerGc, 5, GFX_FADE_OUT, nullptr);
 }
 
 void DoneDealer() {
@@ -222,8 +228,10 @@ void DoneDealer() {
 	livesInSet(London_London_1, Person_Helen_Parker);
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 	g_clue->_animMgr->stopAnim();
-	gfxChangeColors(_lowerGc, 5, GFX_FADE_OUT, 0);
+	gfxChangeColors(_lowerGc, 5, GFX_FADE_OUT, nullptr);
 }
 
 void DoneParking() {
@@ -239,7 +247,7 @@ void DoneParking() {
 		inpTurnFunctionKey(false);  /* or call save functions in case of space */
 		inpTurnESC(false);
 
-		activ = Menu(menu, _sceneArgs._options, (byte)activ, nullptr, 0);
+		activ = Menu(menu, _sceneArgs._options, activ, nullptr, 0);
 
 		inpTurnESC(true);
 		inpTurnFunctionKey(true);
@@ -282,6 +290,10 @@ void DoneParking() {
 
 	bubble->removeList();
 	menu->removeList();
+	delete bubble;
+	delete menu;
+	bubble = nullptr;
+	menu = nullptr;
 
 	g_clue->_animMgr->stopAnim();
 	gfxChangeColors(_lowerGc, 5, GFX_FADE_OUT, nullptr);
@@ -326,8 +338,10 @@ void DoneGarage() {
 	}
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 	g_clue->_animMgr->stopAnim();
-	gfxChangeColors(_lowerGc, 5, GFX_FADE_OUT, 0);
+	gfxChangeColors(_lowerGc, 5, GFX_FADE_OUT, nullptr);
 }
 
 void tcInitFahndung() {

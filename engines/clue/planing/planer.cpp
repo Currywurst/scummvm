@@ -141,7 +141,7 @@ static void plActionGo() {
 
 				if (!lsInitScrollLandScape(direction, LS_SCROLL_PREPARE)) {
 					if (!action || (action->Type != ACTION_GO)) {
-						if ((action = InitAction(plSys, ACTION_GO, (uint32) direction, 0, 0)))
+						if ((action = InitAction(plSys, ACTION_GO, direction, 0, 0)))
 							PlanChanged = true;
 						else {
 							plSay("PLANING_END", CurrentPerson);
@@ -311,6 +311,8 @@ static void plActionWait() {
 	}
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 }
 
 static void plLevelDesigner(LSObjectNode *lso) {
@@ -397,6 +399,8 @@ static void plLevelDesigner(LSObjectNode *lso) {
 	}
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 
 	lsDoneActivArea(area);
 	lsInitActivArea(area, livGetXPos(Planing_Name[CurrentPerson]), livGetYPos(Planing_Name[CurrentPerson]), Planing_Name[CurrentPerson]);
@@ -506,7 +510,7 @@ static void plActionTake() {
 			Common::String exp = g_clue->_txtMgr->getFirstLine(PLAN_TXT, "EXPAND_ALL");
 			takeableList->expandObjectList(exp);
 
-			uint32 choice = Bubble((NewList<NewNode>*)takeableList, 0, NULL, 0);
+			uint32 choice = Bubble((NewList<NewNode>*)takeableList, 0, nullptr, 0);
 
 			if (ChoiceOk(choice, GET_OUT, takeableList)) {
 				uint32 weightPerson = tcWeightPersCanCarry((PersonNode *)dbGetObject(BurglarsList->getNthNode(CurrentPerson)->_nr));
@@ -1014,7 +1018,7 @@ static void plActionUse() {
 }
 
 static void plAction() {
-	NewList<NewNode> *menu = NULL;
+	NewList<NewNode> *menu = nullptr;
 	if (CurrentPerson < BurglarsNr)
 		menu = g_clue->_txtMgr->goKey(PLAN_TXT, "MENU_2");
 	else
@@ -1102,6 +1106,8 @@ static void plAction() {
 				lsSetActivLiving(Planing_Name[CurrentPerson], (uint16) -1, (uint16) -1);
 
 				menu->removeList();
+				delete menu;
+				menu = nullptr;
 
 				if (CurrentPerson < BurglarsNr)
 					menu = g_clue->_txtMgr->goKey(PLAN_TXT, "MENU_2");
@@ -1141,6 +1147,8 @@ static void plAction() {
 	}
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 }
 
 static void plNoteBook() {
@@ -1211,6 +1219,8 @@ static void plNoteBook() {
 	}
 
 	bubble->removeList();
+	delete bubble;
+	bubble = nullptr;
 }
 
 static void plLook() {
@@ -1343,6 +1353,8 @@ static void plLook() {
 	lsSetActivLiving(Planing_Name[CurrentPerson], (uint16) -1, (uint16) -1);
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 }
 
 /* Planer */
@@ -1457,6 +1469,8 @@ void plPlaner(uint32 objId) {
 	plUnprepareSys();
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 }
 
 } // End of namespace Clue

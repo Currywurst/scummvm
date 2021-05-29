@@ -70,6 +70,8 @@ void ShowTheClouRequester() {
 	}
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 	inpTurnESC(true);
 }
 

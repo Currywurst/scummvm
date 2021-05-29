@@ -104,7 +104,7 @@ uint8 Present(uint32 nr, const char *presentationText, void (*initPresentation)(
 	} else if (dbIsObject(nr, Object_Evidence)) {
 		EvidenceNode *e = (EvidenceNode *)dbGetObject(nr);
 
-		gfxShow((uint16)((PersonNode *) dbGetObject(e->pers))->PictID,
+		gfxShow(((PersonNode *) dbGetObject(e->pers))->PictID,
 		        GFX_NO_REFRESH | GFX_OVERLAY | GFX_BLEND_UP, 0, -1, -1);
 	} else if (dbIsObject(nr, Object_Tool))
 		gfxShow(((ToolNode *)(dbGetObject(nr)))->PictID,
@@ -141,7 +141,7 @@ uint8 Present(uint32 nr, const char *presentationText, void (*initPresentation)(
 		if ((action & INP_MOUSE)) {
 			uint16 y;
 
-			_upperGc->gfxGetMouseXY(NULL, &y);
+			_upperGc->gfxGetMouseXY(nullptr, &y);
 
 			while (y < 9 && firstVis > 0) { /* Scroll up */
 				firstVis--;
@@ -149,7 +149,7 @@ uint8 Present(uint32 nr, const char *presentationText, void (*initPresentation)(
 
 				inpDelay(20);
 
-				_upperGc->gfxGetMouseXY(NULL, &y);
+				_upperGc->gfxGetMouseXY(nullptr, &y);
 			}
 
 			while (y > 48 && y <= 58 && firstVis < (max - 5)) { /* Scroll down */
@@ -158,7 +158,7 @@ uint8 Present(uint32 nr, const char *presentationText, void (*initPresentation)(
 
 				inpDelay(20);
 
-				_upperGc->gfxGetMouseXY(NULL, &y);
+				_upperGc->gfxGetMouseXY(nullptr, &y);
 			}
 		} else {
 			if (action & INP_UP) {
@@ -178,6 +178,8 @@ uint8 Present(uint32 nr, const char *presentationText, void (*initPresentation)(
 	}
 
 	list->removeList();
+	delete list;
+	list = nullptr;
 	presentationData->removeList();
 
 	gfxRefresh();

@@ -68,6 +68,8 @@ uint32 tcGoInsideOfHouse(uint32 buildingID) {
 
 	areas->removeList();
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 
 	return areaID;
 }
@@ -176,6 +178,8 @@ void tcInsideOfHouse(uint32 buildingID, uint32 areaID, byte perc) {
 	}
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 	objects->removeList();
 	inpSetWaitTicks(0);
 }

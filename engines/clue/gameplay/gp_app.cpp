@@ -66,7 +66,7 @@ void tcMattGoesTo(uint32 locNr) {
 	tcRefreshLocationInTitle(locNr);
 	ShowTime(0);
 
-	gfxChangeColors(_lowerGc, 0, GFX_FADE_OUT, 0);
+	gfxChangeColors(_lowerGc, 0, GFX_FADE_OUT, nullptr);
 	g_clue->_animMgr->playAnim(node->_name.c_str(), (int16) 30000, GFX_NO_REFRESH | GFX_ONE_STEP | GFX_BLEND_UP);
 }
 
@@ -418,7 +418,7 @@ uint32 StdHandle(uint32 choice) {
 				} else {
 					uint32 building;
 
-					gfxChangeColors(_lowerGc, 0, GFX_FADE_OUT, 0);
+					gfxChangeColors(_lowerGc, 0, GFX_FADE_OUT, nullptr);
 
 					if (_gamePlayMode & GP_MODE_NO_MUSIC_IN_PLANING)
 						g_clue->_sndMgr->sndStopSound(0);
@@ -504,6 +504,8 @@ void stdDone() {
 		gfxChangeColors(_lowerGc, 5, GFX_FADE_OUT, nullptr);
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 }
 
 

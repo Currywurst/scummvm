@@ -83,9 +83,13 @@ TextMgr::TextMgr(ClueEngine* vm) : _vm(vm) {
 TextMgr::~TextMgr() {
 	if (_txtBase) {
 		uint32 nr = _txtBase->getNrOfNodes();
-
+		
 		for (uint32 i = 0; i < nr; i++)
 			unLoad(i);
+
+		_txtBase->removeList();
+		delete _txtBase;
+		_txtBase = nullptr;
 	}
 }
 
@@ -112,8 +116,8 @@ char *TextMgr::getLine(Text *txt, uint8 lineNr) {
 
 				/* skip comments */
 				while (*(line + 1) == TXT_CHAR_REMARK) {
-					while (*(++line) != TXT_CHAR_EOS);
-					line++; /* skip second EOS */
+					while (*(++line) != TXT_CHAR_EOS)
+						line++; /* skip second EOS */
 				}
 			}
 
@@ -129,7 +133,8 @@ char *TextMgr::getLine(Text *txt, uint8 lineNr) {
 
 /*  public functions - TEXT */
 void TextMgr::init() {
-	_txtBase = new NewList<Text>;
+	if( !_txtBase )
+		_txtBase = new NewList<Text>;
 
 	char txtListPath[DSK_PATH_MAX];
 	dskBuildPathName(DISK_CHECK_FILE, TEXT_DIRECTORY, TXT_LIST, txtListPath);
@@ -191,7 +196,8 @@ void TextMgr::unLoad(uint32 textId) {
 
 	if (txt) {
 		if (txt->_handle) {
-			free(txt->_handle);
+			delete [] txt->_handle;
+			//free(txt->_handle);
 		}
 
 		txt->_handle = nullptr;
@@ -341,6 +347,7 @@ NewList<NewNode> *TextMgr::goKeyAndInsert(uint32 textId, const char *key, ...) {
 
 	originList->removeList();
 	delete originList;
+	originList = nullptr;
 
 	va_end(argument);
 	return txtList;

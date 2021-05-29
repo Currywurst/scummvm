@@ -409,30 +409,30 @@ bool hscLoad(const char *filename) {
 	uint8 *hsc_file = (uint8 *)dskLoad(filename);
 	uint8 *hsc_data = hsc_file;
 
-	for (int i = 0; i < 128; i++) {
-		instrument[i].car_am_vib_eg_ksr_multi = *hsc_data++;
-		instrument[i].mod_am_vib_eg_ksr_multi = *hsc_data++;
+	for (auto &i : instrument) {
+		i.car_am_vib_eg_ksr_multi = *hsc_data++;
+		i.mod_am_vib_eg_ksr_multi = *hsc_data++;
 
-		instrument[i].car_ksl_volume = *hsc_data++;
-		instrument[i].mod_ksl_volume = *hsc_data++;
+		i.car_ksl_volume = *hsc_data++;
+		i.mod_ksl_volume = *hsc_data++;
 
-		instrument[i].car_attack_decay = *hsc_data++;
-		instrument[i].mod_attack_decay = *hsc_data++;
+		i.car_attack_decay = *hsc_data++;
+		i.mod_attack_decay = *hsc_data++;
 
-		instrument[i].car_sustain_release = *hsc_data++;
-		instrument[i].mod_sustain_release = *hsc_data++;
+		i.car_sustain_release = *hsc_data++;
+		i.mod_sustain_release = *hsc_data++;
 
-		instrument[i].feedback_fm = *hsc_data++;
+		i.feedback_fm = *hsc_data++;
 
-		instrument[i].car_waveform = *hsc_data++;
-		instrument[i].mod_waveform = *hsc_data++;
+		i.car_waveform = *hsc_data++;
+		i.mod_waveform = *hsc_data++;
 
-		instrument[i].slide = *hsc_data++;
+		i.slide = *hsc_data++;
 	}
 
 
-	for (int i = 0; i < 51; i++)
-		pattern_table[i] = *hsc_data++;
+	for (unsigned char &i : pattern_table)
+		i = *hsc_data++;
 
 
 	int num_pattern = (dskFileLength(filename) - 1587) / 1152;
@@ -480,7 +480,7 @@ public:
 	Functor0Ptr(const FuncType &func) : _func(func) {}
 
 	bool isValid() const {
-		return _func != 0;
+		return _func != nullptr;
 	}
 	Res operator()() const {
 		return (*_func)();

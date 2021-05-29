@@ -73,6 +73,7 @@ NewList<NewNode> *plLoadTools(Common::Stream *fh) {
 
 	if (foundAll) {
 		l->removeList();
+		delete l;
 		l = nullptr;
 	} else {
 		NewList<NewNode> *extList = nullptr;
@@ -90,6 +91,8 @@ NewList<NewNode> *plLoadTools(Common::Stream *fh) {
 				l->createNode(n->_name);
 
 			extList->removeList();
+			delete extList;
+			extList = nullptr;
 		}
 	}
 
@@ -196,7 +199,7 @@ byte plOpen(uint32 objId, byte mode, Common::Stream **fh) {
 }
 
 void plSave(uint32 objId) {
-	Common::Stream *fh = NULL;
+	Common::Stream *fh = nullptr;
 
 	if (plOpen(objId, PLANING_OPEN_WRITE_PLAN, &fh) == PLANING_OPEN_OK) {
 		if (_gamePlayMode & GP_MODE_GUARD_DESIGN) {
@@ -230,11 +233,13 @@ void plSaveChanged(uint32 objId) {
 			inpTurnESC(true);
 
 		l->removeList();
+		delete l;
+		l = nullptr;
 	}
 }
 
 void plLoad(uint32 objId) {
-	Common::Stream *fh = NULL;
+	Common::Stream *fh = nullptr;
 	byte ret;
 
 	if (objId == Building_Starford_Barracks)

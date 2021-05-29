@@ -142,7 +142,7 @@ void tcDealerSays(PersonNode *dealer, byte textNr, int32 perc) {
 			uint32 offer = tcGetDealerOffer(price, perc);
 			offer = MAX(offer, 1u);
 
-			dealerOffer->removeNode(NULL);
+			dealerOffer->removeNode(nullptr);
 
 			if (loot->Type == textNr) {
 				byte symp;
@@ -179,9 +179,9 @@ void tcDealerSays(PersonNode *dealer, byte textNr, int32 perc) {
 					player->StolenMoney += offer;
 					player->MyStolenMoney += mattsMoney;
 
-					for (byte i = 0; i < 3; i++) {
-						if (dealer != others[i])
-							tcAddDealerSymp((others[i]), (symp * (-1)));
+					for (auto &other : others) {
+						if (dealer != other)
+							tcAddDealerSymp(other, (symp * (-1)));
 					}
 				}
 			}
@@ -192,6 +192,12 @@ void tcDealerSays(PersonNode *dealer, byte textNr, int32 perc) {
 	dealerOffer->removeList();
 	dealerText->removeList();
 	lootNames->removeList();
+	delete lootNames;
+	lootNames = nullptr;
+	delete specialLoot;
+	specialLoot = nullptr;
+	delete dealerText;
+	dealerText = nullptr;
 }
 
 NewList<NewNode>* tcMakeLootList(uint32 containerID, uint32 relID) {
@@ -281,6 +287,10 @@ NewList<NewNode>* tcMakeLootList(uint32 containerID, uint32 relID) {
 	lootE->removeList();
 	lootNameE->removeList();
 	loots->removeList();
+	delete lootE;
+	lootE = nullptr;
+	delete lootNameE;
+	lootNameE = nullptr;
 
 	return out;
 }

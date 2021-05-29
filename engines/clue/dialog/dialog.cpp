@@ -55,7 +55,11 @@ NewList<NewNode> *PrepareQuestions(NewList<NewDynDlgNode> *keyWords, uint32 talk
 
 	stdQuestionList->removeList();
 	questionList->removeList();
-
+	delete stdQuestionList;
+	delete questionList;
+	stdQuestionList = nullptr;
+	questionList = nullptr;
+	
 	return preparedList;
 }
 
@@ -225,6 +229,8 @@ void DynamicTalk(uint32 Person1ID, uint32 Person2ID, byte TalkMode) {
 
 		keyWords->removeList();
 		origin->removeList();
+		delete origin;
+		origin = nullptr;
 		questions->removeList();
 		bubble->removeNode(nullptr);
 	} while (choice != quit);
@@ -275,6 +281,8 @@ byte Say(uint32 TextID, byte activ, uint16 person, const char *text) {
 	}
 	
 	bubble->removeList();
+	delete bubble;
+	bubble = nullptr;
 	return choice;
 }
 

@@ -70,6 +70,8 @@ void tcMyJobAnswer(PersonNode *p) {
 	Bubble(bubble, 0, nullptr, 0);
 
 	jobs->removeList();
+	delete jobs;
+	jobs = nullptr;
 	bubble->removeList();
 }
 
@@ -86,6 +88,8 @@ void tcPrisonAnswer(PersonNode *p) {
 
 	source->removeList();
 	bubble->removeList();
+	delete source;
+	source = nullptr;
 }
 
 void tcAbilityAnswer(uint32 personID) {
@@ -97,6 +101,8 @@ void tcAbilityAnswer(uint32 personID) {
 	Bubble(bubble, 0, nullptr, 0);
 
 	bubble->removeList();
+	delete bubble;
+	bubble = nullptr;
 }
 
 } // End of namespace Clue

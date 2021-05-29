@@ -739,7 +739,9 @@ byte ClueEngine::startupMenu() {
 	}
 
 	menu->removeList();
-
+	delete menu;
+	menu = nullptr;
+	
 	return ret;
 }
 

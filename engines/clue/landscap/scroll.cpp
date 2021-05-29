@@ -38,7 +38,7 @@ byte lsScrollLandScape(byte direction) {
 		l->us_PersonXPos += (PX * speed);
 		l->us_PersonYPos += (PY * speed);
 
-		back = (byte) direction;
+		back = direction;
 	}
 
 	return back;
@@ -47,7 +47,7 @@ byte lsScrollLandScape(byte direction) {
 byte lsInitScrollLandScape(byte direction, byte mode) {
 	struct LandScape *l = ls;
 	int32 dx = 0, dy = 0, px = 0, py = 0, tx = 0, ty = 0, speed =
-	                                       (int32) l->uch_ScrollSpeed;
+	                                       l->uch_ScrollSpeed;
 	byte collis = 0;
 
 	if (direction & LS_SCROLL_LEFT) {
@@ -150,8 +150,8 @@ byte lsIsCollision(int32 x, int32 y, byte direction) {
 	if (collis)
 		return collis;
 
-	for (int32 i = 0; i < 14; i++)
-		color[i] = 255;
+	for (unsigned char &i : color)
+		i = 255;
 
 	/* check collision
 	   As the Maxi always moves by 2 pixels, pixels must be checked
@@ -318,15 +318,15 @@ byte lsIsCollision(int32 x, int32 y, byte direction) {
 	}
 
 	/* from now on color[i] contains a non-zero value when there is a collision */
-	for (uint32 i = 0; i < 14; i++) {
-		if (color[i] != LS_COLLIS_COLOR_0 && color[i] != LS_COLLIS_COLOR_1 && color[i] != LS_COLLIS_COLOR_2 && color[i] != LS_COLLIS_COLOR_3)
-			color[i] = 0;
+	for (unsigned char &i : color) {
+		if (i != LS_COLLIS_COLOR_0 && i != LS_COLLIS_COLOR_1 && i != LS_COLLIS_COLOR_2 && i != LS_COLLIS_COLOR_3)
+			i = 0;
 		else
-			color[i] = 1;
+			i = 1;
 	}
 
-	for (uint32 i = 0; i < 14; i++) {
-		if (color[i])
+	for (unsigned char i : color) {
+		if (i)
 			collis = collisDir;
 	}
 

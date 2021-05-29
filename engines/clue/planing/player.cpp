@@ -176,8 +176,8 @@ static void UnableToWork(uint32 current, uint32 action) {
 static byte plGetMood(uint32 time) {
 	uint32 guyId[PLANING_NR_PERSONS];
 
-	for (uint16 i = 0; i < PLANING_NR_PERSONS; i++)
-		guyId[i] = 0;
+	for (unsigned int &i : guyId)
+		i = 0;
 
 	for (uint16 i = 0; i < BurglarsNr; i++)
 		guyId[i] = PersonsList->getNthNode(i)->_nr;
@@ -338,8 +338,8 @@ static void plPlayerAction() {
 		if (PD.realTime >= Search.TimeOfAlarm + PD.bldObj->PoliceTime) {
 			Search.EscapeBits |= FAHN_SURROUNDED;
 
-			for (int i = 0; i < PLANING_NR_PERSONS; i++)
-				PD.handlerEnded[i] = 1;
+			for (unsigned char &i : PD.handlerEnded)
+				i = 1;
 
 			g_clue->_sndMgr->sndPrepareFX("marthorn.voc");
 			g_clue->_sndMgr->sndPlayFX();
@@ -355,8 +355,8 @@ static void plPlayerAction() {
 
 			Search.EscapeBits |= FAHN_ESCAPE;
 
-			for (int i = 0; i < PLANING_NR_PERSONS; i++)
-				PD.handlerEnded[i] = 1;
+			for (unsigned char &i : PD.handlerEnded)
+				i = 1;
 		}
 	}
 #endif
@@ -373,8 +373,8 @@ static void plPlayerAction() {
 
 			Search.EscapeBits |= FAHN_ESCAPE;
 
-			for (int i = 0; i < PLANING_NR_PERSONS; i++)
-				PD.handlerEnded[i] = 1;
+			for (unsigned char &i : PD.handlerEnded)
+				i = 1;
 		}
 	}
 #ifndef PLAN_IS_PERFECT
@@ -1016,8 +1016,8 @@ static void plPlayerAction() {
 
 	PD.ende = 1;
 
-	for (int i = 0; i < PLANING_NR_PERSONS; i++) {
-		if (!PD.handlerEnded[i])
+	for (unsigned char i : PD.handlerEnded) {
+		if (!i)
 			PD.ende = 0;
 	}
 
@@ -1096,8 +1096,8 @@ int32 plPlayer(uint32 objId, uint32 actionTime, byte(*actionFunc)(uint32, uint32
 					PD.maxTimer = MAX(GetMaxTimer(plSys), PD.maxTimer);
 				}
 
-				for (byte i = 0; i < PLANING_NR_GUARDS; i++)
-					PD.guardKO[i] = 0;
+				for (unsigned char &i : PD.guardKO)
+					i = 0;
 
 				/* Init search structure */
 				Search.BuildingId = objId;
@@ -1194,6 +1194,7 @@ int32 plPlayer(uint32 objId, uint32 actionTime, byte(*actionFunc)(uint32, uint32
 						}
 
 						l->removeList();
+						delete l;
 						l = nullptr;
 						break;
 
@@ -1225,13 +1226,14 @@ int32 plPlayer(uint32 objId, uint32 actionTime, byte(*actionFunc)(uint32, uint32
 							SetPictID(((PersonNode *)dbGetObject(BurglarsList->getNthNode(0)->_nr))->PictID);
 							SetBubbleType(RADIO_BUBBLE);
 
-							uint32 choice2 = (uint32)Bubble(l, 0, NULL, 0);
+							uint32 choice2 = (uint32)Bubble(l, 0, nullptr, 0);
 							if (choice2 != GET_OUT && choice2 < 3) {
 								tcCalcCallValue(choice2 + 2, PD.realTime, choice1);
 								Search.CallCount++;
 							}
 
 							l->removeList();
+							delete l;
 							l = nullptr;
 						}
 						break;
@@ -1239,8 +1241,8 @@ int32 plPlayer(uint32 objId, uint32 actionTime, byte(*actionFunc)(uint32, uint32
 					case PLANING_PLAYER_ESCAPE:
 						Search.EscapeBits |= FAHN_ESCAPE;
 
-						for (byte i = 0; i < PLANING_NR_PERSONS; i++)
-							PD.handlerEnded[i] = 1;
+						for (unsigned char &i : PD.handlerEnded)
+							i = 1;
 						break;
 
 					default:
@@ -1250,7 +1252,7 @@ int32 plPlayer(uint32 objId, uint32 actionTime, byte(*actionFunc)(uint32, uint32
 					}
 				}
 
-				SetMenuTimeOutFunc(NULL);
+				SetMenuTimeOutFunc(nullptr);
 				inpSetWaitTicks(0); /* normales Ausmaß */
 
 				Search.LastAreaId = lsGetActivAreaID();
@@ -1296,9 +1298,9 @@ int32 plPlayer(uint32 objId, uint32 actionTime, byte(*actionFunc)(uint32, uint32
 					while (plCarTooFull()) {
 						hasAll(Person_Matt_Stuvysunt, OLF_INCLUDE_NAME | OLF_INSERT_STAR | OLF_NORMAL, Object_Loot);
 
-						uint32 choice = Bubble((NewList<NewNode>*)ObjectList, 0, 0, 0);
+						uint32 choice = Bubble((NewList<NewNode>*)ObjectList, 0, nullptr, 0);
 						if (choice != GET_OUT)
-							hasUnSet(Person_Matt_Stuvysunt, ObjectList->getNthNode((uint32) choice)->_nr);
+							hasUnSet(Person_Matt_Stuvysunt, ObjectList->getNthNode(choice)->_nr);
 						else
 							plSay("PLAYER_LEAVE_LOOTS_2", 0);
 					}
@@ -1335,6 +1337,8 @@ int32 plPlayer(uint32 objId, uint32 actionTime, byte(*actionFunc)(uint32, uint32
 	plUnprepareSys();
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 
 	if (ret)
 		return tcEscapeByCar(Search.EscapeBits, timeLeft);

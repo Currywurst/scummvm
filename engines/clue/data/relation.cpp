@@ -42,7 +42,7 @@ RELATION AddRelation(RELATION id) {
 			rd->rd_id = id;
 			nrOfRelations++;
 
-			rd->rd_relationsTable = NULL;
+			rd->rd_relationsTable = nullptr;
 
 			return rd->rd_id;
 		}

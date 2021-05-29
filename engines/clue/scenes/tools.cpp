@@ -120,6 +120,8 @@ byte tcDescTool(byte choice) {
 			Bubble(desc, 0, nullptr, 0);
 
 			desc->removeList();
+			delete desc;
+			desc = nullptr;
 		} else
 			choice = GET_OUT;
 	}
@@ -210,6 +212,8 @@ void tcSellTool() {
 			}
 
 			bubble->removeList();
+			delete bubble;
+			bubble = nullptr;
 		} else
 			choice = GET_OUT;
 

@@ -31,7 +31,7 @@ char *dskGetRootPath(char *result) {
 Common::Stream *dskOpen(const char *Pathname, int RW) {
 	// HACK: Replace with proper streams
 	Common::FSNode node(Pathname);
-	Common::Stream *fp = NULL;
+	Common::Stream *fp = nullptr;
 	if (RW == 0) {
 		DebugMsg(ERR_DEBUG, ERROR_MODULE_DISK, "Reading :%s", Pathname);
 		fp = dynamic_cast<Common::Stream*>(node.createReadStream());
@@ -56,7 +56,7 @@ void *dskLoad(const char *Pathname) {
 		dskClose(stream);
 		return ptr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 #if 0

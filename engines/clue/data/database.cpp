@@ -73,8 +73,8 @@ KEY dbEncode(char *key) {
 #endif
 	
 dbObjectNode *dbFindRealObject(uint32 realNr, uint32 offset, uint32 size) {
-	for (uint8 objHashValue = 0; objHashValue < OBJ_HASH_SIZE; objHashValue++) {
-		for (dbObjectNode *obj = objHash[objHashValue]->getListHead(); obj->_succ; obj = (dbObjectNode *) obj->_succ) {
+	for (auto &objHashValue : objHash) {
+		for (dbObjectNode *obj = objHashValue->getListHead(); obj->_succ; obj = (dbObjectNode *) obj->_succ) {
 			if (obj->_nr > offset) {
 				if (size && (obj->_nr > offset + size))
 					continue;
@@ -538,8 +538,12 @@ bool dbLoadAllObjects(const char *fileName) {
 
 				dbObjectNode *obj = dbNewObject(objNr, objType, name, realNr++);
 
-				if (list)
+				if (list) {
 					list->removeList();
+					delete list;
+					list = nullptr;
+				}
+					
 
 				dbRWObject(obj, 0, objType, fh);
 			}
@@ -581,8 +585,8 @@ bool dbSaveAllObjects(const char *fileName, uint32 offset, uint32 size) {
 }
 
 void dbDeleteAllObjects(uint32 offset, uint32 size) {
-	for (uint8 objHashValue = 0; objHashValue < OBJ_HASH_SIZE; objHashValue++) {
-		for (dbObjectNode *obj = objHash[objHashValue]->getListHead(); obj->_succ; obj = (dbObjectNode *) obj->_succ) {
+	for (auto &objHashValue : objHash) {
+		for (dbObjectNode *obj = objHashValue->getListHead(); obj->_succ; obj = (dbObjectNode *) obj->_succ) {
 			if (obj->_nr > offset) {
 				if (size && (obj->_nr > offset + size))
 					continue;
@@ -599,8 +603,8 @@ void dbDeleteAllObjects(uint32 offset, uint32 size) {
 uint32 dbGetObjectCountOfDB(uint32 offset, uint32 size) {
 	uint32 count = 0;
 
-	for (uint8 i = 0; i < OBJ_HASH_SIZE; i++) {
-		for (dbObjectNode *obj = objHash[i]->getListHead(); obj->_succ; obj = (dbObjectNode *) obj->_succ) {
+	for (auto &i : objHash) {
+		for (dbObjectNode *obj = i->getListHead(); obj->_succ; obj = (dbObjectNode *) obj->_succ) {
 			if (obj->_nr > offset && obj->_nr < offset + size)
 				count++;
 		}
@@ -939,7 +943,7 @@ void dbSortObjectList(NewObjectList<dbObjectNode> **objectList, int16(*processNo
 		dbObjectMapper(newNode, n1);
 
 		if (pred) {
-			if (pred == (dbObjectNode *) newList->getListHead())
+			if (pred == newList->getListHead())
 				newList->addHeadNode(newNode);
 			else
 				newList->addNode(newNode, (dbObjectNode *)pred->_pred);
@@ -957,10 +961,11 @@ void dbSortObjectList(NewObjectList<dbObjectNode> **objectList, int16(*processNo
 
 /* public prototypes */
 void dbInit() {
-	ObjectList = new NewObjectList<dbObjectNode>;
+	if( !ObjectList )
+		ObjectList = new NewObjectList<dbObjectNode>;
 
-	for (uint8 objHashValue = 0; objHashValue < OBJ_HASH_SIZE; objHashValue++)
-		objHash[objHashValue] = new NewList<dbObjectNode>;
+	for (auto &objHashValue : objHash)
+		objHashValue = new NewList<dbObjectNode>;
 
 	CompareKey = dbCompare;
 //	EncodeKey = dbEncode;
@@ -968,13 +973,17 @@ void dbInit() {
 }
 
 void dbDone() {
-	for (uint8 objHashValue = 0; objHashValue < OBJ_HASH_SIZE; objHashValue++) {
-		if (objHash[objHashValue])
-			objHash[objHashValue]->removeList();
+	for (auto &objHashValue : objHash) {
+		if (objHashValue) {
+			objHashValue->removeList();
+			delete objHashValue;
+		}		
 	}
-
+	
 	if (ObjectList)
 		ObjectList->removeList();
+	delete ObjectList;
+	ObjectList = nullptr;
 }
 
 static uint32 getKeyStd(KeyConflictE key) {

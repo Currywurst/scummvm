@@ -89,12 +89,12 @@ void tcBuyCar() {
 
 			ShowMenuBackground();
 
-			choice = Bubble((NewList<NewNode> *)bubble, 0, 0, 0);
+			choice = Bubble((NewList<NewNode> *)bubble, 0, nullptr, 0);
 			if (ChoiceOk(choice, GET_OUT, bubble)) {
 				CarNode *matts_car = (CarNode *) dbGetObject(bubble->getNthNode((uint32) choice)->_nr);
 
 				SetCarColors((byte) matts_car->ColorIndex);
-				gfxShow((uint16) matts_car->PictID, GFX_NO_REFRESH | GFX_OVERLAY, 0, -1, -1);
+				gfxShow(matts_car->PictID, GFX_NO_REFRESH | GFX_OVERLAY, 0, -1, -1);
 
 				if (Present(bubble->getNthNode((uint32) choice)->_nr, "Car", InitCarPresent)) {
 					choice1 = Say(BUSINESS_TXT, 0, MATT_PICTID, "AUTOKAUF");
@@ -171,7 +171,7 @@ void tcColorCar(CarNode *car) {
 	PersonNode *marc = (PersonNode *) dbGetObject(Person_Marc_Smith);
 	uint32 costs = (uint32)tcColorCosts(car);
 
-	NewList<NewNode> *bubble = g_clue->_txtMgr->goKeyAndInsert(BUSINESS_TXT, "LACKIEREN", (uint32) costs, NULL);
+	NewList<NewNode> *bubble = g_clue->_txtMgr->goKeyAndInsert(BUSINESS_TXT, "LACKIEREN", costs, NULL);
 
 	SetPictID(marc->PictID);
 	Bubble(bubble, 0, nullptr, 0);
@@ -212,6 +212,8 @@ void tcColorCar(CarNode *car) {
 		}
 
 		colors->removeList();
+		delete colors;
+		colors = nullptr;
 	}
 
 	addVTime(137);
@@ -248,8 +250,8 @@ void tcRepairCar(CarNode *car, const char *repairWhat) {
 	bool enough = true;
 	PersonNode *marc = (PersonNode *) dbGetObject(Person_Marc_Smith);
 
-	NewList<NewNode> *list = NULL;
-	byte *item = NULL;
+	NewList<NewNode> *list = nullptr;
+	byte *item = nullptr;
 	uint32 costs = 0;
 	byte type = 7;
 	if (strcmp(repairWhat, "MotorRepair") == 0) {
@@ -295,7 +297,7 @@ void tcRepairCar(CarNode *car, const char *repairWhat) {
 
 		uint32 totalCosts = 0;
 		AddPresentLine(&presentationData, PRESENT_AS_NUMBER, totalCosts, 0, list, line++);
-		AddPresentLine(&presentationData, PRESENT_AS_NUMBER, (uint32) tcGetPlayerMoney, 0, list, line++);
+		AddPresentLine(&presentationData, PRESENT_AS_NUMBER, tcGetPlayerMoney, 0, list, line++);
 
 		DrawPresent(&presentationData, 0, _upperGc, (byte)presentationData.getNrOfNodes());
 
@@ -347,6 +349,8 @@ void tcRepairCar(CarNode *car, const char *repairWhat) {
 
 	presentationData.removeList();
 	list->removeList();
+	delete list;
+	list = nullptr;
 }
 
 uint32 tcChooseCar(uint32 backgroundNr) {
@@ -377,7 +381,7 @@ uint32 tcChooseCar(uint32 backgroundNr) {
 			CarNode *matts_car = (CarNode *) dbGetObject(carID);
 			SetCarColors((byte) matts_car->ColorIndex);
 			gfxShow(backgroundNr, GFX_NO_REFRESH | GFX_ONE_STEP, 0, -1, -1);
-			gfxShow((uint16) matts_car->PictID, GFX_NO_REFRESH | GFX_OVERLAY, 1, -1, -1);
+			gfxShow(matts_car->PictID, GFX_NO_REFRESH | GFX_OVERLAY, 1, -1, -1);
 		}
 	}
 
@@ -392,7 +396,7 @@ void tcCarGeneralOverhoul(CarNode *car) {
 	SetPictID(marc->PictID);
 
 	NewList<NewNode> *bubble = g_clue->_txtMgr->goKeyAndInsert(BUSINESS_TXT, "GENERAL_OVERHOUL",
-	                      (uint32)((tcCostsPerTotalRepair(car) * 255) / 8), NULL);
+	                                                           tcCostsPerTotalRepair(car) * 255 / 8, NULL);
 	Bubble(bubble, 0, nullptr, 0);
 	bubble->removeList();
 

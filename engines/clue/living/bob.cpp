@@ -45,7 +45,7 @@ static struct Bob *GetNthBob(uint16 BobID) {
 	if (BobID < BOB_MAX)
 		return &list[BobID];
 
-	return NULL;
+	return nullptr;
 }
 
 uint16 BobInit(uint16 width, uint16 height) {
@@ -104,8 +104,8 @@ void BobSetDarkness(byte darkness) {
 void BobDisplayLists(_GC *gc) {
 	gfxPrepareColl(137);
 
-	for (uint16 i = 0; i < BOB_MAX; i++) {
-		struct Bob *bob = &list[i];
+	for (auto &i : list) {
+		struct Bob *bob = &i;
 
 		if (bob->flags & BOB_VISIBLE)
 			gc->gfxBlit(BobRPInMem, bob->xsrc, bob->ysrc, bob->xdst - ScrX, bob->ydst - ScrY, bob->w, bob->h, true);

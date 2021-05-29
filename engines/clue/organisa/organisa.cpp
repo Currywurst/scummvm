@@ -181,7 +181,7 @@ uint32 tcOrganisation() {
 
 		PrintStatus(line);
 
-		activ = Menu(menu, (uint32) 255, activ, 0, 0);
+		activ = Menu(menu, (uint32) 255, activ, nullptr, 0);
 		inpTurnESC(true);
 
 		switch (activ) {
@@ -235,6 +235,8 @@ uint32 tcOrganisation() {
 	}
 
 	menu->removeList();
+	delete menu;
+	menu = nullptr;
 
 	tcDoneDisplayOrganisation();
 
@@ -431,6 +433,8 @@ void tcChooseGuys() {
 
 		ShowMenuBackground();
 		menu->removeList();
+		delete menu;
+		menu = nullptr;
 	}
 
 	list->removeList();

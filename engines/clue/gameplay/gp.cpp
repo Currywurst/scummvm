@@ -157,7 +157,12 @@ void closeStory() {
 
 	for (uint32 i = 0; i < _film->_amountOfScenes; i++) {
 		delete _film->_gameplay[i]._cond;
-		delete _film->_gameplay[i]._nextEvents;
+		
+		if(auto pEvents = _film->_gameplay[i]._nextEvents ) {
+			pEvents->removeList();
+			delete pEvents;
+			pEvents = nullptr;
+		}
 	}
 
 	delete[] _film->_gameplay;
@@ -351,7 +356,7 @@ int32 GetEventCount(uint32 EventNr) {
 	Scene *sc = getScene(EventNr);
 
 	if (sc)
-		return (int32)sc->_occurrence;
+		return sc->_occurrence;
 
 	return 0;
 }
@@ -434,56 +439,54 @@ void PrepareStory(const char *filename) {
 
 	delete storyHeader;
 	storyHeader = nullptr;
-	
-	NewScene* NS = nullptr;
+
 	if (_film->_amountOfScenes) {
 		_film->_gameplay = new Scene[_film->_amountOfScenes];
 	} else
 		ErrorMsg(Disk_Defect, ERROR_MODULE_GAMEPLAY, 7);
 
 	for (uint32 i = 0; i < _film->_amountOfScenes; i++) {
-		NS = new NewScene;
-		NS->LoadSceneforStory(file);
+		NewScene NS;
+		NS.LoadSceneforStory(file);
 
 		Scene *scene = &(_film->_gameplay[i]);
 
-		scene->_eventNr = NS->_eventNr;
+		scene->_eventNr = NS._eventNr;
 
-		if (NS->_locationNr == (uint32) -1 || NS->_eventCounter || NS->_blockerEventsCounter) /* Storyszene ? */
-			scene->initConditions(NS); /* ja ! -> Bedingungen eintragen */
+		if (NS._locationNr == (uint32) -1 || NS._eventCounter || NS._blockerEventsCounter) /* Storyszene ? */
+			scene->initConditions(&NS); /* ja ! -> Bedingungen eintragen */
 		else
 			_film->_gameplay[i]._cond = nullptr;   /* Spielablaufszene : keine Bedingungen ! */
 		
 		/* Scene Struktur füllen : */
 		scene->doneFct = stdDone;
 		scene->initFct = stdInit;
-		scene->_options = NS->_options;
-		scene->_duration = NS->_duration;
-		scene->_quantity = NS->_quantity;
-		scene->_occurrence = NS->_occurrence;
-		scene->_probability = NS->_probability;
-		scene->_locationNr = NS->_locationNr;
+		scene->_options = NS._options;
+		scene->_duration = NS._duration;
+		scene->_quantity = NS._quantity;
+		scene->_occurrence = NS._occurrence;
+		scene->_probability = NS._probability;
+		scene->_locationNr = NS._locationNr;
 
 		/* Nachfolgerliste aufbauen !  */
 		/* Achtung! auch Patch ändern! */
 
-		if (NS->_nextEventCounter) {
+		if (NS._nextEventCounter) {
 			scene->_nextEvents = new NewList<NewTCEventNode>;
 
-			for (uint32 j = 0; j < NS->_nextEventCounter; j++) {
-				NewTCEventNode *node = scene->_nextEvents->createNode(nullptr);
-				node->_eventNr = NS->_nextEvents[j];
+			for (uint32 j = 0; j < NS._nextEventCounter; j++) {
+				NewTCEventNode* node = scene->_nextEvents->createNode(nullptr);
+				node->_eventNr = NS._nextEvents[j];
 			}
 
-			delete[] NS->_nextEvents;
-			NS->_nextEvents = nullptr;
+			delete [] NS._nextEvents;
+			NS._nextEvents = nullptr;
 		} else
 			scene->_nextEvents = nullptr;
 	}
 
 	/* von den Events muß nichts geladen werden ! */
 	dskClose(file);
-	delete NS;
 }
 
 void Scene::initConditions(NewScene *ns) {
@@ -639,8 +642,8 @@ Common::String buildDate(uint32 days) {
 	const uint8 days_per_month[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 	uint32 p_year = 0;
-	for (uint32 i = 0; i < 12; i++)
-		p_year += days_per_month[i];
+	for (unsigned char i : days_per_month)
+		p_year += i;
 
 	uint32 year = days / p_year;   /* which daywelches Jahr ? */
 	days = days % p_year;   /* wieviele Tage noch in diesem Jahr */

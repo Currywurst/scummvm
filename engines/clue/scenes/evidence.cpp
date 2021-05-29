@@ -87,6 +87,8 @@ static bool tcATraitor(uint32 traitorId) {
 
 	bubble->removeList();
 	newList->removeList();
+	delete bubble;
+	bubble = nullptr;
 
 	Say(BUSINESS_TXT, 0, john->PictID, "ARRESTED");
 
@@ -148,7 +150,7 @@ bool tcStartEvidence() {
 	                    ((BuildingNode *) dbGetObject(Search.BuildingId))->Strike / 7,
 	                    0, 255);
 
-	int32 radio = (int32)((BuildingNode *) dbGetObject(Search.BuildingId))->RadioGuarding;
+	int32 radio = ((BuildingNode *) dbGetObject(Search.BuildingId))->RadioGuarding;
 
 	int32 MyEvidence[4][7];
 	uint32 totalEvidence[7];
@@ -185,7 +187,7 @@ bool tcStartEvidence() {
 		    (((tcGetTrail(p[i], 3) * (int32) Search.KillTime[i] *
 		       (MAX(1, 255 - guarded))) / ((int32) Search.TimeOfBurglary + 1)));
 		MyEvidence[i][4] =
-		    ChangeAbs(0, (int32) Search.CallCount * (int32) radio / 5, 0, 255);
+		    ChangeAbs(0, (int32) Search.CallCount * radio / 5, 0, 255);
 		MyEvidence[i][5] =
 		    (p[i]->KnownToPolice * (MAX(1, guarded))) / (div * 3);
 		MyEvidence[i][6] =
@@ -314,7 +316,7 @@ bool tcStartEvidence() {
 	for (i = 0; i < guyCount; i++) {
 		totalEvidence[i] /= 3;  /* change als in recognition = ... */
 
-		if (p[i] != 0) {
+		if (p[i] != nullptr) {
 			if (totalEvidence[i] > 255)
 				totalEvidence[i] = 255;
 
@@ -345,9 +347,9 @@ bool tcStartEvidence() {
 	if (!(tcCarFound((CarNode *) dbGetObject(Organisation.CarID),
 	          Search.TimeOfBurglary - Search.TimeOfAlarm))) {
 		CarNode *car = (CarNode *)dbGetObject(Organisation.CarID);
-		int32 newStrike = CalcValue((int32) car->Strike, 0, 255, 255, 15);
+		int32 newStrike = CalcValue(car->Strike, 0, 255, 255, 15);
 		if (newStrike < (car->Strike + 40))
-			newStrike = ChangeAbs((int32) car->Strike, 40, 0, 255);
+			newStrike = ChangeAbs(car->Strike, 40, 0, 255);
 
 		car->Strike = newStrike;
 	}
@@ -358,6 +360,9 @@ bool tcStartEvidence() {
 	spuren->removeList();
 	guys->removeList();
 
+	delete spuren;
+	spuren = nullptr;
+	
 	return caught;
 }
 
@@ -397,6 +402,8 @@ bool tcPersonWanted(uint32 persId) {
 	SetPictID(john->PictID);
 	Bubble(bubble, 0, nullptr, 0);
 	bubble->removeList();
+	delete bubble;
+	bubble = nullptr;
 
 	Say(BUSINESS_TXT, 0, miles->PictID, "ARREST_HIM");
 	livesInUnSet(London_London_1, persId);
@@ -422,6 +429,8 @@ bool tcPersonWanted(uint32 persId) {
 	}
 
 	jobs->removeList();
+	delete jobs;
+	jobs = nullptr;
 
 	return caught;
 }
@@ -559,7 +568,7 @@ int32 tcEscapeByCar(uint32 escBits, int32 timeLeft) {
 	if (escapeSucc != FAHN_ESCAPED)
 		g_clue->_animMgr->stopAnim();
 
-	return ((int32) escapeSucc);
+	return escapeSucc;
 }
 
 int32 tcCalcCarEscape(int32 timeLeft) {
@@ -647,7 +656,7 @@ int32 tcCalcCarEscape(int32 timeLeft) {
 		ShowMenuBackground();
 		PrintStatus(line);
 
-		gfxChangeColors(_lowerGc, 0, GFX_FADE_OUT, 0);
+		gfxChangeColors(_lowerGc, 0, GFX_FADE_OUT, nullptr);
 		gfxShow(car->PictID, GFX_NO_REFRESH | GFX_ONE_STEP, 0, -1, -1);
 
 		gfxPrepareColl(GFX_COLL_PARKING);

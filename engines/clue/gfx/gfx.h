@@ -134,7 +134,7 @@ public:
 
 class Font {
 public:
-	Graphics::Surface *_bmp;
+	Graphics::Surface *_bmp = nullptr;
 
 	uint16 _width;                   /* width of one character */
 	uint16 _height;                  /* height of one character */
@@ -162,7 +162,7 @@ public:
 	uint16 _cursorX;
 	uint16 _cursorY;
 
-	Font *_font;
+	Font *_font = nullptr;
 
 	_GC(uint16 x, uint16 y, uint16 w, uint16 h, uint8 colorStart, uint8 End, Font* font);
 	~_GC();

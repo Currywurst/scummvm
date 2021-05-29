@@ -212,6 +212,8 @@ template <typename T>
 NewList<T>::~NewList() {
 	delete _head;
 	delete _tail;
+	_head = nullptr;
+	_tail = nullptr;
 }
 
 template <typename T>
@@ -270,6 +272,7 @@ T* NewList<T>::remTailNode() {
 		NewNode *old = _tail->_pred;
 		_tail->_pred->remNode();
 		delete old;
+		old = nullptr;
 	}
 
 	return result;
@@ -282,6 +285,7 @@ void NewList<T>::removeNode(Common::String name) {
 		if ((node = getNode(name))) {
 			node->remNode();
 			delete node;
+			node = nullptr;
 		}
 	} else if (!isEmpty()) {
 		node = remTailNode();

@@ -44,6 +44,8 @@ void plMessage(const char *msg, byte flags) {
 		plPrintInfo(m->getListHead()->_name.c_str());
 
 	m->removeList();
+	delete m;
+	m = nullptr;
 
 	if (flags & PLANING_MSG_WAIT) {
 		inpSetWaitTicks(140);
@@ -66,7 +68,7 @@ void plDisplayTimer(uint32 time, bool doSpotsImmediatly) {
 	if (_gamePlayMode & GP_MODE_GUARD_DESIGN) {
 		Common::String info = Common::String::format("x:%d, y:%d   %s %.2d:%.2d:%.2d %s",
 		        livGetXPos(Planing_Name[CurrentPerson]), livGetYPos(Planing_Name[CurrentPerson]), txtTimer.c_str(),
-		        (uint32)(time / 3600), (uint32)((time / 60) % 60), (uint32)(time % 60), txtSeconds.c_str());
+		        time / 3600, time / 60 % 60, time % 60, txtSeconds.c_str());
 
 		_menuGc->setPens(0, 0, 0);
 		_menuGc->rectFill(120, 0, 320, 10);
@@ -75,8 +77,8 @@ void plDisplayTimer(uint32 time, bool doSpotsImmediatly) {
 		_menuGc->setPens(248, GFX_SAME_PEN, GFX_SAME_PEN);
 		_menuGc->gfxPrint(info, 2, GFX_PRINT_RIGHT);
 	} else {
-		Common::String info = Common::String::format("%s %.2d:%.2d:%.2d %s", txtTimer.c_str(), (uint32)(time / 3600),
-		        (uint32)((time / 60) % 60), (uint32)(time % 60), txtSeconds.c_str());
+		Common::String info = Common::String::format("%s %.2d:%.2d:%.2d %s", txtTimer.c_str(), time / 3600,
+		        time / 60 % 60, time % 60, txtSeconds.c_str());
 
 		_menuGc->setPens(0, 0, 0);
 		_menuGc->rectFill(220, 0, 320, 10);
@@ -117,6 +119,8 @@ byte plSay(const char *msg, uint32 persId) {
 	inpTurnESC(true);
 
 	l->removeList();
+	delete l;
+	l = nullptr;
 
 	plDisplayTimer(0, true);
 	plDisplayInfo();
@@ -125,7 +129,7 @@ byte plSay(const char *msg, uint32 persId) {
 }
 
 void plDrawWait(uint32 sec) {
-	Common::String time = Common::String::format("%.2d:%.2d", (uint32)(sec / 60), (uint32)(sec % 60));
+	Common::String time = Common::String::format("%.2d:%.2d", sec / 60, sec % 60);
 
 	_menuGc->setMode(GFX_JAM_2);
 	_menuGc->setPens(248, GFX_SAME_PEN, GFX_SAME_PEN);

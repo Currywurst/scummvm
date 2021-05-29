@@ -129,6 +129,7 @@ NewList<NewNode> *LoadSystem(Common::Stream *fh, System *sys) {
 
 	if (foundAll) {
 		l->removeList();
+		delete l;
 		l = nullptr;
 	} else {
 		NewList<NewNode> *extList = nullptr;
@@ -145,6 +146,8 @@ NewList<NewNode> *LoadSystem(Common::Stream *fh, System *sys) {
 				l->createNode(n->_name);
 
 			extList->removeList();
+			delete extList;
+			extList = nullptr;
 		}
 	}
 

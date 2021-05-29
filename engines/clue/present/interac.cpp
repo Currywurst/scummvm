@@ -357,7 +357,7 @@ byte Bubble(NewList<NewNode> *bubble, byte activ, void (*func)(byte), uint32 wai
 	if (ActivPersonPictID == (uint16) -1)
 		gfxShow((uint16) CurrentBubbleType, GFX_NO_REFRESH | GFX_OVERLAY, 0, -1, -1);
 	else {
-		gfxShow((uint16) ActivPersonPictID, GFX_NO_REFRESH | GFX_OVERLAY | GFX_BLEND_UP, 0, -1, -1);
+		gfxShow(ActivPersonPictID, GFX_NO_REFRESH | GFX_OVERLAY | GFX_BLEND_UP, 0, -1, -1);
 		gfxShow((uint16) CurrentBubbleType, GFX_NO_REFRESH | GFX_OVERLAY, 0, -1, -1);
 
 		if (CurrentBubbleType == SPEAK_BUBBLE)

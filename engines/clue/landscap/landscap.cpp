@@ -79,7 +79,7 @@ void lsBuildScrollWindow() {
 	uint8 palette[GFX_PALETTE_SIZE];
 
 	gfxSetColorRange(0, 255);
-	gfxChangeColors(_upperGc, 0, GFX_FADE_OUT, 0);
+	gfxChangeColors(_upperGc, 0, GFX_FADE_OUT, nullptr);
 
 	/* Boden aufbauen */
 	for (i = 0; i < LS_FLOORS_PER_COLUMN; i++) {
@@ -347,7 +347,7 @@ void lsRefreshAllLootBags() {
 	for (uint32 i = 1; i < 9; i++) {
 		LSObjectNode *lso = (LSObjectNode *)dbGetObject(9700 + i);
 
-		if (lso->uch_Visible == LS_OBJECT_VISIBLE && hasLootBag(ls->ul_AreaID, (uint32)(9700 + i))) {
+		if (lso->uch_Visible == LS_OBJECT_VISIBLE && hasLootBag(ls->ul_AreaID, (9700 + i))) {
 			BobSet(lso->us_OffsetFact, lso->us_DestX, lso->us_DestY, LS_LOOTBAG_X_OFFSET, LS_LOOTBAG_Y_OFFSET);
 			BobVis(lso->us_OffsetFact);
 		}

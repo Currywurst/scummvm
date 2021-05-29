@@ -79,7 +79,7 @@ void lsInitLandScape(uint32 bID, byte mode) {
 	livInit(0, 0, LS_VISIBLE_X_SIZE, LS_VISIBLE_Y_SIZE, LS_MAX_AREA_WIDTH,
 	        LS_MAX_AREA_HEIGHT, 8, ls->ul_AreaID);
 
-	ls->p_CurrFloor = NULL;
+	ls->p_CurrFloor = nullptr;
 
 	ls->us_DoorXOffset = 0;
 	ls->us_DoorYOffset = 32;    /* above are 16er objects */
@@ -156,7 +156,7 @@ void lsInitObjects() {
 	/* jetzt alle Stockwerke durchgehen! */
 	for (uint32 i = 0; i < 3; i++) {
 		ls->ul_ObjectRetrievalAreaId[i] = 0;
-		ls->p_ObjectRetrievalLists[i] = NULL;
+		ls->p_ObjectRetrievalLists[i] = nullptr;
 	}
 
 	dbObjectNode* n;
@@ -219,8 +219,8 @@ void lsInitObjectDB(uint32 bld, uint32 areaID) {
 
 /* contrary to the Amiga version this loads all floor data into memory at once */
 static void lsInitFloorSquares() {
-	for (uint8 i = 0; i < 3; i++)
-		ls->p_AllFloors[i] = NULL;
+	for (auto &p_AllFloor : ls->p_AllFloors)
+		p_AllFloor = nullptr;
 
 	uint32 count = LS_FLOORS_PER_LINE * LS_FLOORS_PER_COLUMN;
 
@@ -281,14 +281,14 @@ static void lsSetCurrFloorSquares(uint32 areaId) {
 
 /* release all floor data */
 static void lsDoneFloorSquares() {
-	for (int i = 0; i < 3; i++) {
-		if (ls->p_AllFloors[i]) {
+	for (auto &p_AllFloor : ls->p_AllFloors) {
+		if (p_AllFloor) {
 			int32 count = LS_FLOORS_PER_LINE * LS_FLOORS_PER_COLUMN;
 			size_t size = sizeof(struct LSFloorSquare) * count;
 
-			TCFreeMem(ls->p_AllFloors[i], size);
+			TCFreeMem(p_AllFloor, size);
 
-			ls->p_AllFloors[i] = NULL;
+			p_AllFloor = nullptr;
 		}
 	}
 }

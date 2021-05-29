@@ -34,23 +34,33 @@ Common::String txtSeconds;
 
 /* System functions */
 void plInit() {
+	auto pTextMgr = g_clue->_txtMgr;
+	
 	/* Get texts */
-	NewList<NewNode> *l = g_clue->_txtMgr->goKey(PLAN_TXT, "TXT_TOO_LOUD");
+	NewList<NewNode> *l = pTextMgr->goKey(PLAN_TXT, "TXT_TOO_LOUD");
 	txtTooLoud = l->getListHead()->_name;
 	l->removeList();
-
-	l = g_clue->_txtMgr->goKey(PLAN_TXT, "TXT_TIMER");
+	delete l;
+	l = nullptr;
+	
+	l = pTextMgr->goKey(PLAN_TXT, "TXT_TIMER");
 	txtTimer = l->getListHead()->_name;
 	l->removeList();
+	delete l;
+	l = nullptr;
 
 	l = g_clue->_txtMgr->goKey(PLAN_TXT, "TXT_WEIGHT");
 	txtWeight = l->getListHead()->_name;
 	l->removeList();
-
+	delete l;
+	l = nullptr;
+	
 	l = g_clue->_txtMgr->goKey(PLAN_TXT, "TXT_SECONDS");
 	txtSeconds = l->getListHead()->_name;
 	l->removeList();
-
+	delete l;
+	l = nullptr;
+	
 	plSys = InitSystem();
 }
 

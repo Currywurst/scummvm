@@ -63,11 +63,15 @@ Font::Font(const char *fileName, uint16 width, uint16 height, uint8 firstChar, u
 }
 
 Font::~Font() {
-	delete _bmp;
+	if( _bmp ) {
+		_bmp->free();
+		delete _bmp;
+		_bmp = nullptr;		
+	}
 }
 
 _GC::~_GC() {
-	delete _font;
+	// do not delete font pointer
 }
 
 	
@@ -79,12 +83,14 @@ void gfxRealRefreshArea(uint16 x, uint16 y, uint16 w, uint16 h);
 
 	
 void gfxInit() {
+	if( Screen )
+		return;
 	ScreenFormat = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	Screen = new Graphics::Surface();
-	Screen->create(SCREEN_WIDTH, SCREEN_HEIGHT, ScreenFormat);
-
+	Screen->create(SCREEN_WIDTH, SCREEN_HEIGHT, ScreenFormat);		
+	
 	gfxSetGC(nullptr);
 
 	/* diese RP müssen nur ein Bild maximaler Größe aufnehmen können */
@@ -123,14 +129,17 @@ void gfxInit() {
 void gfxDone() {
 	if (_pictureList) {
 		_pictureList->removeList();
+		delete _pictureList;
 		_pictureList = nullptr;
 	}
 
 	if (_collectionList) {
 		_collectionList->removeList();
+		delete _collectionList;
 		_collectionList = nullptr;
 	}
 
+	// removes GC fonts 
 	delete bubbleFont;
 	delete menuFont;
 	bubbleFont = menuFont = nullptr;
@@ -150,8 +159,18 @@ void gfxDone() {
 	StdRP0InMem = StdRP1InMem = AnimRPInMem = AddRPInMem = LSObjectRPInMem = LSFloorRPInMem = nullptr;
 	RefreshRPInMem = ScratchRP = BobRPInMem = LSRPInMem = nullptr;
 
+	// fonts are already deleted
+	delete LowerGC;
+	delete MenuGC;
+	delete LSUpperGC;
+	delete LSMenuGC;
+
+	LowerGC = MenuGC = LSUpperGC = LSMenuGC = nullptr;
+	
 	if (Screen) {
-		Screen->free();
+		if( Screen->getPixels() )
+			Screen->free();
+		delete Screen;
 		Screen = nullptr;
 	}
 }
@@ -905,7 +924,7 @@ void gfxShow(uint16 us_PictId, uint32 ul_Mode, int32 l_Delay, int32 l_XPos, int3
 
 	if (ul_Mode & GFX_FADE_OUT) {
 		gfxSetColorRange(coll->_colorRangeStart, coll->_colorRangeEnd);
-		gfxChangeColors(nullptr, l_Delay, GFX_FADE_OUT, NULL);
+		gfxChangeColors(nullptr, l_Delay, GFX_FADE_OUT, nullptr);
 	}
 
 	if (!l_Delay && (ul_Mode & GFX_BLEND_UP)) {

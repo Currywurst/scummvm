@@ -81,8 +81,8 @@ Common::Error ClueEngine::run() {
 	if (tcInit()) {
 		uint32 sceneId = SCENE_NEW_GAME;
 
-		gfxChangeColors(_lowerGc, 0, GFX_FADE_OUT, 0);
-		gfxChangeColors(_menuGc, 0, GFX_FADE_OUT, 0);
+		gfxChangeColors(_lowerGc, 0, GFX_FADE_OUT, nullptr);
+		gfxChangeColors(_menuGc, 0, GFX_FADE_OUT, nullptr);
 
 		tcSetPermanentColors();
 
