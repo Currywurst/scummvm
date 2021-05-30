@@ -116,7 +116,7 @@ char *TextMgr::getLine(Text *txt, uint8 lineNr) {
 
 				/* skip comments */
 				while (*(line + 1) == TXT_CHAR_REMARK) {
-					while (*(++line) != TXT_CHAR_EOS)
+					while (*(++line) != TXT_CHAR_EOS); // semiclon is right here
 						line++; /* skip second EOS */
 				}
 			}
