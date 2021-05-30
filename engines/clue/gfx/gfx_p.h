@@ -18,6 +18,9 @@
   distribution.
  ****************************************************************************/
 
+#pragma once
+
+
 namespace Clue {
 
 #define GFX_SEG_ADDR                    (0xA0000000L)

@@ -18,6 +18,9 @@
   distribution.
  ****************************************************************************/
 
+#pragma once
+
+
 namespace Clue {
 
 #define LIV_LOAD_BUFFER         StdBuffer0  /* muß ein StdBuffer sein -> sonst ClearBuffer in .c ändern */

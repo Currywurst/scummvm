@@ -11,6 +11,9 @@
  *
  */
 
+#pragma once
+
+
 namespace Clue {
 
 #define BAR_WIDTH            255

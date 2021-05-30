@@ -22,6 +22,9 @@
   distribution.
  ****************************************************************************/
 
+#pragma once
+
+
 namespace Clue {
 
 class StoryHeader {

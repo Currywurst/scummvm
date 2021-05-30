@@ -17,6 +17,10 @@
   publiclicensecontract.doc files which should be contained with this
   distribution.
  ****************************************************************************/
+
+#pragma once
+
+
 #include "clue/planing/player.h"
 
 namespace Clue {

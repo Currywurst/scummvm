@@ -18,6 +18,9 @@
   distribution.
  ****************************************************************************/
 
+#pragma once
+
+
 namespace Clue {
 
 #define ACTIV_POSS   3
