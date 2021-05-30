@@ -260,6 +260,8 @@ static byte plCarTooFull() {
 		ret = 1;
 
 	l->removeList();
+	delete l;
+	l = nullptr;
 
 	return ret;
 }

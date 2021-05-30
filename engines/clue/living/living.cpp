@@ -29,7 +29,7 @@ void livInit(uint16 us_VisLScapeX, uint16 us_VisLScapeY,
              uint16 us_VisLScapeWidth, uint16 us_VisLScapeHeight,
              uint16 us_TotalLScapeWidth, uint16 us_TotalLScapeHeight,
              byte uch_FrameCount, uint32 ul_StartArea) {
-	sc = (SpriteControl *)TCAllocMem(sizeof(*sc), 0);
+	sc = (SpriteControl *)TCAllocMem(sizeof(*sc), false);
 
 	sc->_livings = new NewList<NewLiving>;
 	sc->_template = new NewList<NewAnimTemplate>;
@@ -61,6 +61,7 @@ void livDone() {
 				node->livRem();
 
 			sc->_livings->removeList();
+			delete sc->_livings;
 			sc->_livings = nullptr;
 		}
 
@@ -69,6 +70,7 @@ void livDone() {
 				node->livRemTemplate();
 
 			sc->_template->removeList();
+			delete sc->_template;
 			sc->_template = nullptr;
 		}
 

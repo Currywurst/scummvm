@@ -160,7 +160,7 @@ void closeStory() {
 		
 		if(auto pEvents = _film->_gameplay[i]._nextEvents ) {
 			pEvents->removeList();
-			delete pEvents;
+			delete [] pEvents;
 			pEvents = nullptr;
 		}
 	}

@@ -34,7 +34,7 @@ static struct relationDef *FindRelation(RELATION id) {
 
 RELATION AddRelation(RELATION id) {
 	if (!FindRelation(id)) {
-		struct relationDef *rd = (struct relationDef *) TCAllocMem(sizeof(*rd), 0);
+		struct relationDef *rd = (struct relationDef *) TCAllocMem(sizeof(*rd), false);
 		if (rd) {
 			rd->rd_next = relationsDefBase;
 			relationsDefBase = rd;
@@ -104,7 +104,7 @@ RELATION SetP(dbObjectNode *leftKey, RELATION id, dbObjectNode *rightKey, PARAME
 			}
 		}
 
-		struct relation *newRel = (struct relation *) TCAllocMem(sizeof(*newRel), 0);
+		struct relation *newRel = (struct relation *) TCAllocMem(sizeof(*newRel), false);
 		if (newRel) {
 			newRel->r_next = rd->rd_relationsTable;
 			rd->rd_relationsTable = newRel;

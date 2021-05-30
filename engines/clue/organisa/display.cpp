@@ -152,6 +152,8 @@ void tcDisplayCommon() {
 		line += name;
 
 		enums->removeList();
+		delete enums;
+		enums = nullptr;
 	} else
 		line += " ? ";
 
@@ -185,6 +187,8 @@ void tcDisplayCommon() {
 	_lowerGc->gfxPrint(line, 35, GFX_PRINT_RIGHT);
 
 	texts->removeList();
+	delete texts;
+	texts = nullptr;
 }
 
 void tcDisplayPerson(uint32 displayMode) {

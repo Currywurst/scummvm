@@ -236,6 +236,8 @@ void DynamicTalk(uint32 Person1ID, uint32 Person2ID, byte TalkMode) {
 	} while (choice != quit);
 
 	bubble->removeList();
+    delete bubble;
+	bubble = nullptr;
 }
 
 void PlayFromCDROM() {

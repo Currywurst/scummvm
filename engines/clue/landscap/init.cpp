@@ -35,7 +35,7 @@ static void lsSetCurrFloorSquares(uint32 areaId);
 void lsInitLandScape(uint32 bID, byte mode) {
 	/* initialisiert das Landschaftsmodul */
 	if (!ls)
-		ls = (LandScape *)TCAllocMem(sizeof(*ls), 0);
+		ls = (LandScape *)TCAllocMem(sizeof(*ls), false);
 
 	ls->ul_BuildingID = bID;
 
@@ -233,7 +233,7 @@ static void lsInitFloorSquares() {
 	for (n = areas->getListHead(), i = 0; n->_succ; n = (dbObjectNode *)n->_succ, i++) {
 		size_t size = sizeof(struct LSFloorSquare) * count;
 
-		ls->p_AllFloors[i] = (LSFloorSquare *)TCAllocMem(size, 0);
+		ls->p_AllFloors[i] = (LSFloorSquare *)TCAllocMem(size, false);
 		ls->ul_FloorAreaId[i] = n->_nr;
 
 		Common::String areaName = dbGetObjectName(ls->ul_FloorAreaId[i]);
