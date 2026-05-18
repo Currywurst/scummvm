@@ -14,14 +14,6 @@
 /* ---- System headers FIRST (before ScummVM's forbidden.h macros) ---- */
 #include <stdlib.h>
 #include <string.h>
-#if defined(POSIX)
-#include <pthread.h>
-#include <unistd.h>   /* usleep() */
-#endif
-#if defined(WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
 
 /* ---- ScummVM headers ---- */
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
@@ -44,6 +36,10 @@
  * #defines don't corrupt ScummVM's own declarations.                     */
 #include "theclou/platform/tc_sdl_compat.h"
 
+/* sndMixIntoBuffer() is implemented in sound/fx.c and called from
+ * TheClouAudioStream::readBuffer() on the ScummVM mixer thread.      */
+extern "C" void sndMixIntoBuffer(Uint8 *buf, int len);
+
 /* ================================================================== */
 /* Forward declarations                                                */
 /* ================================================================== */
@@ -60,20 +56,17 @@ struct SDL_AudioStream;   /* full definition below */
 
 class TheClouAudioStream : public Audio::AudioStream {
 public:
-    explicit TheClouAudioStream(SDL_AudioStream *rb)
-        : _rb(rb), _active(true) {}
+    TheClouAudioStream() : _active(true) {}
 
     void deactivate() { _active = false; }
 
-    /* readBuffer is implemented after SDL_AudioStream is fully defined */
     int  readBuffer(int16 *buf, const int numSamples) override;
     bool isStereo()  const override { return false; }
     int  getRate()   const override { return 22050; }
     bool endOfData() const override { return !_active; }
 
 private:
-    SDL_AudioStream *_rb;
-    volatile bool    _active;
+    volatile bool _active;
 };
 
 /* ================================================================== */
@@ -85,16 +78,10 @@ struct SDL_Renderer { int dummy; };
 struct SDL_Texture  { int dummy; };
 struct SDL_Joystick { int dummy; };
 
-/* Ring-buffer used as SDL_AudioStream replacement.
- * mutex protects read_pos / write_pos / available.                   */
+/* SDL_AudioStream replacement: no ring buffer needed.
+ * sndMixIntoBuffer() is called directly from readBuffer() so ScummVM's
+ * mixer pulls freshly-mixed samples on demand.                        */
 struct SDL_AudioStream {
-    uint8_t  *buf;
-    int       size;
-    int       read_pos;
-    int       write_pos;
-    int       available;
-
-    Common::Mutex      *mutex;       /* protects ring-buffer fields   */
     TheClouAudioStream *scummStream; /* ScummVM pulls audio from here  */
     Audio::SoundHandle  handle;      /* mixer handle for pause/stop    */
 };
@@ -104,18 +91,10 @@ struct SDL_Mutex {
     Common::Mutex *m;
 };
 
-/* Thin thread wrapper */
+/* SDL_Thread stub — the audio thread is gone (pull model).
+ * tc_CreateThread / tc_WaitThread are kept for link compatibility only. */
 struct SDL_Thread {
-    int (*fn)(void *);
-    void *data;
-    int   result;
-#if defined(POSIX)
-    pthread_t thread;
-#elif defined(WIN32)
-    HANDLE thread;
-#else
-    bool started;
-#endif
+    int result;
 };
 
 /* ================================================================== */
@@ -123,27 +102,15 @@ struct SDL_Thread {
 /* ================================================================== */
 
 int TheClouAudioStream::readBuffer(int16 *buf, const int numSamples) {
-    if (!_rb || !_active) {
+    if (!_active) {
         memset(buf, 0, (size_t)numSamples * sizeof(int16));
         return numSamples;
     }
-    Common::StackLock lock(*_rb->mutex);
-
-    int bytesNeeded = numSamples * (int)sizeof(int16);
-    int toCopy      = (_rb->available < bytesNeeded)
-                      ? _rb->available : bytesNeeded;
-
-    uint8_t *dst = reinterpret_cast<uint8_t *>(buf);
-    for (int i = 0; i < toCopy; i++) {
-        dst[i]      = _rb->buf[_rb->read_pos];
-        _rb->read_pos = (_rb->read_pos + 1) % _rb->size;
-    }
-    _rb->available -= toCopy;
-
-    /* Fill any deficit with silence */
-    if (toCopy < bytesNeeded)
-        memset(dst + toCopy, 0, (size_t)(bytesNeeded - toCopy));
-
+    /* Pull model: mix directly into ScummVM's output buffer.
+     * sndMixIntoBuffer() acquires the audio mutex internally, so this
+     * is safe to call from ScummVM's mixer thread.                   */
+    sndMixIntoBuffer(reinterpret_cast<Uint8 *>(buf),
+                     numSamples * (int)sizeof(int16));
     return numSamples;
 }
 
@@ -154,16 +121,9 @@ int TheClouAudioStream::readBuffer(int16 *buf, const int numSamples) {
 static const char   *s_lastError    = "none";
 static volatile int  g_tcPaused     = 0;   /* set by tc_SetPaused()  */
 
-/* Main-thread ID — set once by tc_InitPlatform() before the game loop.
- * Used in tc_Delay() to distinguish the main game thread (which may pump
- * events) from background threads like the audio mix thread (which must
- * NOT touch the event manager or call tc_QuitGame / longjmp).          */
-#if defined(POSIX)
-static pthread_t     s_mainThread;
-static volatile int  s_mainThreadSet = 0;
-#elif defined(WIN32)
-static DWORD         s_mainThreadId   = 0;
-#endif
+/* No background audio thread exists any more (mixing is pull-based via
+ * sndMixIntoBuffer / readBuffer).  tc_Delay() always runs on the main
+ * game thread — no thread-identity check needed.                      */
 
 /* ================================================================== */
 /* Platform initialisation — call once from the main engine thread    */
@@ -172,23 +132,7 @@ static DWORD         s_mainThreadId   = 0;
 /* ================================================================== */
 
 extern "C" void tc_InitPlatform(void) {
-#if defined(POSIX)
-    s_mainThread    = pthread_self();
-    s_mainThreadSet = 1;
-#elif defined(WIN32)
-    s_mainThreadId  = GetCurrentThreadId();
-#endif
-}
-
-/* Helper: true when called on the thread that called tc_InitPlatform */
-static bool onMainThread(void) {
-#if defined(POSIX)
-    return s_mainThreadSet && pthread_equal(pthread_self(), s_mainThread);
-#elif defined(WIN32)
-    return s_mainThreadId != 0 && GetCurrentThreadId() == s_mainThreadId;
-#else
-    return true;   /* single-threaded platform: always treat as main  */
-#endif
+    /* No per-thread state to initialise: audio mixing is now pull-based. */
 }
 
 /* ================================================================== */
@@ -509,25 +453,10 @@ Uint64 tc_GetPerformanceCounter(void) {
 }
 
 void tc_Delay(Uint32 ms) {
-    /* ---------------------------------------------------------------
-     * Background threads (e.g. the audio mix thread) must NOT touch
-     * ScummVM's event manager, call longjmp/tc_QuitGame, or invoke
-     * g_system APIs that are only safe on the main thread.
-     * For them: a plain usleep() is correct and sufficient.
-     * --------------------------------------------------------------- */
-    if (!onMainThread()) {
-#if defined(POSIX)
-        if (ms) usleep((useconds_t)ms * 1000u);
-#elif defined(WIN32)
-        if (ms) Sleep(ms);
-#endif
-        return;
-    }
-
     if (!g_system) return;
 
-    /* Main thread: spin-wait while paused, pumping events so that
-     * EVENT_FOCUS_GAINED can arrive and lift the pause.              */
+    /* Spin-wait while paused, pumping events so that EVENT_FOCUS_GAINED
+     * can arrive and lift the pause.                                   */
     while (g_tcPaused) {
         g_system->delayMillis(10);
         Common::EventManager *mgr = g_system->getEventManager();
@@ -580,9 +509,6 @@ Uint32       tc_WasInit(Uint32 /*flags*/)         { return 0; }
 /* SDL_AudioStream::mutex serialises the two sides.                   */
 /* ================================================================== */
 
-/* ~1 second of audio at 22050 Hz / 16-bit mono */
-#define TC_AUDIO_BUF_SIZE (22050 * 2)
-
 SDL_AudioStream *tc_OpenAudioDeviceStream(Uint32 /*devid*/,
                                            const SDL_AudioSpec * /*spec*/,
                                            void * /*cb*/, void * /*ud*/) {
@@ -590,12 +516,7 @@ SDL_AudioStream *tc_OpenAudioDeviceStream(Uint32 /*devid*/,
         (SDL_AudioStream *)calloc(1, sizeof(SDL_AudioStream));
     if (!s) return nullptr;
 
-    s->buf = (uint8_t *)calloc(1, TC_AUDIO_BUF_SIZE);
-    if (!s->buf) { free(s); return nullptr; }
-    s->size  = TC_AUDIO_BUF_SIZE;
-    s->mutex = new Common::Mutex();
-
-    s->scummStream = new TheClouAudioStream(s);
+    s->scummStream = new TheClouAudioStream();
 
     if (g_system && g_system->getMixer()) {
         g_system->getMixer()->playStream(
@@ -610,27 +531,11 @@ SDL_AudioStream *tc_OpenAudioDeviceStream(Uint32 /*devid*/,
     return s;
 }
 
-int tc_GetAudioStreamAvailable(SDL_AudioStream *s) {
-    if (!s) return 0;
-    Common::StackLock lock(*s->mutex);
-    return s->available;
-}
-
-bool tc_PutAudioStreamData(SDL_AudioStream *s, const void *buf, int len) {
-    if (!s || !buf || len <= 0) return false;
-    Common::StackLock lock(*s->mutex);
-
-    const uint8_t *src = (const uint8_t *)buf;
-    int space = s->size - s->available;
-    if (len > space) len = space;   /* drop excess if buffer full */
-
-    for (int i = 0; i < len; i++) {
-        s->buf[s->write_pos] = src[i];
-        s->write_pos = (s->write_pos + 1) % s->size;
-    }
-    s->available += len;
-    return true;
-}
+/* Ring-buffer push functions are no longer needed (pull model).
+ * Stubs prevent link errors if any C code references them.      */
+int  tc_GetAudioStreamAvailable(SDL_AudioStream * /*s*/) { return 0; }
+bool tc_PutAudioStreamData(SDL_AudioStream * /*s*/,
+                            const void * /*buf*/, int /*len*/) { return true; }
 
 bool tc_ResumeAudioStreamDevice(SDL_AudioStream *s) {
     if (s && g_system && g_system->getMixer())
@@ -644,16 +549,12 @@ bool tc_PauseAudioStreamDevice(SDL_AudioStream *s) {
     return true;
 }
 
-void tc_FlushAudioStream(SDL_AudioStream *s) {
-    if (!s) return;
-    Common::StackLock lock(*s->mutex);
-    s->read_pos = s->write_pos = s->available = 0;
-}
+void tc_FlushAudioStream(SDL_AudioStream * /*s*/) { /* no ring buffer */ }
 
 void tc_DestroyAudioStream(SDL_AudioStream *s) {
     if (!s) return;
 
-    /* Deactivate stream so readBuffer() returns silence immediately */
+    /* Deactivate so readBuffer() returns silence immediately */
     if (s->scummStream) s->scummStream->deactivate();
 
     /* Stop mixer channel (stops pulling from scummStream) */
@@ -661,8 +562,6 @@ void tc_DestroyAudioStream(SDL_AudioStream *s) {
         g_system->getMixer()->stopHandle(s->handle);
 
     delete s->scummStream;
-    delete s->mutex;
-    free(s->buf);
     free(s);
 }
 
@@ -685,49 +584,18 @@ void tc_DestroyMutex(SDL_Mutex *m) {
 void tc_LockMutex(SDL_Mutex *m)   { if (m && m->m) m->m->lock(); }
 void tc_UnlockMutex(SDL_Mutex *m) { if (m && m->m) m->m->unlock(); }
 
-#if defined(POSIX)
-static void *threadTrampoline(void *arg) {
-    SDL_Thread *t = (SDL_Thread *)arg;
-    t->result = t->fn(t->data);
+/* tc_CreateThread / tc_WaitThread: the audio thread has been eliminated
+ * (mixing is now pull-based in readBuffer).  These stubs exist only so
+ * existing call-sites link cleanly on all platforms.                   */
+SDL_Thread *tc_CreateThread(int (*/*fn*/)(void *), const char *name,
+                             void * /*data*/) {
+    debug(1, "tc_CreateThread('%s'): no-op in ScummVM build (pull-model audio)",
+          name ? name : "?");
     return nullptr;
-}
-#elif defined(WIN32)
-static DWORD WINAPI threadTrampoline(LPVOID arg) {
-    SDL_Thread *t = (SDL_Thread *)arg;
-    t->result = t->fn(t->data);
-    return 0;
-}
-#endif
-
-SDL_Thread *tc_CreateThread(int (*fn)(void *), const char * /*name*/,
-                             void *data) {
-    SDL_Thread *t = (SDL_Thread *)calloc(1, sizeof(SDL_Thread));
-    if (!t) return nullptr;
-    t->fn   = fn;
-    t->data = data;
-#if defined(POSIX)
-    if (pthread_create(&t->thread, nullptr, threadTrampoline, t) != 0) {
-        free(t); return nullptr; }
-#elif defined(WIN32)
-    DWORD tid;
-    t->thread = CreateThread(nullptr, 0, threadTrampoline, t, 0, &tid);
-    if (!t->thread) { free(t); return nullptr; }
-#else
-    debug(1, "tc_CreateThread: threading not supported on this platform");
-    t->started = false;
-#endif
-    return t;
 }
 
 void tc_WaitThread(SDL_Thread *t, int *status) {
-    if (!t) return;
-#if defined(POSIX)
-    pthread_join(t->thread, nullptr);
-#elif defined(WIN32)
-    WaitForSingleObject(t->thread, INFINITE);
-    CloseHandle(t->thread);
-#endif
-    if (status) *status = t->result;
+    if (status) *status = 0;
     free(t);
 }
 

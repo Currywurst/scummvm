@@ -41,7 +41,6 @@ static void LoadVOC(const char *fileName);
 static void SpeechFreeBufferUnlocked(void);
 static S16 SpeechNextSample(void);
 static void MixAudioChunk(Uint8 *stream, int len);
-static int SDLCALL sndAudioThread(void *userdata);
 
 void sndAudioLock(void)
 {
@@ -101,49 +100,14 @@ static void MixAudioChunk(Uint8 *stream, int len)
     }
 }
 
-static int SDLCALL sndAudioThread(void *userdata)
+/* Called by TheClouAudioStream::readBuffer() on the ScummVM mixer thread.
+ * Replaces the old sndAudioThread push model with a direct pull model:
+ * ScummVM asks for samples → we mix them on the spot, under the audio lock. */
+void sndMixIntoBuffer(Uint8 *buf, int len)
 {
-    (void) userdata;
-
-    while (FXBase.audioThreadRunning) {
-        const int target = SND_STREAM_CHUNK_BYTES * 4;
-        int available;
-        int deficit;
-
-        if (!FXBase.audioStream) {
-            SDL_Delay(10);
-            continue;
-        }
-
-        available = SDL_GetAudioStreamAvailable(FXBase.audioStream);
-        deficit = target - available;
-
-        while (FXBase.audioThreadRunning && deficit > 0) {
-            int chunk = SDL_min(deficit, SND_STREAM_CHUNK_BYTES);
-
-            chunk &= ~(int) (sizeof(S16) - 1);
-            if (chunk <= 0) {
-                break;
-            }
-
-            sndAudioLock();
-            MixAudioChunk(MixChunk, chunk);
-            sndAudioUnlock();
-
-            if (!SDL_PutAudioStreamData(FXBase.audioStream, MixChunk, chunk)) {
-                DebugMsg(ERR_WARNING, ERROR_MODULE_SOUND,
-                         "SDL_PutAudioStreamData: %s", SDL_GetError());
-                SDL_Delay(10);
-                break;
-            }
-
-            deficit -= chunk;
-        }
-
-        SDL_Delay(5);
-    }
-
-    return 0;
+    sndAudioLock();
+    MixAudioChunk(buf, len);
+    sndAudioUnlock();
 }
 
 void InitAudio(void)
@@ -181,15 +145,10 @@ void InitAudio(void)
         goto fail;
     }
 
-    FXBase.audioThreadRunning = true;
-    FXBase.audioThread = SDL_CreateThread(sndAudioThread, "audio-mix", NULL);
-    if (!FXBase.audioThread) {
-        FXBase.audioThreadRunning = false;
-        DebugMsg(ERR_WARNING, ERROR_MODULE_SOUND,
-                 "SDL_CreateThread failed: %s", SDL_GetError());
-        goto fail;
-    }
-
+    /* No audio thread is created: mixing is now done inline in
+     * TheClouAudioStream::readBuffer() via sndMixIntoBuffer().
+     * SDL_ResumeAudioStreamDevice signals ScummVM's mixer to start
+     * pulling from TheClouAudioStream.                              */
     if (!SDL_ResumeAudioStreamDevice(FXBase.audioStream)) {
         DebugMsg(ERR_WARNING, ERROR_MODULE_SOUND,
                  "SDL_ResumeAudioStreamDevice: %s", SDL_GetError());
@@ -200,11 +159,6 @@ void InitAudio(void)
     return;
 
 fail:
-    if (FXBase.audioThread) {
-        FXBase.audioThreadRunning = false;
-        SDL_WaitThread(FXBase.audioThread, NULL);
-        FXBase.audioThread = NULL;
-    }
     if (FXBase.audioMutex) {
         SDL_DestroyMutex(FXBase.audioMutex);
         FXBase.audioMutex = NULL;
@@ -227,12 +181,7 @@ void RemoveAudio(void)
 {
     sndStopSpeechSample();
 
-    FXBase.audioThreadRunning = false;
-    if (FXBase.audioThread) {
-        SDL_WaitThread(FXBase.audioThread, NULL);
-        FXBase.audioThread = NULL;
-    }
-
+    /* No thread to join — mixing was inline in readBuffer(). */
     if (FXBase.audioMutex) {
         SDL_DestroyMutex(FXBase.audioMutex);
         FXBase.audioMutex = NULL;

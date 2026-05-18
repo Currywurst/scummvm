@@ -27,10 +27,10 @@ struct FXBase {
     SND_BUFFER *pSfxBuffer;
     SND_BUFFER *pMusicBuffer;
 
-  struct SDL_AudioStream *audioStream;
-  struct SDL_Thread *audioThread;
-  SDL_Mutex *audioMutex;
-  bool audioThreadRunning;
+    struct SDL_AudioStream *audioStream;
+    /* audioThread / audioThreadRunning removed: mixing now happens inline
+     * inside TheClouAudioStream::readBuffer() (ScummVM pull model).      */
+    SDL_Mutex *audioMutex;
 };
 
 extern struct FXBase FXBase;
@@ -44,6 +44,11 @@ extern void InitAudio(void);
 extern void RemoveAudio(void);
 void sndAudioLock(void);
 void sndAudioUnlock(void);
+
+/* Called by TheClouAudioStream::readBuffer() on the ScummVM mixer thread.
+ * Mixes one chunk of audio (OPL music + SFX + speech) into buf[0..len-1].
+ * Internally acquires/releases the audio mutex.                          */
+void sndMixIntoBuffer(Uint8 *buf, int len);
 
 #endif
 
