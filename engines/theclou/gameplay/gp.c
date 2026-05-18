@@ -20,6 +20,7 @@
 
 #include "gameplay/gp.h"
 #include "gameplay/gamefunc.h"
+#include "platform/tc_debug.h"
 
 void InitLocations(void);
 void FreeLocations(void);
@@ -203,8 +204,8 @@ U32 PlayStory(void)
 
 	/* die neue Szene initialisieren ! ( Bühnenbild aufbauen ) */
 #ifdef DEEP_DEBUG
-	printf("----------------------------------------\n");
-	printf("SCENE_INIT %" PRIu32 "\n", curr->EventNr);
+	tc_debug(3, "----------------------------------------");
+	tc_debug(3, "SCENE_INIT %" PRIu32, curr->EventNr);
 #endif
 	if (curr->Init)
 	    curr->Init();
@@ -219,13 +220,13 @@ U32 PlayStory(void)
 
 	if (interr_allowed && (!(GamePlayMode & GP_STORY_OFF))) {
 #ifdef DEEP_DEBUG
-	    printf("STEP_A1\n");
+	    tc_debug(3, "STEP_A1");
 #endif
 	    if ((story_scene = GetStoryScene(curr)))
 		interr_allowed = 0;
 	} else {
 #ifdef DEEP_DEBUG
-	    printf("STEP_A2\n");
+	    tc_debug(3, "STEP_A2");
 #endif
 	    story_scene = 0;
 	}
@@ -234,14 +235,14 @@ U32 PlayStory(void)
 	    SceneArgs.Ueberschrieben = 0;
 
 #ifdef DEEP_DEBUG
-	    printf("STEP_B\n");
+	    tc_debug(3, "STEP_B");
 #endif
 	    if (curr->Done) {
 		SceneArgs.Moeglichkeiten =
 		    curr->Moeglichkeiten & film->EnabledChoices;
 
 #ifdef DEEP_DEBUG
-		printf("SCENE_DONE\n");
+		tc_debug(3, "SCENE_DONE");
 #endif
 		curr->Done();	/* Funktionalität */
 	    } else

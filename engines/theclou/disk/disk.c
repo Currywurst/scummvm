@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 
 #include "error/error.h"
+#include "platform/tc_debug.h"
 
 #include "disk/disk.h"
 #include "disk/disk.eh"
@@ -100,7 +101,7 @@ void dskInitSaveDir(void)
     snprintf(saveDataDisk, sizeof(saveDataDisk), "%s" DIR_SEP "datadisk",
              SaveRootPathSet ? SaveRootPath : RootPathName);
 
-    fprintf(stderr, "TheClou: save directory = %s\n", saveDataDisk);
+    tc_debug(1, "TheClou: save directory = %s", saveDataDisk);
 
     /* Create <savepath>/datadisk/ if it does not exist yet */
     if (stat(saveDataDisk, &st) != 0) {

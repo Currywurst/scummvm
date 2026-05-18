@@ -21,6 +21,7 @@
 #define ERR_EXIT_SHUTDOWN   30L
 
 #include "base/base.h"
+#include "platform/tc_debug.h"
 
 /* tc_QuitGame() does a longjmp back to the main game loop.
  * Using it instead of exit() lets ScummVM shut down cleanly
@@ -95,15 +96,15 @@ void ErrorMsg(ErrorE type, ErrorModuleE moduleId, U32 errorId)
 
     switch (type) {
     case Internal_Error:
-	printf("Internal Error!\n");
+	tc_warning("TheClou: Internal Error!");
 	break;
 
     case No_Mem:
-	printf("You don't have enough memory!\n");
+	tc_warning("TheClou: Not enough memory!");
 	break;
 
     case Disk_Defect:
-	printf("Can't open file! Please install DER CLOU! again\n");
+	tc_warning("TheClou: Can't open file! Please reinstall DER CLOU!");
 	break;
     default:
 	break;
@@ -115,34 +116,27 @@ void ErrorMsg(ErrorE type, ErrorModuleE moduleId, U32 errorId)
 
 static void ErrDebugMsg(DebugE type, const char *moduleName, const char *txt)
 {
-    FILE *fp;
-
     if (setup.Debug < type) {
         return;
     }
 
-    if (ErrorHandler.uch_OutputToFile) {	/* Ausgabe */
-	if ((fp = fopen(ErrorHandler.Filename, "a"))) {
-	    fprintf(fp, "%s\t: %s\n", moduleName, txt);
-	    fclose(fp);
-	}
-    }
+    /* File logging omitted: ScummVM handles log output centrally. */
 
     switch (type) {
     case ERR_DEBUG:
-	fprintf(stderr, "%s\t: %s\n", moduleName, txt);
+        tc_debug(2, "%s\t: %s", moduleName, txt);
         break;
 
     case ERR_WARNING:
-	fprintf(stderr, "Module %s: %s\n", moduleName, txt);
+        tc_warning("Module %s: %s", moduleName, txt);
         break;
 
     case ERR_ERROR:
-	fprintf(stderr, "ERROR: Module %s: %s\n", moduleName, txt);
+        tc_warning("ERROR: Module %s: %s", moduleName, txt);
 
         tcDone();
 
-	tc_QuitGame();
+        tc_QuitGame();
         break;
     }
 }

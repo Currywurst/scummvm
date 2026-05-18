@@ -19,6 +19,7 @@
  ****************************************************************************/
 
 #include "story/story.h"
+#include "platform/tc_debug.h"
 
 ubyte tcDoLastBurglarySpot(U32 ul_Time, U32 ul_BuildingId);
 
@@ -275,7 +276,7 @@ void tcDoneMeetBriggs(void)
     ubyte choice;
 
 #ifdef DEEP_DEBUG
-    printf("tcDoneMeetBriggs!\n");
+    tc_debug(3, "tcDoneMeetBriggs!");
 #endif
     knowsSet(Person_Matt_Stuvysunt, Person_Herbert_Briggs);
 
