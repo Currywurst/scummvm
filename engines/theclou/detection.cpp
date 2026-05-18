@@ -1,0 +1,99 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "engines/advancedDetector.h"
+#include "base/plugins.h"
+
+static const PlainGameDescriptor theClouGames[] = {
+	{ "theclou", "The Clou! (Der Clou!)" },
+	{ nullptr, nullptr }
+};
+
+namespace TheClou {
+
+// Detection requires BOTH data/tcmain.dat AND data/tcstory.pc to be present.
+// The .pc extension on tcstory.pc is unique to Der Clou! and prevents false
+// positives from other engines (e.g. Level9) that also have .dat files.
+static const ADGameDescription gameDescriptions[] = {
+	// German version — files ship ALL-CAPS on the original DOS distribution.
+	// kADFlagMatchFullPaths is set on the MetaEngine so subdirectory paths work.
+	{
+		"theclou",
+		"German",
+		AD_ENTRY2s("DATA/TCMAIN.DAT", nullptr, AD_NO_SIZE,
+		           "DATA/TCSTORY.PC", nullptr, AD_NO_SIZE),
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NOMIDI)
+	},
+	// English version
+	{
+		"theclou",
+		"English",
+		AD_ENTRY2s("DATA/TCMAIN.DAT", nullptr, AD_NO_SIZE,
+		           "DATA/TCSTORY.PC", nullptr, AD_NO_SIZE),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NOMIDI)
+	},
+	AD_TABLE_END_MARKER
+};
+
+} // End of namespace TheClou
+
+// directoryGlobs tells the AdvancedDetector which subdirectories to scan
+// when building the file map for detection.  "data" MUST be listed so that
+// the scanner recurses into DATA/ and finds TCMAIN.DAT / TCSTORY.PC.
+// The user must select the game's ROOT directory (the folder that contains
+// DATA/, DATADISK/, TEXTS/ etc.), not the DATA subdirectory itself.
+static const char * const directoryGlobs[] = {
+	"data",
+	"datadisk",
+	"texts",
+	"pictures",
+	"sounds",
+	nullptr
+};
+
+class TheClouMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
+public:
+	TheClouMetaEngineDetection() : AdvancedMetaEngineDetection(TheClou::gameDescriptions, theClouGames) {
+		_flags = kADFlagMatchFullPaths;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
+	}
+
+	const char *getName() const override {
+		return "theclou";
+	}
+
+	const char *getEngineName() const override {
+		return "The Clou! (Der Clou!)";
+	}
+
+	const char *getOriginalCopyright() const override {
+		return "(C) 1993-1994 neo Software Produktions GmbH";
+	}
+};
+
+REGISTER_PLUGIN_STATIC(THECLOU_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TheClouMetaEngineDetection);
