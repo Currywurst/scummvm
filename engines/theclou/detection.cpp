@@ -33,19 +33,19 @@ namespace TheClou {
 // The .pc extension on tcstory.pc is unique to Der Clou! and prevents false
 // positives from other engines (e.g. Level9) that also have .dat files.
 static const ADGameDescription gameDescriptions[] = {
-	// German version — files ship ALL-CAPS on the original DOS distribution.
+	// German version (Der Clou! v1.0) — files ship ALL-CAPS on the original DOS distribution.
 	// kADFlagMatchFullPaths is set on the MetaEngine so subdirectory paths work.
 	{
 		"theclou",
 		"German",
-		AD_ENTRY2s("DATA/TCMAIN.DAT", nullptr, AD_NO_SIZE,
-		           "DATA/TCSTORY.PC", nullptr, AD_NO_SIZE),
+		AD_ENTRY2s("DATA/TCMAIN.DAT", "d1e8794f38161bd6a822d4b344433569", 10999,
+		           "DATA/TCSTORY.PC", "54d219699d7afe637e24d2e1a1a8435f", 12559),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
-	// English version
+	// English version (The Clou! v1.0) — checksums to be filled once files are available
 	{
 		"theclou",
 		"English",
