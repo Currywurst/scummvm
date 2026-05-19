@@ -241,14 +241,14 @@ ubyte tcSaveChangesInScenes(char *fileName)
 {
     U32 i;
     ubyte back = 0;
-    FILE *file;
+    TC_FILE *file;
 
     if ((file = dskOpen(fileName, "wb"))) {
-	fprintf(file, "%" PRIu32 "\r\n", film->EnabledChoices);
+	tc_fprintf(file, "%" PRIu32 "\r\n", film->EnabledChoices);
 
 	for (i = 0; i < film->AmountOfScenes; i++) {
-	    fprintf(file, "%" PRIu32 "\r\n", film->gameplay[i].EventNr);
-	    fprintf(file, "%" PRIu16 "\r\n", film->gameplay[i].Geschehen);
+	    tc_fprintf(file, "%" PRIu32 "\r\n", film->gameplay[i].EventNr);
+	    tc_fprintf(file, "%" PRIu16 "\r\n", film->gameplay[i].Geschehen);
 	}
 
 	dskClose(file);
@@ -264,7 +264,7 @@ ubyte tcLoadChangesInScenes(char *fileName)
     ubyte back = 1;
     U32 eventNr, choice;
     U16 count;
-    FILE *file;
+    TC_FILE *file;
     struct Scene *sc;
 
     if ((file = dskOpen(fileName, "rb"))) {

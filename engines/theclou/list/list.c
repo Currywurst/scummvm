@@ -260,7 +260,7 @@ void ReplaceNode(LIST *list, const char *name, NODE *newNode)
 
 U32 ReadList(LIST *list, size_t size, char *fileName)
 {
-    FILE *fh;
+    TC_FILE *fh;
     U32 i = UINT32_C(0);
     char buffer[256];
 
@@ -270,7 +270,7 @@ U32 ReadList(LIST *list, size_t size, char *fileName)
 	    {
 		if (!CreateNode(list, size, buffer)) {
 		    RemoveNode(list, NULL);
-		    fclose(fh);
+		    tc_fclose(fh);
 		    return 0;
 		}
 
@@ -278,20 +278,20 @@ U32 ReadList(LIST *list, size_t size, char *fileName)
 	    }
 	}
 
-	fclose(fh);
+	tc_fclose(fh);
     }
     return i;
 }
 
 void WriteList(LIST *list, char *fileName)
 {
-    register FILE *fh = NULL;
+    register TC_FILE *fh = NULL;
     register NODE *node = NULL;
 
     if ((fh = dskOpen(fileName, "wb"))) {
 	for (node = LIST_HEAD(list); NODE_SUCC(node); node = NODE_SUCC(node))
-	    fprintf(fh, "%s\r\n", NODE_NAME(node));
+	    tc_fprintf(fh, "%s\r\n", NODE_NAME(node));
 
-	fclose(fh);
+	tc_fclose(fh);
     }
 }

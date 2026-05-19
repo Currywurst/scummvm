@@ -296,7 +296,7 @@ void plPrepareSys(U32 currPer, U32 objId, ubyte sysMode)
 
     if ((sysMode & PLANING_GUARDS_LOAD) && (PersonsNr > BurglarsNr)
 	&& !(GamePlayMode & GP_LEVEL_DESIGN)) {
-	FILE *fh = NULL;
+	TC_FILE *fh = NULL;
 
 	startsWithAll(objId, OLF_NORMAL, Object_LSArea);
 

@@ -29,7 +29,7 @@ void InitSceneInfo(void);
 void FreeSceneInfo(void);
 
 void PrepareStory(char *filename);
-void LoadSceneforStory(struct NewScene *dest, FILE * file);
+void LoadSceneforStory(struct NewScene *dest, TC_FILE * file);
 
 void InitConditions(struct Scene *scene, struct NewScene *ns);
 void FreeConditions(struct Scene *scene);
@@ -389,7 +389,7 @@ void PrepareStory(char *filename)
     struct StoryHeader SH;
     struct NewScene NS;
     struct TCEventNode *node;
-    FILE *file;
+    TC_FILE *file;
     char pathname[DSK_PATH_MAX];
 
     dskBuildPathName(DISK_CHECK_FILE, DATA_DIRECTORY, filename, pathname);
@@ -533,7 +533,7 @@ void FreeConditions(struct Scene *scene)
     }
 }
 
-static U32 *gpAllocAndReadEvents(FILE *file, U32 count, U32 errorCode)
+static U32 *gpAllocAndReadEvents(TC_FILE *file, U32 count, U32 errorCode)
 {
 	U32 i;
 	U32 *buffer;
@@ -559,7 +559,7 @@ static U32 *gpAllocAndReadEvents(FILE *file, U32 count, U32 errorCode)
 	return buffer;
 }
 
-void LoadSceneforStory(struct NewScene *dest, FILE * file)
+void LoadSceneforStory(struct NewScene *dest, TC_FILE * file)
 {
 	U32 dummy;
 

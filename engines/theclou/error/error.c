@@ -22,6 +22,7 @@
 
 #include "base/base.h"
 #include "platform/tc_debug.h"
+#include "platform/tc_fs.h"
 
 /* tc_QuitGame() does a longjmp back to the main game loop.
  * Using it instead of exit() lets ScummVM shut down cleanly
@@ -61,7 +62,7 @@ struct ErrorHandler ErrorHandler;
 
 bool pcErrOpen(S32 l_Mode, char *ErrorFilename)
 {
-    FILE *p_File;
+    TC_FILE *p_File;
     bool alright = false;
 
     switch (l_Mode) {

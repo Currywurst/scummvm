@@ -331,7 +331,7 @@ void lsLoadSpotBitMap(MemRastPort *rp)
 
 void lsLoadSpots(U32 bldId, char *uch_FileName)
 {
-    FILE *file;
+    TC_FILE *file;
     char filename[DSK_PATH_MAX], buffer[TXT_KEY_LENGTH];
     uword SpotCount, i, j;
     U32 CtrlObjId;
@@ -341,31 +341,31 @@ void lsLoadSpots(U32 bldId, char *uch_FileName)
 
     file = dskOpen(filename, "r");
 
-    fgets(buffer, TXT_KEY_LENGTH - 1, file);
+    tc_fgets(buffer, TXT_KEY_LENGTH - 1, file);
     SpotCount = (uword) atol(buffer);
 
     for (i = 0; i < SpotCount; i++) {
 	uword Size, Speed, Count, XPos, YPos;
 
-	fgets(buffer, TXT_KEY_LENGTH - 1, file);
+	tc_fgets(buffer, TXT_KEY_LENGTH - 1, file);
 	Size = (uword) atol(buffer);
 
-	fgets(buffer, TXT_KEY_LENGTH - 1, file);
+	tc_fgets(buffer, TXT_KEY_LENGTH - 1, file);
 	Speed = (uword) atol(buffer);
 
-	fgets(buffer, TXT_KEY_LENGTH - 1, file);
+	tc_fgets(buffer, TXT_KEY_LENGTH - 1, file);
 	CtrlObjId = atol(buffer);
 
-	fgets(buffer, TXT_KEY_LENGTH - 1, file);
+	tc_fgets(buffer, TXT_KEY_LENGTH - 1, file);
 	Count = (uword) atol(buffer);
 
 	spot = lsAddSpot(Size, Speed, CtrlObjId);
 
 	for (j = 0; j < Count; j++) {
-	    fgets(buffer, TXT_KEY_LENGTH - 1, file);
+	    tc_fgets(buffer, TXT_KEY_LENGTH - 1, file);
 	    XPos = (uword) atol(buffer);
 
-	    fgets(buffer, TXT_KEY_LENGTH - 1, file);
+	    tc_fgets(buffer, TXT_KEY_LENGTH - 1, file);
 	    YPos = (uword) atol(buffer);
 
 	    lsAddSpotPosition(spot, XPos, YPos);

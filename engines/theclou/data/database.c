@@ -258,14 +258,14 @@ static U32 dbGetMemSize(U32 type)
 }
 
 static void
-dbRWStdObject(void *obj, int RW, U32 type, U32 size, U32 localSize, FILE *fp)
+dbRWStdObject(void *obj, int RW, U32 type, U32 size, U32 localSize, TC_FILE *fp)
 {
-    void (*U8_RW) (FILE * fp, U8 * x);
-    void (*S8_RW) (FILE * fp, S8 * x);
-    void (*U16LE_RW) (FILE * fp, U16 * x);
-    void (*S16LE_RW) (FILE * fp, S16 * x);
-    void (*U32LE_RW) (FILE * fp, U32 * x);
-    void (*S32LE_RW) (FILE * fp, S32 * x);
+    void (*U8_RW) (TC_FILE * fp, U8 * x);
+    void (*S8_RW) (TC_FILE * fp, S8 * x);
+    void (*U16LE_RW) (TC_FILE * fp, U16 * x);
+    void (*S16LE_RW) (TC_FILE * fp, S16 * x);
+    void (*U32LE_RW) (TC_FILE * fp, U32 * x);
+    void (*S32LE_RW) (TC_FILE * fp, S32 * x);
 
     if (RW == 0) {
 	U8_RW = dskRead_U8;
@@ -719,14 +719,14 @@ dbRWStdObject(void *obj, int RW, U32 type, U32 size, U32 localSize, FILE *fp)
 }
 
 static void
-dbRWProfiObject(void *obj, int RW, U32 type, U32 size, U32 localSize, FILE *fp)
+dbRWProfiObject(void *obj, int RW, U32 type, U32 size, U32 localSize, TC_FILE *fp)
 {
-    void (*U8_RW) (FILE * fp, U8 * x);
-    void (*S8_RW) (FILE * fp, S8 * x);
-    void (*U16LE_RW) (FILE * fp, U16 * x);
-    void (*S16LE_RW) (FILE * fp, S16 * x);
-    void (*U32LE_RW) (FILE * fp, U32 * x);
-    void (*S32LE_RW) (FILE * fp, S32 * x);
+    void (*U8_RW) (TC_FILE * fp, U8 * x);
+    void (*S8_RW) (TC_FILE * fp, S8 * x);
+    void (*U16LE_RW) (TC_FILE * fp, U16 * x);
+    void (*S16LE_RW) (TC_FILE * fp, S16 * x);
+    void (*U32LE_RW) (TC_FILE * fp, U32 * x);
+    void (*S32LE_RW) (TC_FILE * fp, S32 * x);
 
     if (RW == 0) {
 	U8_RW = dskRead_U8;
@@ -1179,7 +1179,7 @@ dbRWProfiObject(void *obj, int RW, U32 type, U32 size, U32 localSize, FILE *fp)
 }
 
 static void
-dbRWObject(void *obj, int RW, U32 type, U32 size, U32 localSize, FILE *fp)
+dbRWObject(void *obj, int RW, U32 type, U32 size, U32 localSize, TC_FILE *fp)
 {
     S32 start;
 
@@ -1200,7 +1200,7 @@ dbRWObject(void *obj, int RW, U32 type, U32 size, U32 localSize, FILE *fp)
 
 U8 dbLoadAllObjects(char *fileName, U16 diskId)
 {
-    FILE *fh;
+    TC_FILE *fh;
 
     if ((fh = dskOpen(fileName, "rb"))) {
 	U32 realNr = 1;
@@ -1252,7 +1252,7 @@ U8 dbLoadAllObjects(char *fileName, U16 diskId)
 		dbRWObject(obj, 0, objHd.type, objHd.size, localSize, fh);
 	    }
 
-	    if ((ch = fgetc(fh)) != EOF)
+	    if ((ch = tc_fgetc(fh)) != EOF)
 		ungetc(ch, fh);
 	}
 
@@ -1265,7 +1265,7 @@ U8 dbLoadAllObjects(char *fileName, U16 diskId)
 
 U8 dbSaveAllObjects(char *fileName, U32 offset, U32 size, U16 diskId)
 {
-    FILE *fh;
+    TC_FILE *fh;
     register struct dbObject *obj;
     register U32 realNr = 1;
     register U32 dbSize = dbGetObjectCountOfDB(offset, size);

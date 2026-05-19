@@ -113,20 +113,20 @@ void SetActivHandler(struct System *sys, U32 id)
 	sys->ActivHandler = NULL;
 }
 
-void SaveSystem(FILE * fh, struct System *sys)
+void SaveSystem(TC_FILE * fh, struct System *sys)
 {
     register struct Handler *h;
 
     if (fh) {
-	fprintf(fh, FILE_SYSTEM_ID "\r\n");
+	tc_fprintf(fh, FILE_SYSTEM_ID "\r\n");
 
 	for (h = (struct Handler *) LIST_HEAD(sys->Handlers); NODE_SUCC(h);
 	     h = (struct Handler *) NODE_SUCC(h))
-	    fprintf(fh, FILE_HANDLER_ID "\r\n%" PRIu32 "\r\n", h->Id);
+	    tc_fprintf(fh, FILE_HANDLER_ID "\r\n%" PRIu32 "\r\n", h->Id);
     }
 }
 
-LIST *LoadSystem(FILE * fh, struct System *sys)
+LIST *LoadSystem(TC_FILE * fh, struct System *sys)
 {
     register LIST *l = txtGoKey(PLAN_TXT, "SYSTEM_GUYS_MISSING_1");
     register U8 foundAll = 1, knowsSomebody = 1, handlerNr = 0;
@@ -253,29 +253,29 @@ ubyte IsHandlerCleared(struct System * sys)
     return 0;
 }
 
-void SaveHandler(FILE * fh, struct System *sys, U32 id)
+void SaveHandler(TC_FILE * fh, struct System *sys, U32 id)
 {
     register struct Handler *h;
     register struct Action *a;
 
     if (fh && sys && (h = FindHandler(sys, id))) {
-	fprintf(fh, FILE_ACTION_LIST_ID "\r\n%" PRIu32 "\r\n", id);
+	tc_fprintf(fh, FILE_ACTION_LIST_ID "\r\n%" PRIu32 "\r\n", id);
 
 	for (a = (struct Action *) LIST_HEAD(h->Actions); NODE_SUCC(a);
 	     a = (struct Action *) NODE_SUCC(a)) {
-	    fprintf(fh, FILE_ACTION_ID "\r\n%" PRIu16 "\r\n%" PRIu16 "\r\n",
+	    tc_fprintf(fh, FILE_ACTION_ID "\r\n%" PRIu16 "\r\n%" PRIu16 "\r\n",
 		    a->Type, a->TimeNeeded);
 
 	    switch (a->Type) {
 	    case ACTION_GO:
-		fprintf(fh, "%" PRIu16 "\r\n",
+		tc_fprintf(fh, "%" PRIu16 "\r\n",
 			ActionData(a, struct ActionGo *)->Direction);
 		break;
 
 	    case ACTION_USE:
 	    case ACTION_TAKE:
 	    case ACTION_DROP:
-		fprintf(fh, "%" PRIu32 "\r\n%" PRIu32 "\r\n",
+		tc_fprintf(fh, "%" PRIu32 "\r\n%" PRIu32 "\r\n",
 			ActionData(a, struct ActionUse *)->ToolId, ActionData(a,
 									      struct
 									      ActionUse
@@ -288,7 +288,7 @@ void SaveHandler(FILE * fh, struct System *sys, U32 id)
 	    case ACTION_CONTROL:
 	    case ACTION_SIGNAL:
 	    case ACTION_WAIT_SIGNAL:
-		fprintf(fh, "%" PRIu32 "\r\n",
+		tc_fprintf(fh, "%" PRIu32 "\r\n",
 			ActionData(a, struct ActionOpen *)->ItemId);
 		break;
 	    }
@@ -296,7 +296,7 @@ void SaveHandler(FILE * fh, struct System *sys, U32 id)
     }
 }
 
-ubyte LoadHandler(FILE * fh, struct System *sys, U32 id)
+ubyte LoadHandler(TC_FILE * fh, struct System *sys, U32 id)
 {
     register struct Action *a;
     U16 type;

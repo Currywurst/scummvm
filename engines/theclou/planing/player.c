@@ -1605,7 +1605,7 @@ static void plPlayerAction(void)
 
 S32 plPlayer(U32 objId, U32 actionTime, ubyte(*actionFunc) (U32, U32))
 {
-    FILE *fh = NULL;
+    TC_FILE *fh = NULL;
     LIST *menu = txtGoKey(PLAN_TXT, "PLAYER_MENU"), *l;
     ubyte activ = 0, i;
     U32 timeLeft = 0, bitset, choice1, choice2;

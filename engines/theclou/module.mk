@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	engine.o \
 	metaengine.o \
 	platform/tc_debug.o \
+	platform/tc_fs.o \
 	platform/tc_platform.o \
 	anim/sysanim.o \
 	base/base.o \

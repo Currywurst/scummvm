@@ -22,8 +22,6 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 #include <string.h>
 #include <stdlib.h>
 

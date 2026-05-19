@@ -9,10 +9,10 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 
 #include "error/error.h"
 #include "platform/tc_debug.h"
+#include "platform/tc_fs.h"
 
 #include "disk/disk.h"
 #include "disk/disk.eh"
@@ -56,45 +56,17 @@ char *dskGetSavePath(char *result)
  * Ensures the save directory contains the DATADISK sub-folder and seeds it
  * with GAMES.LST / ORIGIN.LST from the original game data directory.
  * These two files drive the save-slot list; without them the save/load menu
- * refuses to open and every attempted fopen() would previously call exit().
+ * refuses to open.
  *
  * The function is idempotent — it does nothing when the files already exist.
+ * Uses tc_fs_* wrappers (Common::FSNode / Common::File) — no POSIX stat/mkdir.
  * ---------------------------------------------------------------------------*/
-static void copyFileIfMissing(const char *src, const char *dst)
-{
-    struct stat st;
-    FILE *fin, *fout;
-    char buf[4096];
-    size_t n;
-
-    /* Skip if destination already exists */
-    if (stat(dst, &st) == 0)
-        return;
-
-    fin = fopen(src, "rb");
-    if (!fin)
-        return;
-
-    fout = fopen(dst, "wb");
-    if (!fout) {
-        fclose(fin);
-        return;
-    }
-
-    while ((n = fread(buf, 1, sizeof(buf), fin)) > 0)
-        fwrite(buf, 1, n, fout);
-
-    fclose(fin);
-    fclose(fout);
-}
-
 void dskInitSaveDir(void)
 {
     char saveDataDisk[DSK_PATH_MAX];
     char gameDataDisk[DSK_PATH_MAX];
     char srcPath[DSK_PATH_MAX];
     char dstPath[DSK_PATH_MAX];
-    struct stat st;
 
     /* The save root is either explicitly set or falls back to the game root.
      * Either way, we want a "datadisk" sub-directory inside it.          */
@@ -104,18 +76,13 @@ void dskInitSaveDir(void)
     tc_debug(1, "TheClou: save directory = %s", saveDataDisk);
 
     /* Create <savepath>/datadisk/ if it does not exist yet */
-    if (stat(saveDataDisk, &st) != 0) {
-#ifdef _WIN32
-        mkdir(saveDataDisk);
-#else
-        mkdir(saveDataDisk, 0755);
-#endif
-    }
+    if (!tc_fs_isdir(saveDataDisk))
+        tc_fs_mkdir(saveDataDisk);
 
     /* Locate the game's own DATADISK directory (try mixed/upper/lower case) */
     snprintf(gameDataDisk, sizeof(gameDataDisk), "%s" DIR_SEP "DATADISK",
              RootPathName);
-    if (stat(gameDataDisk, &st) != 0) {
+    if (!tc_fs_isdir(gameDataDisk)) {
         snprintf(gameDataDisk, sizeof(gameDataDisk), "%s" DIR_SEP "datadisk",
                  RootPathName);
     }
@@ -123,34 +90,35 @@ void dskInitSaveDir(void)
     /* Copy GAMES.LST (template save-slot list) */
     snprintf(srcPath, sizeof(srcPath), "%s" DIR_SEP "GAMES.LST", gameDataDisk);
     snprintf(dstPath, sizeof(dstPath), "%s" DIR_SEP "games.lst", saveDataDisk);
-    copyFileIfMissing(srcPath, dstPath);
+    tc_fs_copy_if_missing(srcPath, dstPath);
     /* Fallback: try lowercase source name */
-    if (stat(dstPath, &st) != 0) {
+    if (!tc_fs_exists(dstPath)) {
         snprintf(srcPath, sizeof(srcPath), "%s" DIR_SEP "games.lst",
                  gameDataDisk);
-        copyFileIfMissing(srcPath, dstPath);
+        tc_fs_copy_if_missing(srcPath, dstPath);
     }
 
     /* Copy ORIGIN.LST (pristine reference for "not saved yet" comparison) */
     snprintf(srcPath, sizeof(srcPath), "%s" DIR_SEP "ORIGIN.LST", gameDataDisk);
     snprintf(dstPath, sizeof(dstPath), "%s" DIR_SEP "origin.lst", saveDataDisk);
-    copyFileIfMissing(srcPath, dstPath);
-    if (stat(dstPath, &st) != 0) {
+    tc_fs_copy_if_missing(srcPath, dstPath);
+    if (!tc_fs_exists(dstPath)) {
         snprintf(srcPath, sizeof(srcPath), "%s" DIR_SEP "origin.lst",
                  gameDataDisk);
-        copyFileIfMissing(srcPath, dstPath);
+        tc_fs_copy_if_missing(srcPath, dstPath);
     }
 }
 
-FILE *dskOpen(const char *Pathname, const char *Mode)
+TC_FILE *dskOpen(const char *Pathname, const char *Mode)
 {
-    FILE *fp;
+    TC_FILE *fp;
 
     DebugMsg(ERR_DEBUG, ERROR_MODULE_DISK, "Opening :%s (%s)", Pathname, Mode);
 
-    if (!(fp = fopen(Pathname, Mode))) {
+    fp = tc_fopen(Pathname, Mode);
+    if (!fp) {
         /* Use ERR_WARNING (not ERR_ERROR) so we return NULL gracefully.
-         * ERR_ERROR would call exit() immediately, bypassing all the
+         * ERR_ERROR would call tc_QuitGame() immediately, bypassing all the
          * NULL-checks that callers (ReadList, dbSaveAllObjects, …) rely on. */
         DebugMsg(ERR_WARNING, ERROR_MODULE_DISK, "Open :%s", Pathname);
     }
@@ -160,7 +128,7 @@ FILE *dskOpen(const char *Pathname, const char *Mode)
 
 void *dskLoad(const char *Pathname)
 {
-    FILE *fp;
+    TC_FILE *fp;
     U8 *ptr;
     size_t size, pos;
 
@@ -174,7 +142,7 @@ void *dskLoad(const char *Pathname)
     if ((fp = dskOpen(Pathname, "rb"))) {
         size_t nread = 0;
 
-        while ((nread = fread(ptr + pos, 1, BUFSIZ, fp)) == BUFSIZ) {
+        while ((nread = tc_fread(ptr + pos, 1, BUFSIZ, fp)) == BUFSIZ) {
             U8 *tmp;
 
             pos  += nread;
@@ -211,11 +179,11 @@ void *dskLoad(const char *Pathname)
 
 void dskSave(char *Pathname, void *src, size_t size)
 {
-    FILE *fp;
+    TC_FILE *fp;
 
     if ((fp = dskOpen(Pathname, "wb"))) {
-	dskWrite(fp, src, size);
-	dskClose(fp);
+        dskWrite(fp, src, size);
+        dskClose(fp);
     }
 }
 
@@ -240,7 +208,6 @@ bool dskBuildPathName(DiskCheckE check,
 {
     char Dir [DSK_PATH_MAX];
     char File[DSK_PATH_MAX];
-    struct stat status;
 
     /* Use the save path for DATADISK (saves), game root for everything else */
     const char *BaseDir = (stricmp(Directory, DATADISK) == 0)
@@ -281,7 +248,7 @@ bool dskBuildPathName(DiskCheckE check,
             sprintf(Result, "%s" DIR_SEP "%s", BaseDir, Dir);
          }
 
-    } while (stat(Result, &status) == -1);
+    } while (!tc_fs_exists(Result));
 
     if (check == DISK_CHECK_DIR) {
         strcat(Result, DIR_SEP);
@@ -293,156 +260,135 @@ bool dskBuildPathName(DiskCheckE check,
 
 size_t dskFileLength(const char *Pathname)
 {
-    struct stat status;
+    return tc_fs_filesize(Pathname);
+}
 
-    if (stat(Pathname, &status) == -1) {
-        return 0;
-    } else {
-        return status.st_size;
+void dskClose(TC_FILE *fp)
+{
+    tc_fclose(fp);
+}
+
+void dskWrite(TC_FILE *fp, void *src, size_t size)
+{
+    if (tc_fwrite(src, 1, size, fp) != size) {
+        ErrorMsg(Disk_Defect, ERROR_MODULE_DISK, ERR_DISK_WRITE_FAILED);
     }
 }
 
-void dskClose(FILE *fp)
+void dskWrite_U8(TC_FILE *fp, U8 *x)
 {
-    if (fp) {
-	fclose(fp);
-    }
-}
-
-void dskWrite(FILE * fp, void *src, size_t size)
-{
-    if (fwrite(src, 1, size, fp) != size) {
-	ErrorMsg(Disk_Defect, ERROR_MODULE_DISK, ERR_DISK_WRITE_FAILED);
-    }
-}
-
-void dskWrite_U8(FILE * fp, U8 * x)
-{
-    U8 tmp;
-
-    tmp = *x;
+    U8 tmp = *x;
     dskWrite(fp, &tmp, sizeof(tmp));
 }
 
-void dskWrite_S8(FILE * fp, S8 * x)
+void dskWrite_S8(TC_FILE *fp, S8 *x)
 {
-    S8 tmp;
-
-    tmp = *x;
+    S8 tmp = *x;
     dskWrite(fp, &tmp, sizeof(tmp));
 }
 
-void dskWrite_U16LE(FILE * fp, U16 * x)
+void dskWrite_U16LE(TC_FILE *fp, U16 *x)
 {
     U8 tmp[2];
-
-    tmp[0] = (U8) ((*x) & 0xff);
-    tmp[1] = (U8) ((*x >> 8) & 0xff);
+    tmp[0] = (U8)((*x) & 0xff);
+    tmp[1] = (U8)((*x >> 8) & 0xff);
     dskWrite(fp, &tmp, sizeof(tmp));
 }
 
-void dskWrite_S16LE(FILE * fp, S16 * x)
+void dskWrite_S16LE(TC_FILE *fp, S16 *x)
 {
     U8 tmp[2];
-
-    tmp[0] = (U8) ((*x) & 0xff);
-    tmp[1] = (U8) ((*x >> 8) & 0xff);
+    tmp[0] = (U8)((*x) & 0xff);
+    tmp[1] = (U8)((*x >> 8) & 0xff);
     dskWrite(fp, &tmp, sizeof(tmp));
 }
 
-void dskWrite_U32LE(FILE * fp, U32 * x)
+void dskWrite_U32LE(TC_FILE *fp, U32 *x)
 {
     U8 tmp[4];
-
-    tmp[0] = (U8) ((*x) & 0xff);
-    tmp[1] = (U8) ((*x >> 8) & 0xff);
-    tmp[2] = (U8) ((*x >> 16) & 0xff);
-    tmp[3] = (U8) ((*x >> 24) & 0xff);
+    tmp[0] = (U8)((*x) & 0xff);
+    tmp[1] = (U8)((*x >> 8) & 0xff);
+    tmp[2] = (U8)((*x >> 16) & 0xff);
+    tmp[3] = (U8)((*x >> 24) & 0xff);
     dskWrite(fp, &tmp, sizeof(tmp));
 }
 
-void dskWrite_S32LE(FILE * fp, S32 * x)
+void dskWrite_S32LE(TC_FILE *fp, S32 *x)
 {
     U8 tmp[4];
-
-    tmp[0] = (U8) ((*x) & 0xff);
-    tmp[1] = (U8) ((*x >> 8) & 0xff);
-    tmp[2] = (U8) ((*x >> 16) & 0xff);
-    tmp[3] = (U8) ((*x >> 24) & 0xff);
+    tmp[0] = (U8)((*x) & 0xff);
+    tmp[1] = (U8)((*x >> 8) & 0xff);
+    tmp[2] = (U8)((*x >> 16) & 0xff);
+    tmp[3] = (U8)((*x >> 24) & 0xff);
     dskWrite(fp, &tmp, sizeof(tmp));
 }
 
-void dskRead(FILE *fp, void *dest, size_t size)
+void dskRead(TC_FILE *fp, void *dest, size_t size)
 {
-    if (fread(dest, 1, size, fp) != size) {
-	ErrorMsg(Disk_Defect, ERROR_MODULE_DISK, ERR_DISK_READ_FAILED);
+    if (tc_fread(dest, 1, size, fp) != size) {
+        ErrorMsg(Disk_Defect, ERROR_MODULE_DISK, ERR_DISK_READ_FAILED);
     }
 }
 
-void dskRead_U8(FILE * fp, U8 * x)
+void dskRead_U8(TC_FILE *fp, U8 *x)
 {
     U8 tmp;
-
     dskRead(fp, &tmp, sizeof(tmp));
     *x = tmp;
 }
 
-void dskRead_S8(FILE * fp, S8 * x)
+void dskRead_S8(TC_FILE *fp, S8 *x)
 {
     S8 tmp;
-
     dskRead(fp, &tmp, sizeof(tmp));
     *x = tmp;
 }
 
-void dskRead_U16LE(FILE * fp, U16 * x)
+void dskRead_U16LE(TC_FILE *fp, U16 *x)
 {
     U8 tmp[2];
-
     dskRead(fp, &tmp, sizeof(tmp));
-    *x = (U16) ((U16) tmp[0] | ((U16) tmp[1] << 8));
+    *x = (U16)((U16)tmp[0] | ((U16)tmp[1] << 8));
 }
 
-void dskRead_S16LE(FILE * fp, S16 * x)
+void dskRead_S16LE(TC_FILE *fp, S16 *x)
 {
     U8 tmp[2];
-
     dskRead(fp, &tmp, sizeof(tmp));
-    *x = (S16) ((U16) tmp[0] | ((U16) tmp[1] << 8));
+    *x = (S16)((U16)tmp[0] | ((U16)tmp[1] << 8));
 }
 
-void dskRead_U32LE(FILE * fp, U32 * x)
+void dskRead_U32LE(TC_FILE *fp, U32 *x)
 {
     U8 tmp[4];
-
     dskRead(fp, &tmp, sizeof(tmp));
-    *x = (U32) ((U32) tmp[0] | ((U32) tmp[1] << 8)
-		| ((U32) tmp[2] << 16) | ((U32) tmp[3] << 24));
+    *x = (U32)((U32)tmp[0] | ((U32)tmp[1] << 8)
+        | ((U32)tmp[2] << 16) | ((U32)tmp[3] << 24));
 }
 
-void dskRead_S32LE(FILE * fp, S32 * x)
+void dskRead_S32LE(TC_FILE *fp, S32 *x)
 {
     U8 tmp[4];
-
     dskRead(fp, &tmp, sizeof(tmp));
-    *x = (S32) ((U32) tmp[0] | ((U32) tmp[1] << 8)
-		| ((U32) tmp[2] << 16) | ((U32) tmp[3] << 24));
+    *x = (S32)((U32)tmp[0] | ((U32)tmp[1] << 8)
+        | ((U32)tmp[2] << 16) | ((U32)tmp[3] << 24));
 }
 
-bool dskGetLine(char *s, int size, FILE *fp)
+bool dskGetLine(char *s, int size, TC_FILE *fp)
 {
     int ch;
 
-    while ((ch = getc(fp)) != EOF && ch != '\r' && size-- > 0)
-	*s++ = ch;
+    while ((ch = tc_fgetc(fp)) != -1 && ch != '\r' && size-- > 0)
+        *s++ = (char)ch;
     *s = '\0';
 
-    while (ch != '\r' && (ch = getc(fp)) != EOF);
+    while (ch != '\r' && (ch = tc_fgetc(fp)) != -1)
+        ;
 
-    if (ch == EOF)
-	return false;
+    if (ch == -1)
+        return false;
 
-    getc(fp);			/* get trailing '\n' */
+    tc_fgetc(fp); /* consume trailing '\n' */
     return true;
 }
 
@@ -454,18 +400,12 @@ int stricmp(const char *s1, const char *s2)
         a = toupper(*s1++);
         b = toupper(*s2++);
 
-        if (a < b) {
-            return -1;
-        }
-        if (a > b) {
-            return +1;
-        }
+        if (a < b) return -1;
+        if (a > b) return +1;
     }
 
-    if (*s1 == '\0' && *s2 != '\0')
-        return -1;
-    if (*s1 != '\0' && *s2 == '\0')
-        return +1;
+    if (*s1 == '\0' && *s2 != '\0') return -1;
+    if (*s1 != '\0' && *s2 == '\0') return +1;
     return 0;
 }
 
@@ -477,17 +417,11 @@ int strnicmp(const char *s1, const char *s2, size_t n)
         a = toupper(*s1++);
         b = toupper(*s2++);
 
-        if (a < b) {
-            return -1;
-        }
-        if (a > b) {
-            return +1;
-        }
+        if (a < b) return -1;
+        if (a > b) return +1;
     }
 
-    if (*s1 == '\0' && *s2 != '\0')
-        return -1;
-    if (*s1 != '\0' && *s2 == '\0')
-        return +1;
+    if (*s1 == '\0' && *s2 != '\0') return -1;
+    if (*s1 != '\0' && *s2 == '\0') return +1;
     return 0;
 }

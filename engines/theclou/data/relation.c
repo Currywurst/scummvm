@@ -260,12 +260,12 @@ int SaveRelations(char *file, U32 offset, U32 size, U16 disk_id)
     if (relationsDefBase && DecodeKey) {
 	register struct relationDef *rd;
 	register struct relation *r;
-	register FILE *fh;
+	register TC_FILE *fh;
 	char left[256];
 	char right[256];
 
 	if ((fh = dskOpen(file, "wb"))) {
-	    fprintf(fh, "%s\r\n", REL_FILE_MARK);
+	    tc_fprintf(fh, "%s\r\n", REL_FILE_MARK);
 
 	    for (rd = relationsDefBase; rd; rd = rd->rd_next) {
 		if (rd->rd_id > offset) {
@@ -273,14 +273,14 @@ int SaveRelations(char *file, U32 offset, U32 size, U16 disk_id)
 			continue;
 		    }
 
-		    fprintf(fh, "%s\r\n", REL_TABLE_MARK);
+		    tc_fprintf(fh, "%s\r\n", REL_TABLE_MARK);
 
-		    fprintf(fh, "%" PRIu32 "\r\n", rd->rd_id);
+		    tc_fprintf(fh, "%" PRIu32 "\r\n", rd->rd_id);
 
 		    for (r = rd->rd_relationsTable; r; r = r->r_next) {
 			strcpy(left, DecodeKey(r->r_leftKey));
 			strcpy(right, DecodeKey(r->r_rightKey));
-			fprintf(fh, "%s\r\n%s\r\n%" PRIu32 "\r\n",
+			tc_fprintf(fh, "%s\r\n%s\r\n%" PRIu32 "\r\n",
 				left, right, r->r_parameter);
 		    }
 		}
@@ -303,7 +303,7 @@ int LoadRelations(char *file, U16 disk_id)
     char left[256];
     char right[256];
     U8 goOn;
-    FILE *fh = NULL;
+    TC_FILE *fh = NULL;
     U32 dummy;
 
     buffer[0] = '\0';

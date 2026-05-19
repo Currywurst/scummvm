@@ -180,8 +180,8 @@ typedef S16 word;
  *
  */
 
-#define ERR_OPEN_FUNC           fopen
-#define ERR_CLOSE_FUNC		fclose
+#define ERR_OPEN_FUNC           tc_fopen
+#define ERR_CLOSE_FUNC          tc_fclose
 #define ERR_HANDLING_FUNC	ShowTheClouRequester
 
 U32 ShowTheClouRequester(S32 error_class);	/* siehe Base.c */

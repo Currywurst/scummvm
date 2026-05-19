@@ -51,8 +51,8 @@ struct System *InitSystem(void);	/* Initialize system for use */
 void CloseSystem(struct System *sys);	/* Close all system immedietly */
 void SetActivHandler(struct System *sys, U32 id);
 
-void SaveSystem(FILE * fh, struct System *sys);
-LIST *LoadSystem(FILE * fh, struct System *sys);
+void SaveSystem(TC_FILE * fh, struct System *sys);
+LIST *LoadSystem(TC_FILE * fh, struct System *sys);
 
 
 /* System Handler Flags */
@@ -82,8 +82,8 @@ struct Handler *FindHandler(struct System *sys, U32 id);
 
 ubyte IsHandlerCleared(struct System *sys);
 
-void SaveHandler(FILE * fh, struct System *sys, U32 id);
-ubyte LoadHandler(FILE * fh, struct System *sys, U32 id);
+void SaveHandler(TC_FILE * fh, struct System *sys, U32 id);
+ubyte LoadHandler(TC_FILE * fh, struct System *sys, U32 id);
 
 size_t plGetUsedMem(void);
 

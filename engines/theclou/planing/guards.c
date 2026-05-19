@@ -21,7 +21,7 @@
 #include "planing/guards.h"
 
 
-void grdDo(FILE * fh, struct System *sys, LIST * PersonsList, U32 BurglarsNr,
+void grdDo(TC_FILE * fh, struct System *sys, LIST * PersonsList, U32 BurglarsNr,
 	   U32 PersonsNr, ubyte grdAction)
 {
     register ubyte i;
@@ -39,7 +39,7 @@ void grdDo(FILE * fh, struct System *sys, LIST * PersonsList, U32 BurglarsNr,
     }
 }
 
-ubyte grdInit(FILE ** fh, char *mode, U32 bldId, U32 areaId)
+ubyte grdInit(TC_FILE ** fh, char *mode, U32 bldId, U32 areaId)
 {
     char bldName[TXT_KEY_LENGTH], fileName[DSK_PATH_MAX];
 
@@ -58,7 +58,7 @@ ubyte grdInit(FILE ** fh, char *mode, U32 bldId, U32 areaId)
     return 0;
 }
 
-void grdDone(FILE * fh)
+void grdDone(TC_FILE * fh)
 {
     dskClose(fh);
 }
@@ -82,7 +82,7 @@ ubyte grdAddToList(U32 bldId, LIST * l)
 
 ubyte grdDraw(GC *gc, U32 bldId, U32 areaId)
 {
-    FILE *fh;
+    TC_FILE *fh;
     ubyte ret = 0;
     LIST *GuardsList = CreateList();
 

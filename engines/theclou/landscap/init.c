@@ -250,7 +250,7 @@ static void lsInitFloorSquares(void)
     for (n = LIST_HEAD(areas), i = 0; NODE_SUCC(n); n = NODE_SUCC(n), i++) {
 	size_t size = sizeof(struct LSFloorSquare) * count;
 	unsigned j;
-	FILE *fh;
+	TC_FILE *fh;
 
 	gLandscapeState->p_AllFloors[i] = TCAllocMem(size, 0);
 	gLandscapeState->ul_FloorAreaId[i] = OL_NR(n);

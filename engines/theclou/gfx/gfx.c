@@ -60,17 +60,6 @@ SDL_Texture *sdlTexture;
 
 ubyte DecrBuffer[GFX_DECR_BUFFER_SIZE] = {0};
 
-#define GFX_WINDOW_PREF_FILE "window.cfg"
-
-typedef struct WindowPrefs {
-    unsigned scale;
-    int width;
-    int height;
-    bool loaded;
-} WindowPrefs;
-
-static WindowPrefs windowPrefs = {0, 0, 0, false};
-static char *windowPrefsPath = NULL;
 static bool windowResizeLocked = false;
 static int currentWindowWidth = SCREEN_WIDTH;
 static int currentWindowHeight = SCREEN_HEIGHT;
@@ -178,85 +167,11 @@ static unsigned gfxClampScale(unsigned scale)
     return scale;
 }
 
-static void gfxInitWindowPrefsPath(void)
-{
-    char *prefDir;
-    size_t len;
-
-    if (windowPrefsPath)
-        return;
-
-    prefDir = SDL_GetPrefPath("DerClou", "DerClou");
-    if (!prefDir)
-        return;
-
-    len = strlen(prefDir) + strlen(GFX_WINDOW_PREF_FILE) + 1;
-    windowPrefsPath = (char *)malloc(len);
-    if (windowPrefsPath) {
-        strcpy(windowPrefsPath, prefDir);
-        strcat(windowPrefsPath, GFX_WINDOW_PREF_FILE);
-    }
-
-    SDL_free(prefDir);
-}
-
-static void gfxLoadWindowPrefs(void)
-{
-    FILE *fp;
-    char line[128];
-    unsigned value;
-
-    if (!windowPrefsPath)
-        return;
-
-    fp = fopen(windowPrefsPath, "r");
-    if (!fp)
-        return;
-
-    while (fgets(line, sizeof(line), fp)) {
-        if (sscanf(line, "scale=%u", &value) == 1) {
-            if (value >= 1)
-                windowPrefs.scale = value;
-        } else if (sscanf(line, "width=%u", &value) == 1) {
-            windowPrefs.width = (int)value;
-        } else if (sscanf(line, "height=%u", &value) == 1) {
-            windowPrefs.height = (int)value;
-        }
-    }
-
-    fclose(fp);
-
-    if (windowPrefs.scale >= 1)
-        windowPrefs.loaded = true;
-}
-
-static void gfxSaveWindowPrefs(void)
-{
-    FILE *fp;
-
-    if (!windowPrefsPath || !windowPrefs.loaded)
-        return;
-
-    fp = fopen(windowPrefsPath, "w");
-    if (!fp)
-        return;
-
-    fprintf(fp, "scale=%u\n", setup.Scale);
-    fprintf(fp, "width=%d\n", windowPrefs.width);
-    fprintf(fp, "height=%d\n", windowPrefs.height);
-
-    fclose(fp);
-}
-
 static void gfxUpdateWindowMetrics(unsigned scale)
 {
     unsigned clampedScale = gfxClampScale(scale);
-    windowPrefs.scale = clampedScale;
-    windowPrefs.width = (int)(SCREEN_WIDTH * clampedScale);
-    windowPrefs.height = (int)(SCREEN_HEIGHT * clampedScale);
-    currentWindowWidth = windowPrefs.width;
-    currentWindowHeight = windowPrefs.height;
-    windowPrefs.loaded = true;
+    currentWindowWidth  = (int)(SCREEN_WIDTH  * clampedScale);
+    currentWindowHeight = (int)(SCREEN_HEIGHT * clampedScale);
 }
 
 static void gfxApplyWindowScale(unsigned scale, bool updateWindow, bool persist)
@@ -271,12 +186,10 @@ static void gfxApplyWindowScale(unsigned scale, bool updateWindow, bool persist)
 
     if (updateWindow && sdlWindow && !setup.FullScreen) {
         windowResizeLocked = true;
-        SDL_SetWindowSize(sdlWindow, windowPrefs.width, windowPrefs.height);
+        SDL_SetWindowSize(sdlWindow, currentWindowWidth, currentWindowHeight);
         windowResizeLocked = false;
     }
 
-    if (persist)
-        gfxSaveWindowPrefs();
 }
 
 static unsigned gfxChooseScaleFromResize(int width, int height, bool growing)
@@ -356,14 +269,6 @@ void gfxInit(void)
     Uint32 flags;
     int sw, sh;
 
-    gfxInitWindowPrefsPath();
-
-    if (!setup.ScaleOverride) {
-        gfxLoadWindowPrefs();
-        if (windowPrefs.loaded && windowPrefs.scale >= 1)
-            setup.Scale = windowPrefs.scale;
-    }
-
     gfxApplyWindowScale(setup.Scale, false, false);
 
     if (!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
@@ -431,11 +336,6 @@ void gfxInit(void)
         }
     }
 
-    if (!setup.FullScreen) {
-        windowPrefs.width = currentWindowWidth;
-        windowPrefs.height = currentWindowHeight;
-        windowPrefs.loaded = true;
-    }
 
     SDL_RaiseWindow(sdlWindow);
     SDL_SetWindowAlwaysOnTop(sdlWindow, true);
@@ -541,8 +441,6 @@ void gfxInit(void)
 
 void gfxDone(void)
 {
-    gfxSaveWindowPrefs();
-
     if (PictureList) {
 	RemoveList(PictureList);
 	PictureList = NULL;
@@ -598,10 +496,6 @@ void gfxDone(void)
         SDL_QuitSubSystem(SDL_INIT_VIDEO);
     }
 
-    if (windowPrefsPath) {
-        free(windowPrefsPath);
-        windowPrefsPath = NULL;
-    }
 }
 
 void gfxSetGC(GC *gc)
@@ -2013,7 +1907,7 @@ void ShowIntro(void)
     memset(colorTABLE, 0, sizeof(colorTABLE));
 
     for (anims=0; anims<5; anims++) {
-        FILE *fp;
+        TC_FILE *fp;
         char pathName[DSK_PATH_MAX];
         bool showA;
 
@@ -2033,8 +1927,8 @@ void ShowIntro(void)
 	if (fp) {
             XMSOffset = 0;
 
-	    fread(&head[0], 1, 4, fp);
-	    fread(&size, 1, 4, fp);
+	    tc_fread(&head[0], 1, 4, fp);
+	    tc_fread(&size, 1, 4, fp);
 	    rsize = Amg2Pc(size);
 
             dskRead(fp, XMSHandle, rsize);

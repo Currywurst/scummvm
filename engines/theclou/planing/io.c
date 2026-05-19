@@ -33,26 +33,26 @@ static char *Planing_Open[3] = { "rb", "wb", "rb" };
 
 
 /* Loading & saving functions */
-void plSaveTools(FILE * fh)
+void plSaveTools(TC_FILE * fh)
 {
     if (fh) {
 	struct ObjectNode *n;
 
 	hasAll(Person_Matt_Stuvysunt, OLF_NORMAL, Object_Tool);
 
-	fprintf(fh, PLANING_PLAN_TOOL_BEGIN_ID);
-	fprintf(fh, "\r\n");
+	tc_fprintf(fh, PLANING_PLAN_TOOL_BEGIN_ID);
+	tc_fprintf(fh, "\r\n");
 
 	for (n = (struct ObjectNode *) LIST_HEAD(ObjectList); NODE_SUCC(n);
 	     n = (struct ObjectNode *) NODE_SUCC(n))
-	    fprintf(fh, "%" PRIu32 "\r\n", OL_NR(n));
+	    tc_fprintf(fh, "%" PRIu32 "\r\n", OL_NR(n));
 
-	fprintf(fh, PLANING_PLAN_TOOL_END_ID);
-	fprintf(fh, "\r\n");
+	tc_fprintf(fh, PLANING_PLAN_TOOL_END_ID);
+	tc_fprintf(fh, "\r\n");
     }
 }
 
-LIST *plLoadTools(FILE * fh)
+LIST *plLoadTools(TC_FILE * fh)
 {
     register LIST *l = txtGoKey(PLAN_TXT, "SYSTEM_TOOLS_MISSING_1");
     register ubyte foundAll = 1, canGet = 2, toolsNr = 0;
@@ -111,7 +111,7 @@ LIST *plLoadTools(FILE * fh)
     return l;
 }
 
-ubyte plOpen(U32 objId, ubyte mode, FILE ** fh)
+ubyte plOpen(U32 objId, ubyte mode, TC_FILE ** fh)
 {
     if (GamePlayMode & GP_GUARD_DESIGN) {
 	if (grdInit(fh, Planing_Open[mode], objId, lsGetActivAreaID()))
@@ -119,7 +119,7 @@ ubyte plOpen(U32 objId, ubyte mode, FILE ** fh)
     } else {
 	register LIST *PlanList;
 	register ubyte i;
-	FILE *pllFh;
+	TC_FILE *pllFh;
 	U32 pllData = 0;
 	char pllPath[DSK_PATH_MAX], pllPath2[DSK_PATH_MAX],
 	    name1[TXT_KEY_LENGTH], name2[TXT_KEY_LENGTH], exp[TXT_KEY_LENGTH];
@@ -203,7 +203,7 @@ ubyte plOpen(U32 objId, ubyte mode, FILE ** fh)
 			pllData |= 1L << i;
 
 			if ((pllFh = dskOpen(pllPath, "wb"))) {
-			    fprintf(pllFh, "%" PRIu32, pllData);
+			    tc_fprintf(pllFh, "%" PRIu32, pllData);
 			    dskClose(pllFh);
 			}
 		    }
@@ -230,7 +230,7 @@ ubyte plOpen(U32 objId, ubyte mode, FILE ** fh)
 
 void plSave(U32 objId)
 {
-    FILE *fh = NULL;
+    TC_FILE *fh = NULL;
 
     if (plOpen(objId, PLANING_OPEN_WRITE_PLAN, &fh) == PLANING_OPEN_OK) {
 	if (GamePlayMode & GP_GUARD_DESIGN) {
@@ -273,7 +273,7 @@ void plSaveChanged(U32 objId)
 
 void plLoad(U32 objId)
 {
-    FILE *fh = NULL;
+    TC_FILE *fh = NULL;
     ubyte ret;
 
     if (objId == Building_Starford_Kaserne)
