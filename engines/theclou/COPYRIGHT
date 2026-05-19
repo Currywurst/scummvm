@@ -1,0 +1,126 @@
+Der Clou! / The Clou! — ScummVM Engine
+=======================================
+
+This engine integrates three distinct bodies of code, each under its own
+copyright and license terms.  Distributors and contributors must comply
+with ALL applicable licenses simultaneously.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+I.  ORIGINAL GAME CODE  (1993 – 1994)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Copyright (C) 1993, 1994  neo Software Produktions GmbH
+                          Wienerbergstraße 9/1, A-1100 Wien, Austria
+
+Authors (original "...and avoid panic by" team):
+  Helmut Gaberschek   — base, anim, gfx, memory, living
+  Kaweh Kazemi        — data, database, relation, planing, landscap
+
+Affected source directories:
+  anim/       base/       cdrom/      data/
+  dialog/     disk/       gameplay/   gfx/
+  inphdl/     landscap/   list/       living/
+  memory/     organisa/   planing/    present/
+  random/     scenes/     story/      text/
+
+License: Der Clou! Public License Contract
+  The full license text is in 'publiclicencecontract.doc' (Microsoft Word)
+  distributed with the game.  A plain-text summary is in the file
+  'derclou/LICENSE' in the source repository.
+
+  Key obligations for distributors:
+  • Non-commercial distribution only.
+  • Any modified or newly created source files and a runnable binary
+    must be sent to <office@neo.at> within 14 calendar days after
+    public release, with subject line "Open Source <product name>".
+  • Both a Binary Distribution and a Developer's Distribution
+    (source + data) must be made freely and publicly available.
+  • The product name must use "Der Clou!" as its base name.
+    (Example: "Der Clou! — ScummVM Port")
+  • Every version must prominently credit neo Software:
+      "basierend auf der Originalversion von neo Software"
+      "Details darüber finden Sie unter www.neo.at"
+    or an equivalent translation.
+  • The file 'publiclicencecontract.doc' must be included in every
+    distribution.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+II.  SDL2 OPEN SOURCE PORT  (2005)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Portions Copyright (C) 2005  Vasco Alexandre da Silva Costa
+Portions Copyright (C) 2005  Thomas Trummer
+Portions Copyright (C) 2005  Jens Granseuer
+
+These contributors ported the original DOS game to SDL2 under the same
+Der Clou! Public License Contract described in Section I above.
+
+Affected source files:
+  cdrom/cdrom.c   cdrom/cdrom.h   (wholly by Vasco Alexandre da Silva Costa)
+  All other files in Section I carry a "Portions copyright (c) 2005
+  Vasco Alexandre da Silva Costa" notice in their headers.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+III.  SCUMMVM INTEGRATION  (2024 – 2026)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Copyright (C) 2024-2026  The ScummVM Team
+
+Authors of new ScummVM-specific files:
+  David Stoffel       — primary integration author
+
+New files written entirely for this ScummVM port (no original game code):
+  detection.cpp           metaengine.cpp          engine.cpp
+  engine.h                module.mk
+  base/theclou_run.cpp
+  platform/tc_debug.h     platform/tc_debug.cpp
+  platform/tc_fs.h        platform/tc_fs.cpp
+  platform/tc_platform.h  platform/tc_platform.cpp
+  platform/tc_quit.h      platform/tc_quit.cpp
+  platform/tc_sdl_compat.h
+
+License: GNU General Public License v3 (or later)
+  See the file COPYING in the ScummVM root directory, or
+  <https://www.gnu.org/licenses/gpl-3.0.html>.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+IV.  FM OPL SOUND EMULATOR  (fmopl)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Copyright (C) 1999, 2000  Tatsuyuki Satoh, MultiArcadeMachineEmulator development
+Copyright (C) 2002         Jarek Burczynski
+Copyright (C) 1997-2005    Nicola Salmoria and The MAME Team
+
+Affected source file:  sound/fmopl.c
+
+License: MAME License
+  Full license text: <ScummVM root>/engines/theclou/sound/fmopl.c header,
+  and in the file 'derclou/mame.txt' in the source repository.
+
+  Key constraints:
+  • Non-commercial use only (source and binary).
+  • Source code must be made freely available alongside any binary.
+  • May not be used in a commercial product without written permission
+    from the authors.
+  • Any derivative work must make its full source code freely available.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+V.  DISTRIBUTOR CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before publishing a build that includes this engine, verify:
+
+  [ ] Distribution is non-commercial (required by Sections I, II, IV).
+  [ ] 'publiclicencecontract.doc' is included in the distribution.
+  [ ] neo Software credit is displayed at startup or in the About screen.
+  [ ] Product name uses "Der Clou!" as a base name.
+  [ ] A source distribution (Developer's Distribution) is publicly available.
+  [ ] Any new/modified source files have been (or will be within 14 days)
+      sent to <office@neo.at> with subject "Open Source Der Clou!".
+  [ ] ScummVM source is available under GPL-3 (already satisfied by the
+      main ScummVM repository).
