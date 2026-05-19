@@ -29,17 +29,22 @@ static const PlainGameDescriptor theClouGames[] = {
 
 namespace TheClou {
 
-// Detection requires BOTH data/tcmain.dat AND data/tcstory.pc to be present.
-// The .pc extension on tcstory.pc is unique to Der Clou! and prevents false
-// positives from other engines (e.g. Level9) that also have .dat files.
+// Detection requires BOTH TCMAIN.DAT and TCSTORY.PC to be present.
+// TCSTORY.PC is unique to Der Clou! (the .pc extension prevents false positives
+// from other engines that also use .dat files).
+//
+// The files live in the DATA/ subdirectory of the game root.  We use
+// directoryGlobs + _maxScanDepth=2 WITHOUT kADFlagMatchFullPaths so the
+// AdvancedDetector recurses into DATA/ and indexes the files by name only.
+// This is the standard ScummVM pattern (cf. BladeRunner, Sludge, …) and is
+// more robust than full-path matching across different platforms/filesystems.
 static const ADGameDescription gameDescriptions[] = {
-	// German version (Der Clou! v1.0) — files ship ALL-CAPS on the original DOS distribution.
-	// kADFlagMatchFullPaths is set on the MetaEngine so subdirectory paths work.
+	// German version (Der Clou! v1.0)
 	{
 		"theclou",
 		"German",
-		AD_ENTRY2s("DATA/TCMAIN.DAT", "d1e8794f38161bd6a822d4b344433569", 10999,
-		           "DATA/TCSTORY.PC", "54d219699d7afe637e24d2e1a1a8435f", 12559),
+		AD_ENTRY2s("TCMAIN.DAT", "0f825d65672e578bd3b021dec974f199", 10999,
+		           "TCSTORY.PC", "b7f03493d6e3706a89206110f2edff25", 12559),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -49,8 +54,8 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"theclou",
 		"English",
-		AD_ENTRY2s("DATA/TCMAIN.DAT", "de4fa6c700d6e45233dea3a95b6090e0", 8324,
-		           "DATA/TCSTORY.PC", "c1455134cd5cc2604bd61ef5de7cf3be", 11132),
+		AD_ENTRY2s("TCMAIN.DAT", "92839ac9027c80d1e6561cd6863eed73", 8324,
+		           "TCSTORY.PC", "ce8419fbf5c69634c582e57d1ae281f6", 11132),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -61,24 +66,24 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace TheClou
 
-// directoryGlobs tells the AdvancedDetector which subdirectories to scan
-// when building the file map for detection.  "data" MUST be listed so that
-// the scanner recurses into DATA/ and finds TCMAIN.DAT / TCSTORY.PC.
-// The user must select the game's ROOT directory (the folder that contains
-// DATA/, DATADISK/, TEXTS/ etc.), not the DATA subdirectory itself.
+// directoryGlobs: scanner recurses into DATA/ (and the other dirs) so it
+// finds TCMAIN.DAT and TCSTORY.PC.  The user must select the game's ROOT
+// directory (the folder that contains DATA/, DATADISK/, TEXTS/, etc.),
+// NOT the DATA subdirectory itself.
+// Directory names must match the on-disk capitalisation exactly because the
+// glob map lookup is case-sensitive even on macOS.
 static const char * const directoryGlobs[] = {
-	"data",
-	"datadisk",
-	"texts",
-	"pictures",
-	"sounds",
+	"DATA",
+	"DATADISK",
+	"TEXTS",
+	"PICTURES",
+	"SOUNDS",
 	nullptr
 };
 
 class TheClouMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	TheClouMetaEngineDetection() : AdvancedMetaEngineDetection(TheClou::gameDescriptions, theClouGames) {
-		_flags = kADFlagMatchFullPaths;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
