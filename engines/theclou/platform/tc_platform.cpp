@@ -7,7 +7,7 @@
  * Timing    → g_system->getMillis() / delayMillis()
  * Audio     → TheClouAudioStream → Audio::Mixer (ring-buffer pull model)
  * Threading → Common::Mutex + POSIX/Win32 thread wrapper
- * Quit      → tc_QuitGame() in base.c via longjmp; we just set a flag
+ * Quit      → tc_QuitGame() in platform/tc_quit.cpp throws QuitException
  * Pause     → g_tcPaused flag; tc_Delay spin-waits while paused
  */
 

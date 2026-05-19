@@ -418,15 +418,15 @@ bool tc_ConvertAudioSamples(const SDL_AudioSpec *src_spec,
 
 /* ------------------------------------------------------------------ */
 /* Quit / Pause control                                                */
-/* tc_QuitGame()  — defined in base/base.c; longjmps out of           */
-/*                  theclou_run() for a clean, exception-free exit.   */
+/* tc_QuitGame()  — defined in platform/tc_quit.cpp; throws              */
+/*                  TheClou::QuitException (clean, RAII-safe exit).       */
 /* tc_SetPaused() — defined in platform/tc_platform.cpp; suspends the */
 /*                  game loop and pauses ScummVM's audio mixer.       */
 /* ------------------------------------------------------------------ */
 #ifdef __cplusplus
 extern "C" {
 #endif
-void tc_QuitGame(void);   /* base/base.c  — longjmps out of theclou_run() */
+void tc_QuitGame(void);        /* platform/tc_quit.cpp — throws QuitException  */
 void tc_SetPaused(int paused); /* tc_platform.cpp — suspends game loop    */
 #ifdef __cplusplus
 }

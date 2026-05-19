@@ -6,8 +6,10 @@ MODULE_OBJS := \
 	platform/tc_debug.o \
 	platform/tc_fs.o \
 	platform/tc_platform.o \
+	platform/tc_quit.o \
 	anim/sysanim.o \
 	base/base.o \
+	base/theclou_run.o \
 	cdrom/cdrom.o \
 	data/dataappl.o \
 	data/database.o \

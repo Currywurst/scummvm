@@ -76,7 +76,7 @@ Common::Error TheClouEngine::run() {
 
 	// Record this thread as the main game thread so tc_Delay() can
 	// distinguish it from background threads (e.g. the audio mix thread).
-	// Background threads must NOT pump events or call tc_QuitGame/longjmp.
+	// Background threads must NOT pump events or call tc_QuitGame.
 	tc_InitPlatform();
 
 	// Blocking call — runs the full game loop; returns when the game exits

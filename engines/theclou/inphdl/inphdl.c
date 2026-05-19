@@ -36,8 +36,8 @@ void gfxWaitTOF(void);
 
 static void inpHandleQuitRequest(void)
 {
-    /* ScummVM-safe exit: longjmps back to theclou_run() which then
-     * calls tcDone() for proper cleanup before returning to launcher. */
+    /* ScummVM-safe exit: throws TheClou::QuitException which unwinds to
+     * theclou_run() (base/theclou_run.cpp); tcDone() always runs after. */
     tc_QuitGame();
 }
 

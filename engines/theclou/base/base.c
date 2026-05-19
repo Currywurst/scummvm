@@ -23,23 +23,7 @@
 extern unsigned _stklen = 16 * 1024;
 #endif
 
-#include <setjmp.h>
 #include "platform/tc_sdl_compat.h"
-
-/* ------------------------------------------------------------------ */
-/* Clean-quit via longjmp — avoids calling exit() inside ScummVM.     */
-/* ------------------------------------------------------------------ */
-static jmp_buf  g_quitJmp;
-static volatile int g_quitJmpValid = 0;
-
-void tc_QuitGame(void)
-{
-    if (g_quitJmpValid) {
-        g_quitJmpValid = 0;
-        longjmp(g_quitJmp, 1);
-    }
-    /* If called before setjmp is set up (shouldn't happen), just return. */
-}
 
 void *StdBuffer0 = NULL;
 void *StdBuffer1 = NULL;
@@ -152,7 +136,7 @@ static char AutoDetectLanguage(void)
     return lang;
 }
 
-static bool tcInit(void)
+bool tcInit(void)
 {
     bool speechAvailable;
 
@@ -568,7 +552,7 @@ static ubyte StartupMenu(void)
     return ret;
 }
 
-static void tcDo(void)
+void tcDo(void)
 {
     U32 sceneId = SCENE_NEW_GAME;
 
@@ -649,7 +633,7 @@ static const char syntaxString[] =
 
 
 /**********************************************************/
-static void parseOptions(int argc, char *argv[])
+void parseOptions(int argc, char *argv[])
 {
     int i;
     const char *s;
@@ -735,43 +719,9 @@ static void parseOptions(int argc, char *argv[])
     }
 }
 
-/**********************************************************/
-/* ScummVM entry point: called by TheClouEngine::run()    */
-/* instead of main() so the C code can live inside ScummVM*/
-void theclou_run(const char *rootPath)
-{
-    bool res;
-
-    g_quitJmpValid = 0;
-
-    /* Initialise setup defaults (volumes, flags).
-     * In the standalone build this is done by parseOptions(argc, argv).
-     * In the ScummVM build there is no argv, so we call it with argc=0
-     * which skips all argument parsing but still sets every default,
-     * including SfxVolume = MusicVolume = SND_MAX_VOLUME.              */
-    parseOptions(0, NULL);
-
-    rndInit();
-    inpClearKbBuffer();
-
-    dskSetRootPath(rootPath ? rootPath : ".");
-
-    /* Ensure <savepath>/datadisk/ exists and contains the save-slot templates
-     * (GAMES.LST / ORIGIN.LST) copied from the game directory.
-     * Must be called AFTER dskSetRootPath so RootPathName is valid, and
-     * AFTER dskSetSavePath has already been called from engine.cpp.    */
-    dskInitSaveDir();
-
-    /* setjmp checkpoint: longjmp from tc_QuitGame() lands here */
-    g_quitJmpValid = 1;
-    if (setjmp(g_quitJmp) == 0) {
-        if ((res = tcInit()))
-            tcDo();
-    }
-    /* longjmp or normal exit — always clean up */
-    g_quitJmpValid = 0;
-    tcDone();
-}
+/* theclou_run() has moved to base/theclou_run.cpp so it can catch the
+ * TheClou::QuitException thrown by tc_QuitGame() (platform/tc_quit.cpp).
+ * See base/theclou_run.cpp for the full entry-point implementation.    */
 
 /**********************************************************/
 /* Keep the original standalone main() only when building */

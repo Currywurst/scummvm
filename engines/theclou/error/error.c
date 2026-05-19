@@ -24,9 +24,9 @@
 #include "platform/tc_debug.h"
 #include "platform/tc_fs.h"
 
-/* tc_QuitGame() does a longjmp back to the main game loop.
- * Using it instead of exit() lets ScummVM shut down cleanly
- * (Return-to-Launcher) rather than killing the whole process. */
+/* tc_QuitGame() throws TheClou::QuitException which unwinds to
+ * theclou_run() (base/theclou_run.cpp). Using it instead of exit()
+ * lets ScummVM shut down cleanly (Return-to-Launcher). */
 extern void tc_QuitGame(void);
 
 #include "error/error.h"
