@@ -660,7 +660,7 @@ static const char *const credits[] = {
 "C0""Matthew Duggan",
 "",
 "C1""TheClou",
-"C0""David Stoffel",
+"C0""David Braun",
 "C2""ScummVM integration",
 "C0""Helmut Gaberschek",
 "C2""Original game (1993/1994, retired)",

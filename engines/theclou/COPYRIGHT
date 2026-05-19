@@ -70,7 +70,7 @@ III.  SCUMMVM INTEGRATION  (2024 – 2026)
 Copyright (C) 2024-2026  The ScummVM Team
 
 Authors of new ScummVM-specific files:
-  David Stoffel       — primary integration author
+  David Braun       — primary integration author
 
 New files written entirely for this ScummVM port (no original game code):
   detection.cpp           metaengine.cpp          engine.cpp
