@@ -125,6 +125,38 @@ char    *tc_fgets(char *s, int n, TC_FILE *f);
  */
 int      tc_fprintf(TC_FILE *f, const char *fmt, ...);
 
+/**
+ * Return the current read position in f as a byte offset from the
+ * beginning of the file, or -1 on error.  Replaces ftell().
+ */
+long     tc_ftell(TC_FILE *f);
+
+/**
+ * Return non-zero if f has reached end-of-file, 0 otherwise.
+ * Replaces feof().
+ */
+int      tc_feof(TC_FILE *f);
+
+/**
+ * Push back one byte c into the read stream by seeking back one byte.
+ * Returns c on success, -1 on error.  Replaces ungetc().
+ * Note: only one byte of pushback is guaranteed (matches standard).
+ */
+int      tc_ungetc(int c, TC_FILE *f);
+
+/**
+ * Seek to the beginning of f.  Replaces rewind().
+ */
+void     tc_rewind(TC_FILE *f);
+
+/**
+ * Read formatted text from f.  Reads one line internally and applies
+ * vsscanf — safe on all ScummVM platforms.  Returns the number of
+ * successfully assigned items, or -1 on end-of-file / error.
+ * Replaces fscanf().
+ */
+int      tc_fscanf(TC_FILE *f, const char *fmt, ...);
+
 #ifdef __cplusplus
 }
 #endif

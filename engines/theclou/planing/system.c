@@ -139,7 +139,7 @@ LIST *LoadSystem(TC_FILE * fh, struct System *sys)
 		   && strcmp(buffer, FILE_HANDLER_ID) == 0) {
 		U32 id;
 
-		if (fscanf(fh, "%" SCNu32 "\r\n", &id) == 1
+		if (tc_fscanf(fh, "%" SCNu32 "\r\n", &id) == 1
 		    && !dbIsObject(id, Object_Police)) {
 		    handlerNr++;
 
@@ -306,26 +306,26 @@ ubyte LoadHandler(TC_FILE * fh, struct System *sys, U32 id)
     char buffer[64];
 
     if (fh && sys && (FindHandler(sys, id))) {
-	rewind(fh);
+	tc_rewind(fh);
 
 	while (dskGetLine(buffer, sizeof(buffer), fh)) {
 	    if (strcmp(buffer, FILE_ACTION_LIST_ID) == 0) {
 		U32 rid;
 
-		if (fscanf(fh, "%" SCNu32 "\r\n", &rid) == 1 && id == rid) {
+		if (tc_fscanf(fh, "%" SCNu32 "\r\n", &rid) == 1 && id == rid) {
 		    SetActivHandler(sys, id);
 
 		    while (dskGetLine(buffer, sizeof(buffer), fh)
 			   && (strcmp(buffer, FILE_ACTION_ID) == 0)) {
-			fscanf(fh, "%" SCNu16 "\r\n", &type);
-			fscanf(fh, "%" SCNu16 "\r\n", &time);
+			tc_fscanf(fh, "%" SCNu16 "\r\n", &type);
+			tc_fscanf(fh, "%" SCNu16 "\r\n", &time);
 
 			if (type) {
 			    a = InitAction(sys, type, 0L, 0L, time);
 
 			    switch (type) {
 			    case ACTION_GO:
-				fscanf(fh, "%" SCNu16 "\r\n", &value16);
+				tc_fscanf(fh, "%" SCNu16 "\r\n", &value16);
 				ActionData(a, struct ActionGo *)->Direction =
 				    value16;
 				break;
@@ -333,11 +333,11 @@ ubyte LoadHandler(TC_FILE * fh, struct System *sys, U32 id)
 			    case ACTION_USE:
 			    case ACTION_TAKE:
 			    case ACTION_DROP:
-				fscanf(fh, "%" SCNu32 "\r\n", &value32);
+				tc_fscanf(fh, "%" SCNu32 "\r\n", &value32);
 				ActionData(a, struct ActionUse *)->ToolId =
 				    value32;
 
-				fscanf(fh, "%" SCNu32 "\r\n", &value32);
+				tc_fscanf(fh, "%" SCNu32 "\r\n", &value32);
 				ActionData(a, struct ActionUse *)->ItemId =
 				    value32;
 				break;
@@ -347,7 +347,7 @@ ubyte LoadHandler(TC_FILE * fh, struct System *sys, U32 id)
 			    case ACTION_CONTROL:
 			    case ACTION_WAIT_SIGNAL:
 			    case ACTION_SIGNAL:
-				fscanf(fh, "%" SCNu32 "\r\n", &value32);
+				tc_fscanf(fh, "%" SCNu32 "\r\n", &value32);
 				ActionData(a, struct ActionOpen *)->ItemId =
 				    value32;
 				break;

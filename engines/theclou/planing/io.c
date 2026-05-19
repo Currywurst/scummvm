@@ -136,7 +136,7 @@ ubyte plOpen(U32 objId, ubyte mode, TC_FILE ** fh)
 	dskBuildPathName(DISK_CHECK_FILE, DATADISK, name2, pllPath);
 
 	if ((pllFh = dskOpen(pllPath, "rb"))) {
-	    fscanf(pllFh, "%" SCNu32, &pllData);
+	    tc_fscanf(pllFh, "%" SCNu32, &pllData);
 	    dskClose(pllFh);
 
 	    if ((mode == PLANING_OPEN_WRITE_PLAN) || pllData) {

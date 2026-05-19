@@ -1184,7 +1184,7 @@ dbRWObject(void *obj, int RW, U32 type, U32 size, U32 localSize, TC_FILE *fp)
     S32 start;
 
 
-    start = ftell(fp);
+    start = tc_ftell(fp);
 
     if (setup.Profidisk) {
         dbRWProfiObject(obj, RW, type, size, localSize, fp);
@@ -1192,7 +1192,7 @@ dbRWObject(void *obj, int RW, U32 type, U32 size, U32 localSize, TC_FILE *fp)
         dbRWStdObject(obj, RW, type, size, localSize, fp);
     }
 
-    if ((U32) (ftell(fp) - start) != size) {
+    if ((U32) (tc_ftell(fp) - start) != size) {
 	ErrorMsg(Disk_Defect, ERROR_MODULE_DATABASE, 1);
     }
 }
@@ -1206,7 +1206,7 @@ U8 dbLoadAllObjects(char *fileName, U16 diskId)
 	U32 realNr = 1;
 	struct dbObjectHeader objHd;
 
-	while (!feof(fh)) {
+	while (!tc_feof(fh)) {
 	    int ch;
 
 	    objHd.nr = 0;
@@ -1253,7 +1253,7 @@ U8 dbLoadAllObjects(char *fileName, U16 diskId)
 	    }
 
 	    if ((ch = tc_fgetc(fh)) != EOF)
-		ungetc(ch, fh);
+		tc_ungetc(ch, fh);
 	}
 
 	dskClose(fh);

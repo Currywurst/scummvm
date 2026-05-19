@@ -317,8 +317,8 @@ int LoadRelations(char *file, U16 disk_id)
 	    if (strcmp(buffer, REL_FILE_MARK) == 0) {
 		dskGetLine(buffer, sizeof(buffer), fh);
 
-		while (!feof(fh) && strcmp(buffer, REL_TABLE_MARK) == 0) {
-		    fscanf(fh, "%" SCNu32 "\r\n", &rd);
+		while (!tc_feof(fh) && strcmp(buffer, REL_TABLE_MARK) == 0) {
+		    tc_fscanf(fh, "%" SCNu32 "\r\n", &rd);
 
 		    goOn = 0;
 		    if (FindRelation(rd))
@@ -343,7 +343,7 @@ int LoadRelations(char *file, U16 disk_id)
 			    if (sscanf(right, "%" SCNu32, &dummy) != 1)
 				break;
 
-			    if (fscanf(fh, "%" SCNu32 "\r\n", &parameter) != 1)
+			    if (tc_fscanf(fh, "%" SCNu32 "\r\n", &parameter) != 1)
 				break;
 
 			    if (!SetP

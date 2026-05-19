@@ -268,12 +268,12 @@ ubyte tcLoadChangesInScenes(char *fileName)
     struct Scene *sc;
 
     if ((file = dskOpen(fileName, "rb"))) {
-	fscanf(file, "%" SCNu32 "\r\n", &choice);
+	tc_fscanf(file, "%" SCNu32 "\r\n", &choice);
 	SetEnabledChoices(choice);
 
 	for (i = 0; i < film->AmountOfScenes; i++) {
-	    fscanf(file, "%" SCNu32 "\r\n", &eventNr);
-	    fscanf(file, "%" SCNu16 "\r\n", &count);
+	    tc_fscanf(file, "%" SCNu32 "\r\n", &eventNr);
+	    tc_fscanf(file, "%" SCNu16 "\r\n", &count);
 
 	    if ((sc = GetScene(eventNr)))
 		sc->Geschehen = count;

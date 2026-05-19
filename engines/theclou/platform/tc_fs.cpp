@@ -232,3 +232,43 @@ extern "C" int tc_fprintf(TC_FILE *f, const char *fmt, ...) {
 		f->wstream->write(msg.c_str(), msg.size());
 	return (int)msg.size();
 }
+
+extern "C" long tc_ftell(TC_FILE *f) {
+	if (!f || !f->rstream) return -1L;
+	return (long)f->rstream->pos();
+}
+
+extern "C" int tc_feof(TC_FILE *f) {
+	if (!f || !f->rstream) return 1;
+	return f->rstream->eos() ? 1 : 0;
+}
+
+extern "C" int tc_ungetc(int c, TC_FILE *f) {
+	if (!f || !f->rstream) return -1;
+	int64 pos = f->rstream->pos();
+	if (pos <= 0) return -1;
+	if (!f->rstream->seek(pos - 1)) return -1;
+	return (unsigned char)c;
+}
+
+extern "C" void tc_rewind(TC_FILE *f) {
+	if (!f || !f->rstream) return;
+	f->rstream->seek(0);
+}
+
+extern "C" int tc_fscanf(TC_FILE *f, const char *fmt, ...) {
+	if (!f || !f->rstream) return -1;
+
+	/* Read one line into a temporary buffer, then parse with vsscanf.
+	 * All game call-sites read exactly one value per line, so fgets +
+	 * vsscanf is semantically equivalent to fscanf here.              */
+	char buf[256];
+	if (!tc_fgets(buf, (int)sizeof(buf), f))
+		return -1;
+
+	va_list args;
+	va_start(args, fmt);
+	int result = vsscanf(buf, fmt, args);
+	va_end(args);
+	return result;
+}
