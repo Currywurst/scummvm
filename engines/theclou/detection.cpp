@@ -45,12 +45,12 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
-	// English version (The Clou! v1.0) — checksums to be filled once files are available
+	// English version (The Clou! v1.0)
 	{
 		"theclou",
 		"English",
-		AD_ENTRY2s("DATA/TCMAIN.DAT", nullptr, AD_NO_SIZE,
-		           "DATA/TCSTORY.PC", nullptr, AD_NO_SIZE),
+		AD_ENTRY2s("DATA/TCMAIN.DAT", "de4fa6c700d6e45233dea3a95b6090e0", 8324,
+		           "DATA/TCSTORY.PC", "c1455134cd5cc2604bd61ef5de7cf3be", 11132),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
