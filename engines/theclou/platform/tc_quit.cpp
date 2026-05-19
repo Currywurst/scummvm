@@ -21,15 +21,25 @@
 /*
  * tc_quit.cpp — Implementation of tc_QuitGame().
  *
- * Declared extern "C" so that every C source file in the engine can call
- * it without knowing about C++ exceptions.  The throw propagates through
- * all C and C++ frames on the call stack until it reaches the try/catch
- * in theclou_run() (base/theclou_run.cpp), where tcDone() is called for
- * orderly cleanup before returning to the ScummVM launcher.
+ * Centralises the setjmp/longjmp quit mechanism that was previously
+ * scattered inside base/base.c.  See platform/tc_quit.h for the full
+ * design rationale.
+ *
+ * tc_QuitGame() is declared extern "C" so that every C source file in
+ * the engine can call it via the declaration in tc_sdl_compat.h without
+ * knowing about the longjmp internals.
  */
 
 #include "theclou/platform/tc_quit.h"
 
+/* Global state — defined here, declared extern in tc_quit.h. */
+jmp_buf         g_tcQuitJmp;
+volatile int    g_tcQuitJmpValid = 0;
+
 extern "C" void tc_QuitGame(void) {
-	throw TheClou::QuitException();
+	if (g_tcQuitJmpValid) {
+		g_tcQuitJmpValid = 0;
+		longjmp(g_tcQuitJmp, 1);
+	}
+	/* Called before setjmp was set up — shouldn't happen in normal use. */
 }

@@ -21,10 +21,15 @@
 /*
  * theclou_run.cpp — ScummVM entry point for the Der Clou! game loop.
  *
- * This file is intentionally C++ (not C) so that it can catch the
- * TheClou::QuitException thrown by tc_QuitGame().  All game-logic
- * functions it calls are compiled as C and forward-declared here with
- * extern "C" linkage.
+ * This file is C++ (not C) so that it can forward-declare the C game
+ * functions with extern "C" linkage and call them from a single clean
+ * entry point.  The setjmp/longjmp quit mechanism is isolated in
+ * platform/tc_quit.h — see that file for the design rationale.
+ *
+ * ScummVM builds with -fno-exceptions, so C++ throw/catch cannot be used.
+ * longjmp is safe here because there are no C++ objects with non-trivial
+ * destructors on the stack between the setjmp checkpoint and the longjmp
+ * sites deep in the C game code.
  *
  * Call sequence (from TheClouEngine::run() in engine.cpp):
  *
@@ -36,15 +41,14 @@
  *                               inpClearKbBuffer()
  *                               dskSetRootPath(path)
  *                               dskInitSaveDir()
- *                               try {
- *                                 tcInit() ──────────► game initialisation
- *                                 tcDo()  ──────────► main game loop
- *                                                       │
+ *                               g_tcQuitJmpValid = 1
+ *                               setjmp(g_tcQuitJmp) ──► game init + loop
+ *                                                         │
  *                                           tc_QuitGame() called
- *                                                       │
- *                                           throw QuitException
- *                               } catch (QuitException) { }
- *                               tcDone() ─────────── ► cleanup / free mem
+ *                                                         │
+ *                                           longjmp back to setjmp
+ *                               g_tcQuitJmpValid = 0
+ *                               tcDone() ─────────────── cleanup
  *                             ◄── returns normally
  *     └─ return kNoError
  */
@@ -52,9 +56,9 @@
 #include <cstddef>
 #include "theclou/platform/tc_quit.h"
 
-/* Forward-declare every C function this file needs.                       */
-/* We do NOT include the legacy base/base.h because it pulls in SDL compat */
-/* headers that conflict with ScummVM types when compiled as C++.          */
+/* Forward-declare every C function this file needs.                        */
+/* We do NOT include the legacy base/base.h because it pulls in SDL compat  */
+/* headers that conflict with ScummVM types when compiled as C++.           */
 extern "C" {
 	/* base/base.c */
 	void parseOptions(int argc, char **argv);
@@ -81,14 +85,12 @@ extern "C" {
  *
  * @param rootPath  Absolute path to the game's root directory
  *                  (the folder that contains DATA/, DATADISK/, etc.).
- *                  Passed through from ConfMan "path" in engine.cpp.
  */
 extern "C" void theclou_run(const char *rootPath) {
 	/* Initialise setup defaults (volumes, debug flags, etc.).
 	 * In the standalone build this is done by parseOptions(argc, argv).
 	 * Inside ScummVM there is no argv, so we call with argc=0 which skips
-	 * all argument parsing but still sets every field to its default
-	 * (including SfxVolume = MusicVolume = SND_MAX_VOLUME).             */
+	 * all argument parsing but still sets every field to its default.    */
 	parseOptions(0, NULL);
 
 	rndInit();
@@ -97,20 +99,20 @@ extern "C" void theclou_run(const char *rootPath) {
 	dskSetRootPath(rootPath ? rootPath : ".");
 
 	/* Ensure <savepath>/datadisk/ exists and contains the save-slot
-	 * template files (GAMES.LST / ORIGIN.LST) copied from the game
-	 * directory.  Must be called AFTER dskSetRootPath.                  */
+	 * template files (GAMES.LST / ORIGIN.LST).
+	 * Must be called AFTER dskSetRootPath.                              */
 	dskInitSaveDir();
 
-	/* Run the game.  tc_QuitGame() — called from the error handler,
-	 * input handler, or quit menu — throws QuitException to break out
-	 * of tcInit()/tcDo() without calling exit().  tcDone() is always
-	 * reached so that all game resources are freed before we return.    */
-	try {
+	/* Arm the longjmp checkpoint.  tc_QuitGame() (called from the error
+	 * handler, input handler, or quit menu) longjmps back here so the
+	 * game loop can be exited without calling exit().  tcDone() is
+	 * always reached so all game resources are freed before we return.  */
+	g_tcQuitJmpValid = 1;
+	if (setjmp(g_tcQuitJmp) == 0) {
 		if (tcInit())
 			tcDo();
-	} catch (const TheClou::QuitException &) {
-		/* Normal quit path — fall through to tcDone() below. */
 	}
-
+	/* longjmp or normal exit — always clean up. */
+	g_tcQuitJmpValid = 0;
 	tcDone();
 }

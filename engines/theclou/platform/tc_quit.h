@@ -28,53 +28,50 @@
  * input handler, quit menu).  Inside ScummVM an engine must never call
  * exit(); it must return from Engine::run() so the launcher can continue.
  *
- * Solution: tc_QuitGame() throws TheClou::QuitException.  The exception
- * unwinds through all C and C++ frames back to the try/catch in
- * theclou_run() (base/theclou_run.cpp), which then calls tcDone() for
- * orderly resource cleanup before returning to the ScummVM launcher.
+ * ScummVM builds with -fno-exceptions, so C++ throw/catch is unavailable.
+ * Instead we use setjmp/longjmp, isolated in this module so that the
+ * mechanism is not scattered across base.c as it was originally.
  *
- * C callers (error.c, inphdl.c, tc_platform.cpp, …) see only the plain
- * extern "C" declaration below and call tc_QuitGame() like any other
- * function.  The throw happens inside the C++ implementation in
- * platform/tc_quit.cpp.
+ * Usage:
+ *   1. theclou_run() (base/theclou_run.cpp) calls setjmp(g_tcQuitJmp) and
+ *      sets g_tcQuitJmpValid = 1 before entering the game loop.
+ *   2. Any game-code site that needs to quit calls tc_QuitGame().
+ *   3. tc_QuitGame() longjmps back to the setjmp site in theclou_run().
+ *   4. theclou_run() calls tcDone() for orderly cleanup and returns.
  *
- * Platform note: propagating a C++ exception through C stack frames is
- * well-defined on all ABI/platform combinations that ScummVM targets
- * (ELF/DWARF on Linux & Android, Mach-O/DWARF on macOS & iOS,
- * PE/SEH on Windows) — the C frames simply have no destructors to run and
- * the unwinder skips them cleanly.
+ * Safety:
+ *   longjmp is safe here because there are no C++ objects with non-trivial
+ *   destructors on the stack between the setjmp and the longjmp sites —
+ *   the frames in between are all plain C functions (tcInit, tcDo, ...).
+ *   tc_QuitGame() must NOT be called from background threads.
  */
+
+#include <setjmp.h>
 
 #ifdef __cplusplus
-namespace TheClou {
-
-/**
- * Thrown by tc_QuitGame() to terminate the game loop and return control
- * to the ScummVM launcher.  Caught exclusively in theclou_run().
- */
-struct QuitException {};
-
-} // namespace TheClou
-
 extern "C" {
-#endif /* __cplusplus */
+#endif
+
+/** Jump buffer — set up by theclou_run() before the game loop starts. */
+extern jmp_buf          g_tcQuitJmp;
+
+/** Non-zero while the jump buffer above is valid (i.e. inside theclou_run). */
+extern volatile int     g_tcQuitJmpValid;
 
 /**
  * Request an immediate, clean exit from the game loop.
  *
- * Throws TheClou::QuitException which unwinds to the try/catch in
- * theclou_run() (base/theclou_run.cpp).  tcDone() is always called
- * after the catch, so all resources are freed before control returns
- * to the ScummVM launcher.
+ * longjmps back to theclou_run() (base/theclou_run.cpp).
+ * tcDone() is always called after the longjmp so all resources are freed
+ * before control returns to the ScummVM launcher.
  *
  * Safe to call from any C or C++ game-code context (error handler,
- * input handler, quit menu, …).  Must NOT be called from background
- * threads — only the main game thread runs inside theclou_run().
+ * input handler, quit menu, …).  Must NOT be called from background threads.
  */
 void tc_QuitGame(void);
 
 #ifdef __cplusplus
-} /* extern "C" */
+}
 #endif
 
 #endif /* THECLOU_TC_QUIT_H */
