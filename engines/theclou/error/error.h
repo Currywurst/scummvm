@@ -75,7 +75,7 @@ typedef enum {
     ERR_DEBUG
 } DebugE;
 
-bool pcErrOpen(S32 l_Mode, char *ErrorFilename);
+bool pcErrOpen(S32 l_Mode, const char *ErrorFilename);
 
 void ErrorMsg(ErrorE type, ErrorModuleE moduleId, U32 errorId);
 void pcErrClose(void);

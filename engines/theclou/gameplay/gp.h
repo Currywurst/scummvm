@@ -151,7 +151,7 @@ struct TCEventNode {
 };
 
 /* global functions */
-void InitStory(char *story_filename);
+void InitStory(const char *story_filename);
 extern void CloseStory(void);
 
 extern U32 PlayStory(void);

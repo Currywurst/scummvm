@@ -28,15 +28,17 @@
 #include "common/savefile.h"
 #include "engines/util.h"
 
-// Forward-declare C entry points. We avoid including the legacy headers
-// directly because they typedef 'byte' as S8, conflicting with ScummVM's
-// 'byte' (unsigned char).
+// Forward-declare entry points from other translation units.
+// theclou_run / tc_SetPaused / tc_InitPlatform are defined with
+// extern "C" in their respective .cpp files so the symbols are
+// unmangled and callable from here.
 extern "C" {
-	void theclou_run(const char *rootPath);    /* base/base.c      */
-	void dskSetSavePath(const char *savePath); /* disk/disk.c      */
-	void tc_SetPaused(int paused);             /* tc_platform.cpp  */
-	void tc_InitPlatform(void);                /* tc_platform.cpp  */
+	void theclou_run(const char *rootPath);    /* base/theclou_run.cpp */
+	void tc_SetPaused(int paused);             /* platform/tc_platform.cpp */
+	void tc_InitPlatform(void);                /* platform/tc_platform.cpp */
 }
+// dskSetSavePath is plain C++ (defined in disk/disk.cpp).
+void dskSetSavePath(const char *savePath);
 
 namespace TheClou {
 

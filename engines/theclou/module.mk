@@ -67,20 +67,21 @@ MODULE_OBJS := \
 	story/story.o \
 	text/text.o
 
-# The derclou C sources use paths relative to the engine root
-# (e.g. #include "inphdl/inphdl.h"), so we add that directory to CFLAGS
-# for every object in this module.
-engines/theclou/%.o: CFLAGS += -I$(srcdir)/engines/theclou
+# The derclou sources use paths relative to the engine root
+# (e.g. #include "inphdl/inphdl.h").  CPPFLAGS is passed to both
+# the C compiler (%.c) and the C++ compiler (%.cpp) by ScummVM's
+# Makefile.common, so this covers all translation units in the engine.
+engines/theclou/%.o: CPPFLAGS += -I$(srcdir)/engines/theclou
 
-# Build the legacy C files with SCUMMVM_ENGINE so that main() is excluded
-# and type conflicts with ScummVM headers are avoided.
-engines/theclou/base/base.o: CFLAGS += -DSCUMMVM_ENGINE
-engines/theclou/gfx/gfx.o:  CFLAGS += -DSCUMMVM_ENGINE
-engines/theclou/inphdl/inphdl.o: CFLAGS += -DSCUMMVM_ENGINE
-engines/theclou/sound/fx.o:  CFLAGS += -DSCUMMVM_ENGINE
-engines/theclou/sound/newsound.o: CFLAGS += -DSCUMMVM_ENGINE
-engines/theclou/sound/buffer.o:   CFLAGS += -DSCUMMVM_ENGINE
-engines/theclou/cdrom/cdrom.o:    CFLAGS += -DSCUMMVM_ENGINE
+# Files that need SCUMMVM_ENGINE to exclude main() / resolve type conflicts.
+# Use CXXFLAGS since all source files are now .cpp.
+engines/theclou/base/base.o:      CXXFLAGS += -DSCUMMVM_ENGINE
+engines/theclou/gfx/gfx.o:       CXXFLAGS += -DSCUMMVM_ENGINE
+engines/theclou/inphdl/inphdl.o: CXXFLAGS += -DSCUMMVM_ENGINE
+engines/theclou/sound/fx.o:      CXXFLAGS += -DSCUMMVM_ENGINE
+engines/theclou/sound/newsound.o: CXXFLAGS += -DSCUMMVM_ENGINE
+engines/theclou/sound/buffer.o:  CXXFLAGS += -DSCUMMVM_ENGINE
+engines/theclou/cdrom/cdrom.o:   CXXFLAGS += -DSCUMMVM_ENGINE
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_THECLOU), DYNAMIC_PLUGIN)

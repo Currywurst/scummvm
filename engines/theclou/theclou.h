@@ -31,7 +31,9 @@ typedef uint32_t U32;
 typedef int32_t S32;
 
 typedef U8 ubyte;
-typedef S8 byte;
+/* NOTE: 'byte' intentionally NOT defined here to avoid conflict with
+ * ScummVM's own typedef (unsigned char) in common/scummsys.h.
+ * Use S8 or ubyte directly instead. */
 typedef U16 uword;
 typedef S16 word;
 
