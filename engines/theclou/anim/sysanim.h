@@ -1,56 +1,55 @@
-/*
- * newanim.c
- * (c) 1993 by Helmut Gaberschek & Kaweh Kazemi, ...and avoid panic by
- * All rights reserved.
+/* ScummVM - Graphic Adventure Engine
  *
- * new animation module for the PANIC-System
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * Rev   Date        Comment
- * 1     26.08.93    First implementation
+ * Original game code (c) 1993 Helmut Gaberschek & Kaweh Kazemi
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
  *
- */
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
-
-/*
- * Aufbau der Anim.List Datei (Aufbau einer Zeile)
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * 	PictureMode,PictsPerSecc,Pic1,AnimPic,PicAnzahl,Animphase
- *	Breite, Animphase Höhe, Animphase offset, PlayMode
- *	XDest, YDest (als Offset zum 1. Bild)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MODULE_ANIM
-#define MODULE_ANIM
+/**
+ * @file anim/sysanim.h
+ * @brief Animation handler for Der Clou!
+ *
+ * Animation list file format (one line per animation entry):
+ *   PictureMode, PictsPerSec, Pic1, AnimPic, PicAnzahl, Animphase
+ *   Breite, Animphase Hoehe, Animphase offset, PlayMode
+ *   XDest, YDest (offset relative to first picture)
+ */
+
+#ifndef ENGINES_THECLOU_ANIM_SYSANIM_H
+#define ENGINES_THECLOU_ANIM_SYSANIM_H
 
 #include "theclou.h"
-
-#ifndef MODULE_TEXT
 #include "text/text.h"
-#endif
-
 #include "gfx/gfx.h"
-
-#ifndef MODULE_RANDOM
 #include "random/random.h"
-#endif
 
-/* global functions */
-extern void InitAnimHandler(void);
-extern void CloseAnimHandler(void);
+void InitAnimHandler(void);
+void CloseAnimHandler(void);
 
-extern void PlayAnim(char *AnimID, U16 how_often, U32 mode);	/* -> docs vom 16.08.92 ! */
-extern void StopAnim(void);
+/** Play animation @p AnimID for @p how_often repetitions with @p mode flags. */
+void PlayAnim(const char *AnimID, U16 how_often, U32 mode);
+void StopAnim(void);
 
-extern void GetAnim(char *AnimID, char *Dest);
-extern void animator(void);
+void GetAnim(const char *AnimID, char *Dest);
+void animator(void);
 
-extern void SuspendAnim(void);
-extern void ContinueAnim(void);
+void SuspendAnim(void);
+void ContinueAnim(void);
 
-#endif
+#endif // ENGINES_THECLOU_ANIM_SYSANIM_H

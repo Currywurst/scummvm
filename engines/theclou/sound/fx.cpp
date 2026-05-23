@@ -1,15 +1,32 @@
-/****************************************************************************
-  Copyright (c) 2005 Vasco Alexandre da Silva Costa
-  Portions copyright (c) 2005 Jens Granseuer
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
 #include <limits.h>
 #include <math.h>
 
 #include "platform/tc_sdl_compat.h"
+#include "platform/tc_debug.h"
 
 #include "base/base.h"
 
@@ -24,7 +41,6 @@ struct FXBase FXBase;
 
 static bool SfxChannelOn = false;
 static bool MusicChannelOn = true;
-static Uint8 MixChunk[SND_STREAM_CHUNK_BYTES];
 
 typedef struct SpeechChannel {
     S16 *samples;
@@ -33,7 +49,7 @@ typedef struct SpeechChannel {
     bool active;
 } SpeechChannel;
 
-static SpeechChannel Speech = { NULL, 0, 0, false };
+static SpeechChannel Speech = { nullptr, 0, 0, false };
 static bool SpeechDirChecked = false;
 static bool SpeechDirAvailable = false;
 
@@ -128,7 +144,7 @@ void InitAudio(void)
     spec.freq = SND_FREQUENCY;
 
     FXBase.audioStream = SDL_OpenAudioDeviceStream(
-            SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, NULL, NULL);
+            SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, nullptr, nullptr);
     if (!FXBase.audioStream) {
         DebugMsg(ERR_WARNING, ERROR_MODULE_SOUND,
                  "SDL_OpenAudioDeviceStream: %s", SDL_GetError());
@@ -161,19 +177,19 @@ void InitAudio(void)
 fail:
     if (FXBase.audioMutex) {
         SDL_DestroyMutex(FXBase.audioMutex);
-        FXBase.audioMutex = NULL;
+        FXBase.audioMutex = nullptr;
     }
     if (FXBase.audioStream) {
         SDL_DestroyAudioStream(FXBase.audioStream);
-        FXBase.audioStream = NULL;
+        FXBase.audioStream = nullptr;
     }
     if (FXBase.pSfxBuffer) {
         sndFreeBuffer(FXBase.pSfxBuffer);
-        FXBase.pSfxBuffer = NULL;
+        FXBase.pSfxBuffer = nullptr;
     }
     if (FXBase.pMusicBuffer) {
         sndFreeBuffer(FXBase.pMusicBuffer);
-        FXBase.pMusicBuffer = NULL;
+        FXBase.pMusicBuffer = nullptr;
     }
 }
 
@@ -184,7 +200,7 @@ void RemoveAudio(void)
     /* No thread to join — mixing was inline in readBuffer(). */
     if (FXBase.audioMutex) {
         SDL_DestroyMutex(FXBase.audioMutex);
-        FXBase.audioMutex = NULL;
+        FXBase.audioMutex = nullptr;
     }
 
     if (FXBase.audioStream) {
@@ -195,16 +211,16 @@ void RemoveAudio(void)
         }
         SDL_FlushAudioStream(FXBase.audioStream);
         SDL_DestroyAudioStream(FXBase.audioStream);
-        FXBase.audioStream = NULL;
+        FXBase.audioStream = nullptr;
     }
 
     if (FXBase.pSfxBuffer) {
         sndFreeBuffer(FXBase.pSfxBuffer);
-        FXBase.pSfxBuffer = NULL;
+        FXBase.pSfxBuffer = nullptr;
     }
     if (FXBase.pMusicBuffer) {
         sndFreeBuffer(FXBase.pMusicBuffer);
-        FXBase.pMusicBuffer = NULL;
+        FXBase.pMusicBuffer = nullptr;
     }
 
     FXBase.us_AudioOk = 0;
@@ -260,6 +276,9 @@ bool sndSpeechLibraryAvailable(void)
                                              "",
                                              dummy);
         SpeechDirChecked = true;
+        tc_debug(1, "TheClou: speech library %s (AUDIO dir %s)",
+                 SpeechDirAvailable ? "available" : "NOT FOUND",
+                 SpeechDirAvailable ? dummy : "(not found)");
     }
 
     return SpeechDirAvailable;
@@ -268,9 +287,9 @@ bool sndSpeechLibraryAvailable(void)
 bool sndPlaySpeechSample(const char *clipName)
 {
     SDL_AudioSpec wavSpec;
-    Uint8 *wavBuffer = NULL;
+    Uint8 *wavBuffer = nullptr;
     Uint32 wavLength = 0;
-    Uint8 *converted = NULL;
+    Uint8 *converted = nullptr;
     int convertedLen = 0;
     size_t frames;
     char fileName[DSK_PATH_MAX];
@@ -357,7 +376,7 @@ static void SpeechFreeBufferUnlocked(void)
 {
     if (Speech.samples) {
         SDL_free(Speech.samples);
-        Speech.samples = NULL;
+        Speech.samples = nullptr;
     }
 
     Speech.frames = 0;
@@ -396,7 +415,7 @@ static void LoadVOC(const char *fileName)
     U8 SR;
     unsigned sampleRate, compressionType;
 
-    if (!(pSoundFile = dskLoad(fileName))) {
+    if (!(pSoundFile = (U8 *)dskLoad(fileName))) {
 	return;
     }
 
@@ -470,7 +489,7 @@ static void LoadVOC(const char *fileName)
 	for (i = 0; i < nResamples; i++) {
 	    float middleT, leftT;		/* time */
 	    float middleS, leftS, rightS;	/* sample */
-	    unsigned left, right; 
+	    unsigned left, right;
 
 	    /* transform from resampled to original coordinates */
 	    middleT = resampleRatio * i;

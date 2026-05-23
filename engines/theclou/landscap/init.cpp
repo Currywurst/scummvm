@@ -1,25 +1,29 @@
-/*
-**	$Filename: landscap/init.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-02-94
-**
-**	landscap init functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "landscap/landscap.h"
-#include "landscap/landscap.ph"
+#include "landscap/landscap_internal.h"
 
 
 static void lsInitFloorSquares(void);
@@ -35,7 +39,7 @@ void lsInitLandScape(U32 bID, ubyte mode)
     S32 i;
 
     if (!gLandscapeState)
-	gLandscapeState = (struct LandscapeState *)TCAllocMem(sizeof(*gLandscapeState), 0);
+	gLandscapeState = (struct LandScape *)TCAllocMem(sizeof(*gLandscapeState), 0);
 
     gLandscapeState->ul_BuildingID = bID;
 
@@ -79,7 +83,7 @@ void lsInitLandScape(U32 bID, ubyte mode)
     livInit(0, 0, LS_VISIBLE_X_SIZE, LS_VISIBLE_Y_SIZE, LS_MAX_AREA_WIDTH,
 	    LS_MAX_AREA_HEIGHT, 8, gLandscapeState->ul_AreaID);
 
-    gLandscapeState->p_CurrFloor = NULL;
+    gLandscapeState->p_CurrFloor = nullptr;
 
     gLandscapeState->us_DoorXOffset = 0;
     gLandscapeState->us_DoorYOffset = 32;	/* above are 16er objects */
@@ -88,7 +92,7 @@ void lsInitLandScape(U32 bID, ubyte mode)
 
     lsInitFloorSquares();
 
-    lsInitActivArea(gLandscapeState->ul_AreaID, (uword) - 1, (uword) - 1, NULL);
+    lsInitActivArea(gLandscapeState->ul_AreaID, (uword) - 1, (uword) - 1, nullptr);
     lsShowEscapeCar();
 }
 
@@ -162,7 +166,7 @@ void lsInitObjects(void)
     /* jetzt alle Stockwerke durchgehen! */
     for (i = 0; i < 3; i++) {
 	gLandscapeState->ul_ObjectRetrievalAreaId[i] = 0;
-	gLandscapeState->p_ObjectRetrievalLists[i] = NULL;
+	gLandscapeState->p_ObjectRetrievalLists[i] = nullptr;
     }
 
     for (n = (NODE *) LIST_HEAD(areas); NODE_SUCC(n); n = (NODE *) NODE_SUCC(n)) {
@@ -239,7 +243,7 @@ static void lsInitFloorSquares(void)
     LIST *areas;
 
     for (i = 0; i < 3; i++)
-	gLandscapeState->p_AllFloors[i] = NULL;
+	gLandscapeState->p_AllFloors[i] = nullptr;
 
     count = LS_FLOORS_PER_LINE * LS_FLOORS_PER_COLUMN;
 
@@ -325,7 +329,7 @@ static void lsDoneFloorSquares(void)
 
 	    TCFreeMem(gLandscapeState->p_AllFloors[i], size);
 
-	    gLandscapeState->p_AllFloors[i] = NULL;
+	    gLandscapeState->p_AllFloors[i] = nullptr;
 	}
     }
 
@@ -364,7 +368,7 @@ void lsDoneLandScape(void)
 
 	    if (gLandscapeState->p_ObjectRetrievalLists[areaCount]) {
 		RemoveList(gLandscapeState->p_ObjectRetrievalLists[areaCount]);
-		gLandscapeState->p_ObjectRetrievalLists[areaCount] = NULL;
+		gLandscapeState->p_ObjectRetrievalLists[areaCount] = nullptr;
 		gLandscapeState->ul_ObjectRetrievalAreaId[areaCount] = 0;
 	    }
 	}
@@ -393,7 +397,7 @@ void lsDoneLandScape(void)
 	    RemoveList(gLandscapeState->p_DoorRefreshList);
 
 	TCFreeMem(gLandscapeState, sizeof(*gLandscapeState));
-	gLandscapeState = NULL;
+	gLandscapeState = nullptr;
     }
 }
 

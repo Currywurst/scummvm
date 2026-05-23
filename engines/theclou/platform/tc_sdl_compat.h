@@ -1,3 +1,27 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /*
  * tc_sdl_compat.h  —  Drop-in replacement for <SDL3/SDL.h> inside the
  * ScummVM/theclou engine.  All SDL3 types, constants and function calls
@@ -8,8 +32,8 @@
  * covered here.
  */
 
-#ifndef TC_SDL_COMPAT_H
-#define TC_SDL_COMPAT_H
+#ifndef ENGINES_THECLOU_PLATFORM_TC_SDL_COMPAT_H
+#define ENGINES_THECLOU_PLATFORM_TC_SDL_COMPAT_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -453,4 +477,4 @@ static inline int SDL_GetSurfaceColorKey(SDL_Surface *s, Uint32 *key) {
 #define SDL_fabsf(x)    fabsf(x)
 #define SDL_sqrtf(x)    sqrtf(x)
 
-#endif /* TC_SDL_COMPAT_H */
+#endif  // ENGINES_THECLOU_PLATFORM_TC_SDL_COMPAT_H

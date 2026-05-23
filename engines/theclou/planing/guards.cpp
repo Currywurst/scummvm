@@ -1,45 +1,49 @@
-/*
-**      $Filename: planing/guards.c
-**      $Release:  1
-**      $Revision: 0
-**      $Date:     24-04-94
-**
-**      planing.guards for "Der Clou!"
-**
-** (c) 1994 ...and avoid panic by, Kaweh Kazemi
-**      All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "planing/guards.h"
 
 
-void grdDo(TC_FILE * fh, struct System *sys, LIST * PersonsList, U32 BurglarsNr,
-	   U32 PersonsNr, ubyte grdAction)
+void grdDo(TC_FILE * fh, struct System *sys, LIST * p_PersonsList, U32 p_BurglarsNr,
+	   U32 p_PersonsNr, ubyte grdAction)
 {
     ubyte i;
 
-    for (i = BurglarsNr; i < PersonsNr; i++) {
+    for (i = p_BurglarsNr; i < p_PersonsNr; i++) {
 	switch (grdAction) {
 	case GUARDS_DO_SAVE:
-	    SaveHandler(fh, sys, OL_NR(GetNthNode(PersonsList, i)));
+	    SaveHandler(fh, sys, OL_NR(GetNthNode(p_PersonsList, i)));
 	    break;
 
 	case GUARDS_DO_LOAD:
-	    LoadHandler(fh, sys, OL_NR(GetNthNode(PersonsList, i)));
+	    LoadHandler(fh, sys, OL_NR(GetNthNode(p_PersonsList, i)));
 	    break;
 	}
     }
 }
 
-ubyte grdInit(TC_FILE ** fh, char *mode, U32 bldId, U32 areaId)
+ubyte grdInit(TC_FILE ** fh, const char *mode, U32 bldId, U32 areaId)
 {
     char bldName[TXT_KEY_LENGTH], fileName[DSK_PATH_MAX];
 

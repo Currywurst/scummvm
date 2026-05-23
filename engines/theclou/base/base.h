@@ -1,62 +1,41 @@
-/*
-**	$Filename: Base/Base.h
-**	$Release:
-**	$Revision:
-**	$Date:
-**
-**
-**
-**	(C) 1993, 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+#ifndef ENGINES_THECLOU_BASE_BASE_H
+#define ENGINES_THECLOU_BASE_BASE_H
 
-#ifndef MODULE_BASE
-#define MODULE_BASE
-
-#ifndef __STDIO_H
 #include <stdio.h>
-#endif
-
-#ifndef __STDARG_H
 #include <stdarg.h>
-#endif
-
-#ifndef __STDLIB_H
 #include <stdlib.h>
-#endif
-
-#ifndef __FCNTL_H
 #include <fcntl.h>
-#endif
 
 #include "theclou.h"
-
-#ifndef MODULE_ERROR
 #include "error/error.h"
-#endif
-
-#ifndef MODULE_LIST
 #include "list/list.h"
-#endif
-
-#ifndef MODULE_MEMORY
 #include "memory/memory.h"
-#endif
-
-#ifndef MODULE_DISK
 #include "disk/disk.h"
-#endif
-
-#ifndef MODULE_INPHDL
 #include "inphdl/inphdl.h"
-#endif
 
 #include "gfx/gfx.h"
 #include "text/text.h"
@@ -64,22 +43,10 @@
 #include "present/interac.h"
 #include "data/relation.h"
 
-
-#ifndef MODULE_DATABASE
 #include "data/database.h"
-#endif
-
-#ifndef MODULE_GAMEPLAY
 #include "gameplay/gp.h"
-#endif
-
-#ifndef MODULE_SOUND
 #include "sound/newsound.h"
-#endif
-
-#ifndef MODULE_FX
 #include "sound/fx.h"
-#endif
 
 #include "cdrom/cdrom.h"
 
@@ -132,4 +99,4 @@ U32 tcGetProcessorType(void);
 /* ScummVM integration entry point (see base.c) */
 void theclou_run(const char *rootPath);
 
-#endif
+#endif  // ENGINES_THECLOU_BASE_BASE_H

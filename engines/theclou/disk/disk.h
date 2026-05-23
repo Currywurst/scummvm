@@ -6,8 +6,8 @@
   distribution.
  ****************************************************************************/
 
-#ifndef TC_DISK_H
-#define TC_DISK_H
+#ifndef ENGINES_THECLOU_DISK_DISK_H
+#define ENGINES_THECLOU_DISK_DISK_H
 
 #include "platform/tc_fs.h"
 
@@ -63,7 +63,11 @@ TC_FILE *dskOpen(const char *Pathname, const char *Mode);
 
 extern bool dskGetLine(char *s, int size, TC_FILE *fp);
 
-int stricmp(const char *s1, const char *s2);
-int strnicmp(const char *s1, const char *s2, size_t n);
+/* Case-insensitive string comparison helpers.
+ * Renamed from stricmp/strnicmp to avoid collision with ScummVM's
+ * common/forbidden.h which bans those POSIX names.
+ * Use scumm_stricmp / scumm_strnicmp (common/str.h) in pure C++ files. */
+int tc_stricmp (const char *s1, const char *s2);
+int tc_strnicmp(const char *s1, const char *s2, size_t n);
 
-#endif
+#endif  // ENGINES_THECLOU_DISK_DISK_H

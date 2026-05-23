@@ -1,10 +1,27 @@
-/****************************************************************************
-  Copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
 #include "memory/memory.h"
 
 #include "sound/buffer.h"
@@ -22,8 +39,8 @@ SND_BUFFER *sndCreateBuffer(unsigned size)
 {
     SND_BUFFER *buffer;
     unsigned char *data;
-    
-    buffer = (SND_BUFFER)TCAllocMem(sizeof(*buffer), false);
+
+    buffer = (SND_BUFFER *)TCAllocMem(sizeof(*buffer), false);
     data = (unsigned char *)TCAllocMem(size, true);
 
     buffer->data = data;
@@ -53,7 +70,7 @@ unsigned sndLenBuffer(SND_BUFFER *buffer)
 
 unsigned sndInsertBuffer(SND_BUFFER *buffer, const void *src, unsigned srcLen)
 {
-    const unsigned char *psrc = src;
+    const unsigned char *psrc = (const unsigned char *)src;
     unsigned len, pos;
 
     srcLen = min(srcLen, buffer->size - sndLenBuffer(buffer));
@@ -63,10 +80,10 @@ unsigned sndInsertBuffer(SND_BUFFER *buffer, const void *src, unsigned srcLen)
 
     /* insert to the end */
     memcpy(buffer->data + pos, psrc, len);
-  
+
     /* insert to the start */
     memcpy(buffer->data, psrc + len, srcLen - len);
-  
+
     buffer->insertPos += srcLen;
 
     return srcLen;
@@ -74,17 +91,17 @@ unsigned sndInsertBuffer(SND_BUFFER *buffer, const void *src, unsigned srcLen)
 
 unsigned sndRemoveBuffer(SND_BUFFER *buffer, void *dst, unsigned dstLen)
 {
-    unsigned char *pdst = dst;
+    unsigned char *pdst = (unsigned char *)dst;
     unsigned len, pos;
-    
+
     dstLen = min(dstLen, sndLenBuffer(buffer));
-    
+
     pos = buffer->removePos % buffer->size;
     len = min(dstLen, buffer->size - pos);
 
     /* remove from the end */
     memcpy(pdst, buffer->data + pos, len);
-    
+
     /* remove from the start */
     memcpy(pdst + len, buffer->data, dstLen - len);
 

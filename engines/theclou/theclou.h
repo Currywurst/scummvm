@@ -1,44 +1,97 @@
-/*
- * TheClou.h
+/* ScummVM - Graphic Adventure Engine
  *
- * (c) 1993 K. Kazemi, H. Gaberschek
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
+ * Original game code (c) 1993 K. Kazemi, H. Gaberschek
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
-
-#ifndef THECLOU_MODULE
-#define THECLOU_MODULE
-/*
- * verwendete Typen
+/**
+ * @file theclou.h
+ * @brief Global type aliases, constants and forward declarations for Der Clou!
+ *
+ * Include order note:
+ *   This header intentionally does NOT include any ScummVM headers.
+ *   Many legacy game .cpp files include this header first.  Including
+ *   common/scummsys.h here would pull in common/forbidden.h and ban
+ *   functions (strcpy, printf, …) that are still used in legacy code.
+ *
+ *   Pure C++ files that also need ScummVM headers must include
+ *   common/scummsys.h BEFORE theclou.h, or use FORBIDDEN_SYMBOL_EXCEPTION_*
+ *   defines at the top of their .cpp file.
  */
+
+#ifndef ENGINES_THECLOU_THECLOU_H
+#define ENGINES_THECLOU_THECLOU_H
+
+/* -------------------------------------------------------------------------
+ * Standard C headers — included before ScummVM so that the legacy game code
+ * can still call memcpy, memset, strlen etc. directly.  Pure C++ files that
+ * include common/scummsys.h first do not need these.
+ * ---------------------------------------------------------------------- */
+#include <stddef.h>
+#include <stdint.h>
+#include <inttypes.h>  /* PRIu32, SCNu32, … */
+#include <stdbool.h>
+#include <stdio.h>     /* snprintf, sscanf, puts, … */
+#include <ctype.h>     /* isspace, isdigit, … */
 #include <string.h>
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <inttypes.h>
-
-typedef uint8_t U8;
-typedef int8_t S8;
+/* -------------------------------------------------------------------------
+ * Game type aliases
+ * These mirror ScummVM's uint8/int8/uint16/int16/uint32/int32 so that the
+ * legacy game code keeps its original names.  New code should prefer the
+ * ScummVM types directly.
+ * ---------------------------------------------------------------------- */
+typedef uint8_t  U8;
+typedef int8_t   S8;
 typedef uint16_t U16;
-typedef int16_t S16;
+typedef int16_t  S16;
 typedef uint32_t U32;
-typedef int32_t S32;
+typedef int32_t  S32;
 
-typedef U8 ubyte;
-/* NOTE: 'byte' intentionally NOT defined here to avoid conflict with
- * ScummVM's own typedef (unsigned char) in common/scummsys.h.
- * Use S8 or ubyte directly instead. */
+typedef U8  ubyte;
+/* NOTE: 'byte' intentionally NOT defined here — conflicts with ScummVM's
+ * own typedef (unsigned char) in common/scummsys.h.
+ * Use ubyte or U8 instead. */
 typedef U16 uword;
 typedef S16 word;
 
-#define max(a, b)               ((a) > (b) ? (a) : (b))
-#define min(a, b)               ((a) < (b) ? (a) : (b))
+/* -------------------------------------------------------------------------
+ * min / max / clamp
+ * Guard with #ifndef so that ScummVM's template versions (or <algorithm>)
+ * take precedence when this header is included after common/scummsys.h.
+ * ---------------------------------------------------------------------- */
+#ifndef MAX
+#  define MAX(a, b) ((a) > (b) ? (a) : (b))
+#endif
+#ifndef MIN
+#  define MIN(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
+/* Legacy lower-case aliases — only define when not already provided. */
+#ifndef max
+#  define max(a, b) MAX(a, b)
+#endif
+#ifndef min
+#  define min(a, b) MIN(a, b)
+#endif
+
 #define clamp(x, lower, upper)  \
                                 ((x) < (lower) ? \
                                     (lower) : \

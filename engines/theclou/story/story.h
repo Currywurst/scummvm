@@ -1,101 +1,51 @@
-/*
-**	$Filename: story/story.h
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-02-94
-**
-**	story functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
-
-#ifndef MODULE_STORY
-#define MODULE_STORY
+#ifndef ENGINES_THECLOU_STORY_STORY_H
+#define ENGINES_THECLOU_STORY_STORY_H
 
 #include "theclou.h"
-
-#ifndef MODULE_LIST
 #include "list/list.h"
-#endif
-
-#ifndef MODULE_TEXT
 #include "text/text.h"
-#endif
-
-#ifndef MODULE_INTERAC
 #include "present/interac.h"
-#endif
-
-#ifndef MODULE_PRESENT
 #include "present/present.h"
-#endif
-
-#ifndef MODULE_DIALOG
 #include "dialog/dialog.h"
-#endif
-
-#ifndef MODULE_RELATION
 #include "data/relation.h"
-#endif
-
-#ifndef MODULE_DATABASE
 #include "data/database.h"
-#endif
-
-#ifndef MODULE_DATACALC
 #include "data/datacalc.h"
-#endif
-
-#ifndef MODULE_DATAAPPL
 #include "data/dataappl.h"
-#endif
 
 #include "data/objstd/tcdata.h"
-
-#ifndef MODULE_SCENES
 #include "scenes/scenes.h"
-#endif
-
-#ifndef MODULE_GAMEPLAY
 #include "gameplay/gp.h"
-#endif
-
-#ifndef MODULE_GAMEPLAY_APP
 #include "gameplay/gp_app.h"
-#endif
-
-#ifndef MODULE_GFX
 #include "gfx/gfx.h"
-#endif
-
-#ifndef MODULE_ORGANISATION
 #include "organisa/organisa.h"
-#endif
-
-#ifndef MODULE_PLANING_PLANER
 #include "planing/planer.h"
-#endif
-
-#ifndef MODULE_PLANING_PLAYER
 #include "planing/player.h"
-#endif
-
-#ifndef MODULE_LANDSCAP
 #include "landscap/landscap.h"
-#endif
-
-#ifndef MODULE_FX
 #include "sound/fx.h"
-#endif
 
 #define tcLAST_BURGLARY_LEFT_CTRL_OBJ   440221L
 #define tcLAST_BURGLARY_RIGHT_CTRL_OBJ  440228L
@@ -308,4 +258,4 @@ U32 tcLastBurglary(void);
 
 void tcCheckForDowning(void);
 
-#endif
+#endif  // ENGINES_THECLOU_STORY_STORY_H

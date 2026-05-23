@@ -48,7 +48,7 @@ namespace Tinsel {
 #define RANGE_CHECK(num)	assert(num > 0 && num <= _numActors);
 
 struct ACTORINFO {
-	bool		bAlive;		// TRUE == alive
+	bool		bAlive;		// TRUE == alive^
 	bool		bHidden;	// TRUE == hidden
 	bool		completed;	// TRUE == script played out
 

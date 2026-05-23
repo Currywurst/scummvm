@@ -1,36 +1,56 @@
-/*
- * list.c
- * (c) 1994 by Kaweh Kazemi
- * All rights reserved.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code (c) 1994 Kaweh Kazemi
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/**
+ * @file list/list.cpp
+ * @brief Intrusive doubly-linked list implementation for Der Clou!
+ *
+ * We use Common::strlcpy instead of strcpy.
+ * All void* ↔ NODE* casts use static_cast<>.
+ */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <ctype.h>
+/* Common::strlcpy is needed for CreateNode's name copy. */
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+#include "common/scummsys.h"
+#include "common/str.h"
 
 #include "list/list.h"
 #include "memory/memory.h"
+#include "disk/disk.h"
+#include "platform/tc_fs.h"
 
 LIST *CreateList(void)
 {
-    LIST *list = NULL;
+    LIST *list = static_cast<LIST *>(TCAllocMem(sizeof(*list), true));
 
-    if ((list = (LIST *) TCAllocMem(sizeof(*list), true))) {
+    if (list) {
         NODE_SUCC(INNER_HEAD(list)) = INNER_TAIL(list);
-        NODE_PRED(INNER_HEAD(list)) = NULL;
-        NODE_NAME(INNER_HEAD(list)) = NULL;
+        NODE_PRED(INNER_HEAD(list)) = nullptr;
+        NODE_NAME(INNER_HEAD(list)) = nullptr;
 
-        NODE_SUCC(INNER_TAIL(list)) = NULL;
+        NODE_SUCC(INNER_TAIL(list)) = nullptr;
         NODE_PRED(INNER_TAIL(list)) = INNER_HEAD(list);
-        NODE_NAME(INNER_TAIL(list)) = NULL;
+        NODE_NAME(INNER_TAIL(list)) = nullptr;
     }
 
     return list;
@@ -38,7 +58,7 @@ LIST *CreateList(void)
 
 void RemoveList(LIST *list)
 {
-    RemoveNode(list, NULL);
+    RemoveNode(list, nullptr);
     FreeList(list);
 }
 
@@ -53,10 +73,10 @@ void *AddNode(LIST *list, void *node, void *predNode)
 	predNode = INNER_HEAD(list);
 
     NODE_SUCC(node) = NODE_SUCC(predNode);
-    NODE_PRED(node) = predNode;
+    NODE_PRED(node) = static_cast<NODE *>(predNode);
 
-    NODE_PRED(NODE_SUCC(predNode)) = node;
-    NODE_SUCC(predNode) = node;
+    NODE_PRED(NODE_SUCC(predNode)) = static_cast<NODE *>(node);
+    NODE_SUCC(predNode) = static_cast<NODE *>(node);
     return node;
 }
 
@@ -76,8 +96,8 @@ void *RemNode(void *node)
     NODE_PRED(NODE_SUCC(node)) = NODE_PRED(node);
 
     /* just to be safe */
-    NODE_SUCC(node) = NULL;
-    NODE_PRED(node) = NULL;
+    NODE_SUCC(node) = nullptr;
+    NODE_PRED(node) = nullptr;
 
     return node;
 }
@@ -87,7 +107,7 @@ void *RemHeadNode(LIST *list)
     if (!LIST_EMPTY(list))
 	return RemNode(LIST_HEAD(list));
     else
-	return NULL;
+	return nullptr;
 }
 
 void *RemTailNode(LIST *list)
@@ -95,12 +115,12 @@ void *RemTailNode(LIST *list)
     if (!LIST_EMPTY(list))
 	return RemNode(LIST_TAIL(list));
     else
-	return NULL;
+	return nullptr;
 }
 
 void *CreateNode(LIST *list, size_t size, const char *name)
 {
-    NODE *node = NULL;
+    NODE *node = nullptr;
     size_t len = 0;
 
     if (!size)
@@ -110,15 +130,18 @@ void *CreateNode(LIST *list, size_t size, const char *name)
 	len = strlen(name) + 1;
 
     if (size >= sizeof(NODE)) {
-	if ((node = (NODE *) TCAllocMem(size + len, true))) {
-	    NODE_SUCC(node) = NULL;
-	    NODE_PRED(node) = NULL;
+	if ((node = static_cast<NODE *>(TCAllocMem(size + len, true)))) {
+	    NODE_SUCC(node) = nullptr;
+	    NODE_PRED(node) = nullptr;
 	    NODE_SIZE(node) = size;
 
-	    if (name)
-		NODE_NAME(node) = strcpy((char *) node + size, name);
-	    else
-		NODE_NAME(node) = NULL;
+	    if (name) {
+		char *nameBuf = reinterpret_cast<char *>(node) + size;
+		Common::strlcpy(nameBuf, name, len);
+		NODE_NAME(node) = nameBuf;
+	    } else {
+		NODE_NAME(node) = nullptr;
+	    }
 
 	    if (list)
 		AddTailNode(list, node);
@@ -127,7 +150,7 @@ void *CreateNode(LIST *list, size_t size, const char *name)
 	ErrorMsg(Internal_Error, ERROR_MODULE_MEMORY, 666);
     }
 
-    return (void *) node;
+    return static_cast<void *>(node);
 }
 
 void RemoveNode(LIST *list, const char *name)
@@ -135,13 +158,13 @@ void RemoveNode(LIST *list, const char *name)
     NODE *node;
 
     if (name) {
-	if ((node = (NODE *)GetNode(list, name))) {
+	if ((node = static_cast<NODE *>(GetNode(list, name)))) {
 	    RemNode(node);
 	    FreeNode(node);
 	}
     } else {
 	if (!LIST_EMPTY(list)) {
-	    while ((node = (NODE *)RemTailNode(list)))
+	    while ((node = static_cast<NODE *>(RemTailNode(list))))
 		FreeNode(node);
 	}
     }
@@ -168,7 +191,7 @@ void *GetNode(LIST *list, const char *name)
 	    return node;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void *GetNthNode(LIST *list, U32 nth)
@@ -181,12 +204,12 @@ void *GetNthNode(LIST *list, U32 nth)
 	nth--;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 U32 GetNrOfNodes(LIST *list)
 {
-    NODE *node = NULL;
+    NODE *node = nullptr;
     U32 i = 0;
 
     for (i = 0, node = LIST_HEAD(list); NODE_SUCC(node);
@@ -230,7 +253,7 @@ void Link(LIST *list, void *node, void *predNode)
 void *UnLinkByAddr(LIST *list, void *node, NODE **predNode)
 {
     if (!node)
-        return NULL;
+        return nullptr;
 
     if (predNode)
 	*predNode = NODE_PRED(node);
@@ -269,7 +292,7 @@ U32 ReadList(LIST *list, size_t size, char *fileName)
 	    if (buffer[0] != ';')	/* skip comments */
 	    {
 		if (!CreateNode(list, size, buffer)) {
-		    RemoveNode(list, NULL);
+		    RemoveNode(list, nullptr);
 		    tc_fclose(fh);
 		    return 0;
 		}
@@ -285,8 +308,8 @@ U32 ReadList(LIST *list, size_t size, char *fileName)
 
 void WriteList(LIST *list, char *fileName)
 {
-    TC_FILE *fh = NULL;
-    NODE *node = NULL;
+    TC_FILE *fh = nullptr;
+    NODE *node = nullptr;
 
     if ((fh = dskOpen(fileName, "wb"))) {
 	for (node = LIST_HEAD(list); NODE_SUCC(node); node = NODE_SUCC(node))

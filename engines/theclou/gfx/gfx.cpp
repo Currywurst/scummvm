@@ -1,25 +1,28 @@
-/*
-**	$Filename: gfx/gfx.h
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-02-94
-**
-**	gfx functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-  Portions copyright (c) 2005 Jens Granseuer
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
-
-#include <assert.h>
+#include <cassert>
 #include <stdlib.h>
 #include <string.h>
 #include "platform/tc_sdl_compat.h"
@@ -27,8 +30,8 @@
 #include "base/base.h"
 
 #include "gfx/gfx.h"
-#include "gfx/gfx.ph"
 
+/* struct _GC must be defined before gfx.ph which declares GC variables */
 struct _GC {
     Rect clip;
 
@@ -47,11 +50,13 @@ struct _GC {
     Font *font;
 };
 
+#include "gfx/gfx_internal.h"
+
 void gfxILBMToRAW(const U8 *src, U8 *dst, size_t size);
 
 void gfxRealRefreshArea(U16 x, U16 y, U16 w, U16 h);
 
-SDL_Surface *Screen;
+/* SDL_Surface *Screen is defined in gfx.ph — do not redefine here */
 SDL_Surface *windowSurface;
 
 SDL_Window *sdlWindow;
@@ -89,7 +94,7 @@ static SDL_Palette *gfxGetScreenPalette(void)
     SDL_Palette *palette;
 
     if (!Screen)
-        return NULL;
+        return nullptr;
 
     palette = SDL_GetSurfacePalette(Screen);
     if (!palette)
@@ -174,12 +179,9 @@ static void gfxUpdateWindowMetrics(unsigned scale)
     currentWindowHeight = (int)(SCREEN_HEIGHT * clampedScale);
 }
 
-static void gfxApplyWindowScale(unsigned scale, bool updateWindow, bool persist)
+static void gfxApplyWindowScale(unsigned scale, bool updateWindow, bool /*persist*/)
 {
     scale = gfxClampScale(scale);
-
-    if (setup.FullScreen)
-        persist = false;
 
     setup.Scale = scale;
     gfxUpdateWindowMetrics(scale);
@@ -297,7 +299,7 @@ void gfxInit(void)
         return;
     }
 
-    sdlRenderer = SDL_CreateRenderer(sdlWindow, NULL);
+    sdlRenderer = SDL_CreateRenderer(sdlWindow, nullptr);
     if (!sdlRenderer) {
         DebugMsg(ERR_ERROR, ERROR_MODULE_GFX,
                  "SDL_CreateRenderer failed: %s", SDL_GetError());
@@ -315,7 +317,7 @@ void gfxInit(void)
     }
 
     if (setup.FullScreen) {
-        if (!SDL_SetWindowFullscreenMode(sdlWindow, NULL)) {
+        if (!SDL_SetWindowFullscreenMode(sdlWindow, nullptr)) {
             DebugMsg(ERR_WARNING, ERROR_MODULE_GFX,
                      "SDL_SetWindowFullscreenMode failed: %s",
                      SDL_GetError());
@@ -383,7 +385,7 @@ void gfxInit(void)
                  "Unable to allocate screen palette: %s", SDL_GetError());
     }
 
-    gfxSetGC(NULL);
+    gfxSetGC(nullptr);
 
     /* diese RP müssen nur ein Bild maximaler Größe aufnehmen können */
     /* in anderen Modulen wird vorausgesetzt, daß alle RastPorts gleich */
@@ -443,12 +445,12 @@ void gfxDone(void)
 {
     if (PictureList) {
 	RemoveList(PictureList);
-	PictureList = NULL;
+	PictureList = nullptr;
     }
 
     if (CollectionList) {
 	RemoveList(CollectionList);
-	CollectionList = NULL;
+	CollectionList = nullptr;
     }
 
     gfxCloseFont(bubbleFont);
@@ -473,23 +475,23 @@ void gfxDone(void)
 
     if (Screen) {
         SDL_DestroySurface(Screen);
-        Screen = NULL;
+        Screen = nullptr;
     }
     if (windowSurface) {
         SDL_DestroySurface(windowSurface);
-        windowSurface = NULL;
+        windowSurface = nullptr;
     }
     if (sdlTexture) {
         SDL_DestroyTexture(sdlTexture);
-        sdlTexture = NULL;
+        sdlTexture = nullptr;
     }
     if (sdlRenderer) {
         SDL_DestroyRenderer(sdlRenderer);
-        sdlRenderer = NULL;
+        sdlRenderer = nullptr;
     }
     if (sdlWindow) {
         SDL_DestroyWindow(sdlWindow);
-        sdlWindow = NULL;
+        sdlWindow = nullptr;
     }
 
     if (SDL_WasInit(SDL_INIT_VIDEO) != 0) {
@@ -513,8 +515,8 @@ void gfxSetVideoMode(ubyte uch_NewMode)
 	u_gc = &LowerGC;
 	m_gc = &MenuGC;
 
-	gfxSetRGB(NULL, 0, 0, 16, 12);
-	gfxSetRGB(NULL, 255, 63, 63, 63);	/* mouse */
+	gfxSetRGB(nullptr, 0, 0, 16, 12);
+	gfxSetRGB(nullptr, 255, 63, 63, 63);	/* mouse */
 	break;
 
     case GFX_VIDEO_NCH4:
@@ -524,7 +526,7 @@ void gfxSetVideoMode(ubyte uch_NewMode)
 
 	gfxLSInit();
 
-	gfxSetRGB(NULL, 0, 0, 16, 12);
+	gfxSetRGB(nullptr, 0, 0, 16, 12);
 	break;
 
     default:
@@ -532,7 +534,7 @@ void gfxSetVideoMode(ubyte uch_NewMode)
 	return;
     }
 
-    gfxClearArea(NULL);
+    gfxClearArea(nullptr);
 }
 
 void gfxCorrectUpperRPBitmap(void)
@@ -563,13 +565,13 @@ static void gfxInitCollList(void)
 	struct Collection *coll;
 
 	coll =
-	    CreateNode(CollectionList, sizeof(struct Collection),
+	    (struct Collection *)CreateNode(CollectionList, sizeof(struct Collection),
 		       txtGetKey(2, NODE_NAME(n)));
 
 	coll->us_CollId = (uword) txtGetKeyAsULONG(1, NODE_NAME(n));
 
 	coll->puch_Filename = NODE_NAME(coll);
-	coll->prepared = NULL;
+	coll->prepared = nullptr;
 
 	coll->us_TotalWidth = (uword) txtGetKeyAsULONG(3, NODE_NAME(n));
 	coll->us_TotalHeight = (uword) txtGetKeyAsULONG(4, NODE_NAME(n));
@@ -595,7 +597,7 @@ static void gfxInitPictList(void)
     for (n = (NODE *)LIST_HEAD(tempList); NODE_SUCC(n); n = (NODE *)NODE_SUCC(n)) {
 	struct Picture *pict;
 
-	pict = (struct Picture *)CreateNode(PictureList, sizeof(*pict), NULL);
+	pict = (struct Picture *)CreateNode(PictureList, sizeof(*pict), nullptr);
 
 	pict->us_PictId = (uword) txtGetKeyAsULONG(1, NODE_NAME(n));
 	pict->us_CollId = (uword) txtGetKeyAsULONG(2, NODE_NAME(n));
@@ -714,7 +716,7 @@ static void gfxInitGC(GC *gc, U16 x, U16 y, U16 w, U16 h,
  * gfxCloseFont
  */
 
-static Font *gfxOpenFont(char *fileName, U16 w, U16 h,
+static Font *gfxOpenFont(const char *fileName, U16 w, U16 h,
                          unsigned char first, unsigned char last,
                          U16 sw, U16 sh)
 {
@@ -728,7 +730,7 @@ static Font *gfxOpenFont(char *fileName, U16 w, U16 h,
 
 
     /* create font structure. */
-    font = (Font)TCAllocMem(sizeof(*font), true);
+    font = (Font *)TCAllocMem(sizeof(*font), true);
 
     font->w     = w;
     font->h     = h;
@@ -738,7 +740,7 @@ static Font *gfxOpenFont(char *fileName, U16 w, U16 h,
 
 
     dskBuildPathName(DISK_CHECK_FILE, PICTURE_DIRECTORY, fileName, path);
-    lbm = dskLoad(path);
+    lbm = (U8 *)dskLoad(path);
 
 
     bmp = SDL_CreateSurface(sw, sh, SDL_PIXELFORMAT_INDEX8);
@@ -754,7 +756,7 @@ static Font *gfxOpenFont(char *fileName, U16 w, U16 h,
 
     free(lbm);
 
-    SDL_SetSurfaceColorKey(bmp, true, 0);
+    SDL_SetSurfaceColorKey(bmp, 1, 0); /* V601: use int 1 — compat layer takes int, not bool */
     font->bmp = bmp;
 
     return font;
@@ -935,12 +937,12 @@ U16 gfxTextWidth(GC *gc, const char *txt, size_t len)
 
 struct Collection *gfxGetCollection(uword us_CollId)
 {
-    return GetNthNode(CollectionList, (U32) (us_CollId - 1));
+    return (struct Collection *)GetNthNode(CollectionList, (U32) (us_CollId - 1));
 }
 
 struct Picture *gfxGetPicture(uword us_PictId)
 {
-    return GetNthNode(PictureList, (U32) (us_PictId - 1));
+    return (struct Picture *)GetNthNode(PictureList, (U32) (us_PictId - 1));
 }
 
 /* the collection must have been prepared (PrepareColl) beforehand */
@@ -994,7 +996,7 @@ void gfxLoadILBM(char *fileName)
     U8 *lbm;
 
     /* Collection laden */
-    lbm = dskLoad(fileName);
+    lbm = (U8 *)dskLoad(fileName);
 
     gfxSetCMAP(lbm);
     gfxILBMToRAW(lbm, ScratchRP.pixels, SCREEN_SIZE);
@@ -1028,7 +1030,7 @@ void gfxCollToMem(U16 collId, MemRastPort *rp)
 	struct Collection *oldColl;
 
         if ((oldColl = gfxGetCollection(rp->collId))) {
-	    oldColl->prepared = NULL;
+	    oldColl->prepared = nullptr;
         }
     }
 
@@ -1251,7 +1253,7 @@ void gfxRAWBlit(U8 * sp, U8 * dp, const int x1, const int y1, const int x2,
 
 static GC *gfxGetGC(S32 l_DestY)
 {
-    GC *gc = NULL;
+    GC *gc = nullptr;
 
     switch (GfxBase.uch_VideoMode) {
     case GFX_VIDEO_NCH4:
@@ -1428,7 +1430,7 @@ void gfxChangeColors(GC *gc, U32 delay, U32 mode, U8 *palette)
 
     switch (mode) {
     case GFX_FADE_OUT:
-	
+
         gfxGetPaletteFromReg(cols);
 
         fakt=128/time;
@@ -1454,6 +1456,7 @@ void gfxChangeColors(GC *gc, U32 delay, U32 mode, U8 *palette)
 	break;
 
     case GFX_BLEND_UP:
+        if (!palette) return; /* V522: palette is NULL when called from FADE_OUT paths */
         for (t=0; t<GFX_PALETTE_SIZE; t++) {
             cols[t] = palette[t];
         }
@@ -1534,14 +1537,14 @@ void gfxShow(uword us_PictId, U32 ul_Mode, S32 l_Delay, S32 l_XPos, S32 l_YPos)
 
     if (ul_Mode & GFX_FADE_OUT) {
 	gfxSetColorRange(coll->uch_ColorRangeStart, coll->uch_ColorRangeEnd);
-	gfxChangeColors(NULL, l_Delay, GFX_FADE_OUT, NULL);
+	gfxChangeColors(nullptr, l_Delay, GFX_FADE_OUT, nullptr);
     }
 
     if (!l_Delay && (ul_Mode & GFX_BLEND_UP)) {
 	gfxSetColorRange(coll->uch_ColorRangeStart,
 	                 coll->uch_ColorRangeEnd);
-	gfxChangeColors(NULL, l_Delay, GFX_BLEND_UP, ScratchRP.palette);
-	
+	gfxChangeColors(nullptr, l_Delay, GFX_BLEND_UP, ScratchRP.palette);
+
     }
 
     gfxScreenFreeze();
@@ -1555,11 +1558,11 @@ void gfxShow(uword us_PictId, U32 ul_Mode, S32 l_Delay, S32 l_XPos, S32 l_YPos)
     if (l_Delay && (ul_Mode & GFX_BLEND_UP)) {
 	gfxSetColorRange(coll->uch_ColorRangeStart,
 	                 coll->uch_ColorRangeEnd);
-	gfxChangeColors(NULL, l_Delay, GFX_BLEND_UP, ScratchRP.palette);
+	gfxChangeColors(nullptr, l_Delay, GFX_BLEND_UP, ScratchRP.palette);
     }
     gfxScreenThaw(gc, destX, destY, pict->us_Width, pict->us_Height);
 
-    gfxSetGC(NULL);
+    gfxSetGC(nullptr);
 }
 
 /*******************************************************************
@@ -1708,7 +1711,7 @@ size_t XMSOffset = 0;
 U8 *XMSHandle;
 
 
-static const const char *names[5] = {
+static const char *names[5] = {
     "an1_1.anm",
     "an2_4.anm",
     "an3_11.anm",
@@ -1780,22 +1783,23 @@ static U32 Amg2Pc(U32 s)
 
 static void orbyte(U8 *ptr, U8 data, U8 dmask)
 {
-  U8 dmaskoff = ~dmask; 
+  U8 dmaskoff = ~dmask;
 
-  if (0x80 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff; 
-  if (0x40 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff; 
-  if (0x20 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff; 
-  if (0x10 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff; 
-  if (0x08 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff; 
-  if (0x04 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff; 
-  if (0x02 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff; 
-  if (0x01 & data) *ptr   |= dmask; else *ptr   &= dmaskoff; 
+  if (0x80 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff;
+  if (0x40 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff;
+  if (0x20 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff;
+  if (0x10 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff;
+  if (0x08 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff;
+  if (0x04 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff;
+  if (0x02 & data) *ptr++ |= dmask; else *ptr++ &= dmaskoff;
+  if (0x01 & data) *ptr   |= dmask; else *ptr   &= dmaskoff;
 }
 
 
-static void ProcessAnimation(U8 *dp, U8 *sp)
+static void ProcessAnimation(U8 *dp)
 {
     U32 size, rsize, *lp;
+    U8 *sp;
     U8 *me, *me1, *me2, *st;
     U32 offs[8];
     U8 plane, planeMask;
@@ -1863,7 +1867,7 @@ static void ProcessAnimation(U8 *dp, U8 *sp)
 			    cnt = op & 0x7f;
 			    for (j=0; j<cnt; j++) {
                                 U8 val;
-                            
+
                                 val = *sp++;
                                 orbyte(me, val, planeMask);
 				me += SCREEN_WIDTH;
@@ -1901,7 +1905,7 @@ void ShowIntro(void)
     gfxInitGC(&ScreenGC,
         0, 0, 320, 200,
         0, 255,
-        NULL);
+        nullptr);
     gfxSetColorRange(0, 255);
 
     memset(colorTABLE, 0, sizeof(colorTABLE));
@@ -1936,9 +1940,9 @@ void ShowIntro(void)
 
             /* skip header */
 	    XMSOffset += 4;
-            
+
             cp = XMSHandle+XMSOffset;
-            
+
             /* skip header */
 	    XMSOffset += 4;
             /* get size */
@@ -1949,8 +1953,8 @@ void ShowIntro(void)
 
 	    XMSOffset += rsize;
 
-            gfxChangeColors(NULL, 20, GFX_BLEND_UP, colorTABLE);
-            gfxClearArea(NULL);
+            gfxChangeColors(nullptr, 20, GFX_BLEND_UP, colorTABLE);
+            gfxClearArea(nullptr);
 
             /* copy from file to A & B */
             gfxSetCMAP(cp);
@@ -1987,7 +1991,7 @@ void ShowIntro(void)
                 }
 
                 if (t == 0) {
-                    gfxChangeColors(NULL, 20, GFX_BLEND_UP, ScratchRP.palette);
+                    gfxChangeColors(nullptr, 20, GFX_BLEND_UP, ScratchRP.palette);
                 }
 
                 gfxScreenThaw(&ScreenGC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -2012,9 +2016,9 @@ void ShowIntro(void)
 
 
                 if (showA) {
-                    ProcessAnimation(B.pixels, cp);
+                    ProcessAnimation(B.pixels);
                 } else {
-                    ProcessAnimation(A.pixels, cp);
+                    ProcessAnimation(A.pixels);
                 }
 
                 for (s=0; s<MaxAnm; s++) {
@@ -2052,7 +2056,8 @@ void ShowIntro(void)
                             bool canPlay = false;
                             if (trackFlag == 0) {
                                 canPlay = true;
-                            } else if (trackFlag != 0 && startOffset == 0) {
+                            } else if (startOffset == 0) {
+                                /* V547: trackFlag != 0 is always true in this else-branch */
                                 /* Partial sequences unsupported, but allow zero-offset clips. */
                                 canPlay = true;
                             }
@@ -2076,7 +2081,7 @@ void ShowIntro(void)
 	    }
 
 endit:
-            gfxChangeColors(NULL, 1, GFX_FADE_OUT, colorTABLE);
+            gfxChangeColors(nullptr, 1, GFX_FADE_OUT, colorTABLE);
 
 	    if (endi) {
 		goto endit2;
@@ -2085,7 +2090,7 @@ endit:
     }
 
 endit2:
-    gfxClearArea(NULL);
+    gfxClearArea(nullptr);
 
     if (setup.CDAudioFromCD) {
         CDROM_StopAudioTrack();
@@ -2117,7 +2122,7 @@ void gfxInitMemRastPort(MemRastPort *rp, U16 width, U16 height)
 void gfxDoneMemRastPort(MemRastPort *rp)
 {
     TCFreeMem(rp->pixels, rp->w * rp->h);
-    rp->pixels = NULL;
+    rp->pixels = nullptr;
 }
 
 void gfxScratchFromMem(MemRastPort *src)

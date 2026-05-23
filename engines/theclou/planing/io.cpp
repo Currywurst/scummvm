@@ -1,22 +1,26 @@
-/*
-**      $Filename: planing/io.c
-**      $Release:  1
-**      $Revision: 0
-**      $Date:     23-04-94
-**
-**      planing.io for "Der Clou!"
-**
-** (c) 1994 ...and avoid panic by, Kaweh Kazemi
-**      All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "base/base.h"
 
@@ -81,9 +85,9 @@ LIST *plLoadTools(TC_FILE * fh)
 
     if (foundAll) {
 	RemoveList(l);
-	l = NULL;
+	l = nullptr;
     } else {
-	LIST *extList = NULL;
+	LIST *extList = nullptr;
 	NODE *n;
 
 	U32 missingTools = (toolsNr > canGet) ? (toolsNr - canGet) : 0;
@@ -164,7 +168,7 @@ ubyte plOpen(U32 objId, ubyte mode, TC_FILE ** fh)
 			snprintf(name2, sizeof(name2), "*%s Plan %d    %s", name1, i + 1, exp);
 
 			if ((data =
-			     CreateNode(PlanList, sizeof(struct IOData),
+			     (struct IOData *)CreateNode(PlanList, sizeof(struct IOData),
 					name2)))
 			    data->io_Data = i;
 		    }
@@ -174,7 +178,7 @@ ubyte plOpen(U32 objId, ubyte mode, TC_FILE ** fh)
 		txtGetFirstLine(PLAN_TXT, name2, exp);
 		ExpandObjectList(PlanList, exp);
 
-		i = Bubble(PlanList, 0, NULL, 0L);
+		i = Bubble(PlanList, 0, nullptr, 0L);
 
 		if (ChoiceOk(i, GET_OUT, PlanList)) {
 		    struct IOData *data;
@@ -230,7 +234,7 @@ ubyte plOpen(U32 objId, ubyte mode, TC_FILE ** fh)
 
 void plSave(U32 objId)
 {
-    TC_FILE *fh = NULL;
+    TC_FILE *fh = nullptr;
 
     if (plOpen(objId, PLANING_OPEN_WRITE_PLAN, &fh) == PLANING_OPEN_OK) {
 	if (GamePlayMode & GP_GUARD_DESIGN) {
@@ -257,7 +261,7 @@ void plSaveChanged(U32 objId)
 
 	inpTurnESC(0);
 
-	if (Bubble(l, 0, NULL, 0L) == 0) {
+	if (Bubble(l, 0, nullptr, 0L) == 0) {
 	    inpTurnESC(1);
 
 	    if (!plAllInCar(objId))
@@ -273,7 +277,7 @@ void plSaveChanged(U32 objId)
 
 void plLoad(U32 objId)
 {
-    TC_FILE *fh = NULL;
+    TC_FILE *fh = nullptr;
     ubyte ret;
 
     if (objId == Building_Starford_Kaserne)
@@ -287,23 +291,23 @@ void plLoad(U32 objId)
 	    grdDo(fh, plSys, PersonsList, BurglarsNr, PersonsNr,
 		  GUARDS_DO_LOAD);
 	else {
-	    LIST *l = NULL;
+	    LIST *l = nullptr;
 	    ubyte i;
 	    ubyte goon = 1;
 
 	    if ((l = LoadSystem(fh, plSys))) {
 		inpTurnESC(0);
-		Bubble(l, 0, NULL, 0L);
+		(void)Bubble(l, 0, nullptr, 0L); /* V1071: display-only */
 		inpTurnESC(1);
 		RemoveList(l);
 
 		goon = 0;
-		l = NULL;
+		l = nullptr;
 	    }
 
 	    if ((l = plLoadTools(fh))) {
 		inpTurnESC(0);
-		Bubble(l, 0, NULL, 0L);
+		(void)Bubble(l, 0, nullptr, 0L); /* V1071: display-only */
 		inpTurnESC(1);
 		RemoveList(l);
 

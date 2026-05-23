@@ -1,27 +1,31 @@
-/*
-**	$Filename: present/interac.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     05-04-94
-**
-**	interactiv presentations for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by K. Kazemi, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "base/base.h"
 
 #include "present/interac.h"
-#include "present/interac.ph"
+#include "present/interac_internal.h"
 
 void SetBubbleType(uword type)
 {
@@ -65,7 +69,7 @@ ubyte ChoiceOk(ubyte choice, ubyte exit, LIST * l)
 static void DrawMenu(LIST * menu, ubyte nr, S32 mode)
 {
     ubyte i;
-    char *m1 = NULL, *m2 = NULL;
+    char *m1 = nullptr, *m2 = nullptr;
     S32 x = 8, lastx = 0;
 
     if (mode == ACTIV_POSS)
@@ -79,7 +83,7 @@ static void DrawMenu(LIST * menu, ubyte nr, S32 mode)
 	if ((i + 1) <= nr)
 	    m2 = NODE_NAME(GetNthNode(menu, i + 1));
 	else
-	    m2 = NULL;
+	    m2 = nullptr;
 
 	if (m2) {
 	    if (strlen(m1) > strlen(m2)) {
@@ -168,7 +172,7 @@ ubyte Menu(LIST * menu, U32 possibility, ubyte activ, void (*func) (ubyte),
 {
     ubyte i;
     S32 action;
-    char nextActiv;
+    int nextActiv; /* V1112: was char — signed/unsigned mismatch with ubyte activ */
     ubyte max;
     bool ende = false;
     uword x;
@@ -220,7 +224,7 @@ ubyte Menu(LIST * menu, U32 possibility, ubyte activ, void (*func) (ubyte),
 	    action = inpWaitFor(action);
 
 	    if (action & INP_TIME) {
-		refreshMenu = NULL;
+		refreshMenu = nullptr;
 
 		if (MenuTimeOutFunc)
 		    MenuTimeOutFunc();
@@ -243,7 +247,7 @@ ubyte Menu(LIST * menu, U32 possibility, ubyte activ, void (*func) (ubyte),
 
 	    if (action & INP_MOUSE) {	/* MOD : 14.12.93 hg */
 		if ((nextActiv =
-		     SearchMouseActiv(possibility, max)) != ((char) -1)) {
+		     SearchMouseActiv(possibility, max)) != -1) {
 		    if (nextActiv != activ) {
 			DrawMenu(menu, activ, INACTIV_POSS);
 			activ = nextActiv;
@@ -257,7 +261,7 @@ ubyte Menu(LIST * menu, U32 possibility, ubyte activ, void (*func) (ubyte),
 		if ((action & INP_UP) && (activ & 1)) {
 		    if ((nextActiv =
 			 SearchActiv(-1, activ, possibility,
-				     max)) != (char) -1) {
+				     max)) != -1) {
 			if (!(nextActiv & 1)) {
 			    DrawMenu(menu, activ, INACTIV_POSS);
 			    activ = nextActiv;
@@ -272,7 +276,7 @@ ubyte Menu(LIST * menu, U32 possibility, ubyte activ, void (*func) (ubyte),
 		if ((action & INP_DOWN) && !(activ & 1)) {
 		    if ((nextActiv =
 			 SearchActiv(+1, activ, possibility,
-				     max)) != (char) -1) {
+				     max)) != -1) {
 			if (nextActiv & 1) {
 			    DrawMenu(menu, activ, INACTIV_POSS);
 			    activ = nextActiv;
@@ -287,7 +291,7 @@ ubyte Menu(LIST * menu, U32 possibility, ubyte activ, void (*func) (ubyte),
 		if (action & INP_LEFT) {
 		    if ((nextActiv =
 			 SearchActiv(-2, activ, possibility,
-				     max)) != (char) -1) {
+				     max)) != -1) {
 			DrawMenu(menu, activ, INACTIV_POSS);
 			activ = nextActiv;
 			DrawMenu(menu, activ, ACTIV_POSS);
@@ -300,7 +304,7 @@ ubyte Menu(LIST * menu, U32 possibility, ubyte activ, void (*func) (ubyte),
 		if (action & INP_RIGHT) {
 		    if ((nextActiv =
 			 SearchActiv(+2, activ, possibility,
-				     max)) != (char) -1) {
+				     max)) != -1) {
 			DrawMenu(menu, activ, INACTIV_POSS);
 			activ = nextActiv;
 			DrawMenu(menu, activ, ACTIV_POSS);
@@ -312,12 +316,12 @@ ubyte Menu(LIST * menu, U32 possibility, ubyte activ, void (*func) (ubyte),
 	    }
 	}
 
-	refreshMenu = NULL;
+	refreshMenu = nullptr;
 
 	return activ;
     }
 
-    refreshMenu = NULL;
+    refreshMenu = nullptr;
 
     return activ;
 }
@@ -325,7 +329,7 @@ ubyte Menu(LIST * menu, U32 possibility, ubyte activ, void (*func) (ubyte),
 static void DrawBubble(LIST * bubble, U8 firstLine, U8 activ, GC *gc, U32 max)
 {
     unsigned i, j;
-    char *line = NULL;
+    char *line = nullptr;
 
     gfxScreenFreeze();
 
@@ -475,7 +479,7 @@ ubyte Bubble(LIST * bubble, ubyte activ, void (*func) (ubyte), U32 waitTime)
 
 				gfxWaitTOS();
 
-				gfxGetMouseXY(u_gc, NULL, &y);
+				gfxGetMouseXY(u_gc, nullptr, &y);
 			    }
 			} else if ((y > 48) && (y <= 52) && (firstVis < (max - 5))) {	/* Scroll down */
 			    while ((y > 48) && (y <= 52) && (firstVis < (max - 5))) {
@@ -492,7 +496,7 @@ ubyte Bubble(LIST * bubble, ubyte activ, void (*func) (ubyte), U32 waitTime)
 
 				gfxWaitTOS();
 
-				gfxGetMouseXY(u_gc, NULL, &y);
+				gfxGetMouseXY(u_gc, nullptr, &y);
 			    }
 			} else if ((y >= 4) && (y <= 48)) {
 			    ubyte newactiv = firstVis + (y - 4) / 9;

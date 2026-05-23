@@ -1,22 +1,26 @@
-/*
-**      $Filename: planing/planer.c
-**      $Release:  1
-**      $Revision: 0
-**      $Date:     23-04-94
-**
-**      planing.planer for "Der Clou!"
-**
-** (c) 1994 ...and avoid panic by, Kaweh Kazemi
-**      All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <stdint.h>
 
@@ -76,6 +80,9 @@
 #define PLANING_TIME_FIGHT             5
 #define PLANING_TIME_THROUGH_WINDOW    6
 #define PLANING_TIME_USE_STAIRS        8
+
+/* V566: sentinel used to mark "loot" items in takeableList (OL_DATA != NULL means loot) */
+#define PLANER_LOOT_MARKER ((void *)(uintptr_t)1)
 
 
 ubyte AnimCounter = 0;
@@ -213,7 +220,7 @@ static void plActionWait(void)
 	inpTurnFunctionKey(0);
 	inpTurnMouse(0);
 
-	activ = Menu(menu, bitset, activ, NULL, 0);
+	activ = Menu(menu, bitset, activ, nullptr, 0);
 
 	inpTurnMouse(1);
 	inpTurnFunctionKey(1);
@@ -308,7 +315,7 @@ static void plActionWait(void)
 		    txtGetFirstLine(PLAN_TXT, "EXPAND_RADIO", exp);
 		    ExpandObjectList(BurglarsList, exp);
 
-		    choice1 = Bubble(BurglarsList, 0, NULL, 0L);
+		    choice1 = Bubble(BurglarsList, 0, nullptr, 0L);
 
 		    if (ChoiceOk(choice1, GET_OUT, BurglarsList))
 			choice1 = OL_NR(GetNthNode(BurglarsList, choice1));
@@ -359,6 +366,9 @@ static void plLevelDesigner(LSObject lso)
     bitset = BIT(PLANING_LD_MOVE) +
 	BIT(PLANING_LD_REFRESH) + BIT(PLANING_LD_OK) + BIT(PLANING_LD_CANCEL);
 
+    /* V1044: 'ende' is set to 1 in cases PLANING_LD_OK / PLANING_LD_CANCEL below.
+     * ESC and function keys are disabled before Menu(), so those two cases are
+     * the only exit paths — the loop exits when the player confirms or cancels. */
     while (!ende) {
 	plDisplayTimer(0, 1);
 	plDisplayInfo();
@@ -369,7 +379,7 @@ static void plLevelDesigner(LSObject lso)
 	inpTurnFunctionKey(0);
 	inpTurnMouse(0);
 
-	activ = Menu(menu, bitset, activ, NULL, 0);
+	activ = Menu(menu, bitset, activ, nullptr, 0);
 
 	inpTurnMouse(1);
 	inpTurnFunctionKey(1);
@@ -473,13 +483,13 @@ static void plActionOpenClose(uword what)
 		   dbGetObject(OL_NR(GetNthNode(PersonsList, CurrentPerson))))->
 		  PictID);
 
-	choice1 = Bubble(actionList, 0, NULL, 0L);
+	choice1 = Bubble(actionList, 0, nullptr, 0L);
 
 	if (ChoiceOk(choice1, GET_OUT, actionList)) {
 	    choice1 = OL_NR(GetNthNode(actionList, choice1));
 
 	    if (GamePlayMode & GP_LEVEL_DESIGN)
-		plLevelDesigner(dbGetObject(choice1));
+		plLevelDesigner((LSObject)dbGetObject(choice1));
 	    else if ((CurrentPerson >= BurglarsNr)
 		     || !CHECK_STATE(lsGetObjectState(choice1),
 				     Const_tcIN_PROGRESS_BIT)) {
@@ -570,7 +580,7 @@ static void plActionTake(void)
 							 OL_NAME(h2));
 		    h->nr = OL_NR(h2);	/* Loot */
 		    h->type = OL_NR(n);	/* Original */
-		    h->data = NULL;
+		    h->data = nullptr;
 		} else {
 		    if (CHECK_STATE(state, Const_tcOPEN_CLOSE_BIT)) {
 			for (h2 = (struct ObjectNode *) LIST_HEAD(ObjectList);
@@ -582,7 +592,7 @@ static void plActionTake(void)
 								 OL_NAME(h2));
 			    h->nr = OL_NR(h2);	/* Loot */
 			    h->type = OL_NR(n);	/* Original */
-			    h->data = (void *)(uintptr_t) 1;
+			    h->data = PLANER_LOOT_MARKER;
 			}
 		    }
 		}
@@ -600,7 +610,7 @@ static void plActionTake(void)
 	    txtGetFirstLine(PLAN_TXT, "EXPAND_ALL", exp);
 	    ExpandObjectList(takeableList, exp);
 
-	    choice = Bubble(takeableList, 0, NULL, 0L);
+	    choice = Bubble(takeableList, 0, nullptr, 0L);
 
 	    if (ChoiceOk(choice, GET_OUT, takeableList)) {
 		U32 weightPerson =
@@ -866,7 +876,7 @@ static void plActionUse(void)
 		txtGetFirstLine(PLAN_TXT, "EXPAND_ALL", exp);
 		ExpandObjectList(actionList, exp);
 
-		choice1 = Bubble(actionList, 0, NULL, 0L);
+		choice1 = Bubble(actionList, 0, nullptr, 0L);
 
 		if (ChoiceOk(choice1, GET_OUT, actionList)) {
 		    choice1 = OL_NR(GetNthNode(actionList, choice1));
@@ -929,7 +939,7 @@ static void plActionUse(void)
 						    (PersonsList,
 						     CurrentPerson))))->PictID);
 
-			    choice2 = Bubble(objList, 0, NULL, 0L);
+			    choice2 = Bubble(objList, 0, nullptr, 0L);
 
 			    if (ChoiceOk(choice2, GET_OUT, objList)) {
 				choice2 = OL_NR(GetNthNode(objList, choice2));
@@ -1014,7 +1024,7 @@ static void plActionUse(void)
 						       OLF_ALIGNED);
 
 				    ObjectListWidth = 0L;
-				    ObjectListSuccString = NULL;
+				    ObjectListSuccString = nullptr;
 				    UseObject = 0L;
 
 				    txtGetFirstLine(PLAN_TXT, "EXPAND_ALL",
@@ -1028,7 +1038,7 @@ static void plActionUse(void)
 							     CurrentPerson))))->
 					      PictID);
 
-				    choice2 = Bubble(ObjectList, 0, NULL, 0L);
+				    choice2 = Bubble(ObjectList, 0, nullptr, 0L);
 
 				    if (ChoiceOk(choice2, GET_OUT, ObjectList)) {
 					choice2 =
@@ -1251,7 +1261,7 @@ static void plActionUse(void)
 	    txtGetFirstLine(PLAN_TXT, "EXPAND_ALL", exp);
 	    ExpandObjectList(actionList, exp);
 
-	    choice1 = Bubble(actionList, 0, NULL, 0L);
+	    choice1 = Bubble(actionList, 0, nullptr, 0L);
 
 	    if (ChoiceOk(choice1, GET_OUT, actionList)) {
 		choice1 = OL_NR(GetNthNode(actionList, choice1));
@@ -1277,7 +1287,7 @@ static void plActionUse(void)
 
 static void plAction(void)
 {
-    LIST *menu = NULL;
+    LIST *menu = nullptr;
     ubyte activ = 0;
     U32 choice1 = 0L, choice2 = 0L, bitset;
     char exp[TXT_KEY_LENGTH];
@@ -1325,7 +1335,7 @@ static void plAction(void)
 	inpTurnFunctionKey(0);
 	inpTurnMouse(0);
 
-	activ = Menu(menu, bitset, activ, NULL, 0);
+	activ = Menu(menu, bitset, activ, nullptr, 0);
 
 	inpTurnMouse(1);
 	inpTurnFunctionKey(1);
@@ -1342,13 +1352,13 @@ static void plAction(void)
 	    if (GamePlayMode & GP_GUARD_DESIGN) {
 		if (PersonsNr > 2)
 		    choice1 =
-			(U32) Bubble(PersonsList, CurrentPerson, NULL, 0L);
+			(U32) Bubble(PersonsList, CurrentPerson, nullptr, 0L);
 		else
 		    choice1 = ((CurrentPerson) ? 0L : 1L);
 	    } else {
 		if (BurglarsNr > 2)
 		    choice1 =
-			(U32) Bubble(BurglarsList, CurrentPerson, NULL, 0L);
+			(U32) Bubble(BurglarsList, CurrentPerson, nullptr, 0L);
 		else
 		    choice1 = ((CurrentPerson) ? 0L : 1L);
 	    }
@@ -1424,7 +1434,7 @@ static void plAction(void)
 		txtGetFirstLine(PLAN_TXT, "EXPAND_ALL", exp);
 		ExpandObjectList(ObjectList, exp);
 
-		choice1 = Bubble(ObjectList, 0, NULL, 0L);
+		choice1 = Bubble(ObjectList, 0, nullptr, 0L);
 
 		if (ChoiceOk(choice1, GET_OUT, ObjectList)) {
 		    U32 weightLoot;
@@ -1494,7 +1504,7 @@ static void plAction(void)
 		    txtGetFirstLine(PLAN_TXT, "EXPAND_ALL", exp);
 		    ExpandObjectList(BurglarsList, exp);
 
-		    choice1 = Bubble(BurglarsList, 0, NULL, 0L);
+		    choice1 = Bubble(BurglarsList, 0, nullptr, 0L);
 
 		    if (ChoiceOk(choice1, GET_OUT, BurglarsList))
 			choice1 = OL_NR(GetNthNode(BurglarsList, choice1));
@@ -1636,7 +1646,7 @@ static void plLook(void)
 	inpTurnFunctionKey(0);
 	inpTurnESC(0);
 
-	activ = Menu(menu, bitset, activ, NULL, 0);
+	activ = Menu(menu, bitset, activ, nullptr, 0);
 
 	inpTurnFunctionKey(1);
 	inpTurnESC(1);
@@ -1703,7 +1713,7 @@ static void plLook(void)
 	    plMessage("CHANGE_PERSON_2", PLANING_MSG_REFRESH);
 
 	    if (PersonsNr > 2)
-		choice1 = (U32) Bubble(PersonsList, CurrentPerson, NULL, 0L);
+		choice1 = (U32) Bubble(PersonsList, CurrentPerson, nullptr, 0L);
 	    else
 		choice1 = ((CurrentPerson) ? 0L : 1L);
 
@@ -1803,7 +1813,7 @@ void plPlaner(U32 objId)
 	inpTurnFunctionKey(0);
 	inpTurnMouse(0);
 
-	activ = Menu(menu, bitset, activ, NULL, 0);
+	activ = Menu(menu, bitset, activ, nullptr, 0);
 
 	inpTurnMouse(1);
 	inpTurnFunctionKey(1);

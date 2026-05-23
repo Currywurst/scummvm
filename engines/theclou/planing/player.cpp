@@ -1,22 +1,26 @@
-/*
-**      $Filename: planing/player.c
-**      $Release:  1
-**      $Revision: 0
-**      $Date:     23-04-94
-**
-**      planing.player for "Der Clou!"
-**
-** (c) 1994 ...and avoid panic by, Kaweh Kazemi
-**      All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "base/base.h"
 
@@ -391,7 +395,7 @@ static void plPlayerAction(void)
 #ifndef PLAN_IS_PERFECT
     if (!(PD.timer % 3)) {
 	if (PD.isItDark) {
-	    ubyte j, i;
+	    ubyte j;
 	    uword xpos[PLANING_NR_PERSONS];
 	    uword ypos[PLANING_NR_PERSONS];
 	    U32 area[PLANING_NR_PERSONS];
@@ -1600,12 +1604,12 @@ static void plPlayerAction(void)
     }
 
     if (PD.ende)
-	SetMenuTimeOutFunc(NULL);
+	SetMenuTimeOutFunc(nullptr);
 }
 
 S32 plPlayer(U32 objId, U32 actionTime, ubyte(*actionFunc) (U32, U32))
 {
-    TC_FILE *fh = NULL;
+    TC_FILE *fh = nullptr;
     LIST *menu = txtGoKey(PLAN_TXT, "PLAYER_MENU"), *l;
     ubyte activ = 0, i;
     U32 timeLeft = 0, bitset, choice1, choice2;
@@ -1728,7 +1732,7 @@ S32 plPlayer(U32 objId, U32 actionTime, ubyte(*actionFunc) (U32, U32))
 		    inpTurnESC(0);
 
 		    activ =
-			Menu(menu, bitset, activ, NULL,
+			Menu(menu, bitset, activ, nullptr,
 			     INP_AS_FAST_AS_POSSIBLE);
 
 		    inpTurnFunctionKey(1);
@@ -1742,14 +1746,14 @@ S32 plPlayer(U32 objId, U32 actionTime, ubyte(*actionFunc) (U32, U32))
 			    if (PersonsNr > 2)
 				choice1 =
 				    (U32) Bubble(PersonsList, CurrentPerson,
-						 NULL, 0L);
+						 nullptr, 0L);
 			    else
 				choice1 = ((CurrentPerson) ? 0L : 1L);
 			} else {
 			    if (BurglarsNr > 2)
 				choice1 =
 				    (U32) Bubble(BurglarsList, CurrentPerson,
-						 NULL, 0L);
+						 nullptr, 0L);
 			    else
 				choice1 = ((CurrentPerson) ? 0L : 1L);
 			}
@@ -1785,7 +1789,7 @@ S32 plPlayer(U32 objId, U32 actionTime, ubyte(*actionFunc) (U32, U32))
 				  PictID);
 			SetBubbleType(RADIO_BUBBLE);
 
-			if ((choice1 = Bubble(l, 0, NULL, 0L)) != GET_OUT) {
+			if ((choice1 = Bubble(l, 0, nullptr, 0L)) != GET_OUT) {
 			    if (choice1 < 2) {
 				tcCalcCallValue(choice1, PD.realTime, 0L);
 				Search.CallCount++;
@@ -1793,7 +1797,7 @@ S32 plPlayer(U32 objId, U32 actionTime, ubyte(*actionFunc) (U32, U32))
 			}
 
 			RemoveList(l);
-			l = NULL;
+			l = nullptr;
 			break;
 
 		    case PLANING_PLAYER_RADIO_ONE:
@@ -1808,14 +1812,14 @@ S32 plPlayer(U32 objId, U32 actionTime, ubyte(*actionFunc) (U32, U32))
 						    (BurglarsList,
 						     0))))->PictID);
 			    node =
-				UnLink(BurglarsList,
+				(NODE *)UnLink(BurglarsList,
 				       OL_NAME(GetNthNode(BurglarsList, 0)),
 				       &help);
 
 			    txtGetFirstLine(PLAN_TXT, "EXPAND_RADIO", exp);
 			    ExpandObjectList(BurglarsList, exp);
 
-			    choice1 = Bubble(BurglarsList, 0, NULL, 0L);
+			    choice1 = Bubble(BurglarsList, 0, nullptr, 0L);
 
 			    if (ChoiceOk(choice1, GET_OUT, BurglarsList))
 				choice1 =
@@ -1841,7 +1845,7 @@ S32 plPlayer(U32 objId, U32 actionTime, ubyte(*actionFunc) (U32, U32))
 			    SetBubbleType(RADIO_BUBBLE);
 
 			    if ((choice2 =
-				 (U32) Bubble(l, 0, NULL, 0L)) != GET_OUT) {
+				 (U32) Bubble(l, 0, nullptr, 0L)) != GET_OUT) {
 				if (choice2 < 3) {
 				    tcCalcCallValue(choice2 + 2, PD.realTime,
 						    choice1);
@@ -1850,7 +1854,7 @@ S32 plPlayer(U32 objId, U32 actionTime, ubyte(*actionFunc) (U32, U32))
 			    }
 
 			    RemoveList(l);
-			    l = NULL;
+			    l = nullptr;
 			}
 			break;
 
@@ -1868,7 +1872,7 @@ S32 plPlayer(U32 objId, U32 actionTime, ubyte(*actionFunc) (U32, U32))
 		    }
 		}
 
-		SetMenuTimeOutFunc(NULL);
+		SetMenuTimeOutFunc(nullptr);
 		inpSetWaitTicks(0);	/* normales Ausma� */
 
 		Search.LastAreaId = lsGetActivAreaID();
@@ -1950,7 +1954,7 @@ S32 plPlayer(U32 objId, U32 actionTime, ubyte(*actionFunc) (U32, U32))
 	}
 
 	if (l) {
-	    Bubble(l, 0, NULL, 0L);
+	    (void)Bubble(l, 0, nullptr, 0L); /* V1071: display-only */
 	    RemoveList(l);
 	}
 

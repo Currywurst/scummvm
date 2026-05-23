@@ -1,22 +1,26 @@
-/*
-**	$Filename: landscap/spot.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     19-04-94
-**
-**	spot functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "base/base.h"
 
@@ -38,7 +42,7 @@ struct SpotControl {
     MemRastPort RP;
 };
 
-static struct SpotControl *gSpotControl = NULL;
+static struct SpotControl *gSpotControl = nullptr;
 
 void lsInitSpots(void)
 {
@@ -66,7 +70,7 @@ void lsDoneSpots(void)
 	TCFreeMem(gSpotControl, sizeof(*gSpotControl));
     }
 
-    gSpotControl = NULL;
+    gSpotControl = nullptr;
 }
 
 static S32 lsIsSpotVisible(struct Spot *spot)
@@ -85,7 +89,7 @@ void lsMoveAllSpots(U32 time)
 	 spot = (struct Spot *) NODE_SUCC(spot))
 	if (spot->us_PosCount > 1)
 	    if (lsIsSpotVisible(spot))
-		if (lsIsLSObjectInActivArea(dbGetObject(spot->ul_CtrlObjId)))	/* wenn der Steuerkasten in dieser Area -> */
+		if (lsIsLSObjectInActivArea((LSObject)dbGetObject(spot->ul_CtrlObjId)))	/* wenn der Steuerkasten in dieser Area -> */
 		    if (spot->uch_Status & LS_SPOT_ON)
 			lsShowSpot(spot, time);	/* Spot darstellen (auch in der aktiven Area */
 }
@@ -96,7 +100,7 @@ void lsShowAllSpots(U32 time, U32 mode)
 
     for (spot = (struct Spot *) LIST_HEAD(gSpotControl->p_spots); NODE_SUCC(spot);
 	 spot = (struct Spot *) NODE_SUCC(spot)) {
-	if (lsIsLSObjectInActivArea(dbGetObject(spot->ul_CtrlObjId))) {	/* wenn der Steuerkasten in dieser Area -> */
+	if (lsIsLSObjectInActivArea((LSObject)dbGetObject(spot->ul_CtrlObjId))) {	/* wenn der Steuerkasten in dieser Area -> */
 	    if (mode & LS_ALL_VISIBLE_SPOTS)
 		if (spot->uch_Status & LS_SPOT_ON)
 		    lsShowSpot(spot, time);	/* Spot darstellen */
@@ -264,7 +268,7 @@ struct Spot *lsAddSpot(uword us_Size, uword us_Speed, U32 ul_CtrlObjId)
     spot->uch_Status = LS_SPOT_ON;
     spot->us_PosCount = 0;
 
-    spot->p_CurrPos = NULL;
+    spot->p_CurrPos = nullptr;
 
     spot->ul_CtrlObjId = ul_CtrlObjId;
 
@@ -289,7 +293,7 @@ void lsAddSpotPosition(struct Spot *spot, uword us_XPos, uword us_YPos)
 
     pos =
 	(struct SpotPosition *) CreateNode(spot->p_positions, sizeof(*pos),
-					   NULL);
+					   nullptr);
 
     pos->us_XPos = (word) us_XPos + (word) LS_PC_CORRECT_X;
     pos->us_YPos = (word) us_YPos + (word) LS_PC_CORRECT_Y;

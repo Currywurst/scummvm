@@ -1,55 +1,38 @@
-/*
-**	$Filename: living/living.h
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     13-04-94
-**
-**	"sprite" functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
-
-#ifndef MODULE_LIVING
-#define MODULE_LIVING
+#ifndef ENGINES_THECLOU_LIVING_LIVING_H
+#define ENGINES_THECLOU_LIVING_LIVING_H
 
 #include "theclou.h"
-
-#ifndef MODULE_LIST
 #include "list/list.h"
-#endif
-
-#ifndef MODULE_MEMORY
 #include "memory/memory.h"
-#endif
-
-#ifndef MODULE_LANDSCAP
 #include "landscap/landscap.h"
-#endif
-
-#ifndef MODULE_DISK
 #include "disk/disk.h"
-#endif
-
-#ifndef MODULE_TEXT
 #include "text/text.h"
-#endif
-
-#ifndef MODULE_GFX
 #include "gfx/gfx.h"
-#endif
-
-#ifndef MODULE_BOB
 #include "living/bob.h"
-#endif
 
 /* defines for AnimPlayMode */
 #define LIV_PM_NORMAL    	1
@@ -119,4 +102,4 @@ extern ubyte livGetOldAction(char *uch_Name);
 /* uword spotDone */
 /* uword spotSetPos(uword, uword, uword); */
 
-#endif
+#endif  // ENGINES_THECLOU_LIVING_LIVING_H

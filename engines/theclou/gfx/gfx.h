@@ -1,25 +1,30 @@
-/*
-**	$Filename: gfx/gfx.h
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-02-94
-**
-**	gfx functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code (c) 1994 H. Gaberschek
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/** @file gfx/gfx.h — Graphics subsystem for Der Clou! */
 
-#ifndef MODULE_GFX
-#define MODULE_GFX
+#ifndef ENGINES_THECLOU_GFX_GFX_H
+#define ENGINES_THECLOU_GFX_GFX_H
 
 #include "theclou.h"
 #include "platform/tc_sdl_compat.h"
@@ -64,9 +69,12 @@ typedef enum {
 #define GFX_VIDEO_NCH4					2
 #define GFX_VIDEO_TEXT					3
 
+// Forward declarations — definitions follow below
+struct _MemRastPort;
 typedef struct _MemRastPort MemRastPort;
-typedef struct _Rect        Rect;
-typedef struct Font         Font;
+struct _Rect;
+typedef struct _Rect Rect;
+struct Font;
 
 struct _MemRastPort {
     U16 w;
@@ -257,4 +265,4 @@ void gfxHandleWindowEvent(const SDL_Event *ev);
 void ShowIntro(void);
 
 #include "gfx/gfxnch4.h"
-#endif
+#endif // ENGINES_THECLOU_GFX_GFX_H

@@ -1,22 +1,26 @@
-/*
-**	$Filename: scenes/cars.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-02-94
-**
-**	"car & vans" functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "scenes/scenes.h"
 
@@ -67,7 +71,7 @@ char *tcShowPriceOfCar(U32 nr, U32 type, void *data)
 
 void tcBuyCar(void)
 {
-    LIST *bubble = NULL;
+    LIST *bubble = nullptr;
     ubyte choice = 0, choice1 = 0;
     Car matts_car;
     Person marc = (Person) dbGetObject(Person_Marc_Smith);
@@ -81,7 +85,7 @@ void tcBuyCar(void)
 	       OLF_INSERT_STAR | OLF_ADD_SUCC_STRING, Object_Car);
 	bubble = ObjectListPrivate;
 
-	ObjectListSuccString = NULL;
+	ObjectListSuccString = nullptr;
 	ObjectListWidth = 0;
 
 	if (!(LIST_EMPTY(bubble))) {
@@ -190,10 +194,10 @@ void tcColorCar(Car car)
 
     costs = (U32)tcColorCosts(car);
 
-    bubble = txtGoKeyAndInsert(BUSINESS_TXT, "LACKIEREN", (U32) costs, NULL);
+    bubble = txtGoKeyAndInsert(BUSINESS_TXT, "LACKIEREN", (U32) costs, nullptr);
 
     SetPictID(marc->PictID);
-    Bubble(bubble, 0, 0L, 0L);
+    (void)Bubble(bubble, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
     RemoveList(bubble);
 
     if (Say(BUSINESS_TXT, 0, MATT_PICTID, "LACKIEREN_ANT") == 0) {
@@ -211,7 +215,7 @@ void tcColorCar(Car car)
 		(choice =
 		 Bubble(colors, (ubyte) car->ColorIndex, 0L, 0L), GET_OUT,
 		 colors)) {
-		car->ColorIndex = (ubyte) choice;
+		car->ColorIndex = (enum ColorE) choice;
 
 		SetCarColors(car->ColorIndex);
 		gfxPrepareRefresh();
@@ -246,17 +250,14 @@ void tcSellCar(U32 ObjectID)
     car = (Car) dbGetObject(ObjectID);
     offer = tcGetCarTraderOffer(car);
 
-    if (tcRGetCarAge(car) < 1)
-	bubble =
-	    txtGoKeyAndInsert(BUSINESS_TXT, "ANGEBOT_1", tcRGetCarValue(car),
-			      offer, NULL);
-    else
-	bubble =
-	    txtGoKeyAndInsert(BUSINESS_TXT, "ANGEBOT", tcRGetCarValue(car),
-			      tcRGetCarAge(car), offer, NULL);
+    /* V547: tcRGetCarAge() returns max(...,1) — the < 1 branch was always dead.
+     * ANGEBOT_1 (brand-new car text) can never be reached; always use ANGEBOT. */
+    bubble =
+	txtGoKeyAndInsert(BUSINESS_TXT, "ANGEBOT", tcRGetCarValue(car),
+			  tcRGetCarAge(car), offer, nullptr);
 
     SetPictID(marc->PictID);
-    Bubble(bubble, 0, 0L, 0L);
+    (void)Bubble(bubble, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
     RemoveList(bubble);
 
     if ((Say(BUSINESS_TXT, 0, MATT_PICTID, "VERKAUF")) == 0) {
@@ -270,11 +271,11 @@ void tcSellCar(U32 ObjectID)
     AddVTime(97);
 }
 
-void tcRepairCar(Car car, char *repairWhat)
+void tcRepairCar(Car car, const char *repairWhat)
 {
     LIST *presentationData = CreateList();
-    LIST *list = NULL;
-    ubyte *item = NULL, type = 7, ready = 0;
+    LIST *list = nullptr;
+    ubyte *item = nullptr, type = 7, ready = 0;
     bool enough = true;
     U32 costs = 0, choice = 0L, totalCosts = 0L;
     uword line = 0;
@@ -315,7 +316,7 @@ void tcRepairCar(Car car, char *repairWhat)
 
 	AddVTime(3);
 
-	AddPresentTextLine(presentationData, NULL, 0L, list, line++);
+	AddPresentTextLine(presentationData, nullptr, 0L, list, line++);
 
 	if (item)
 	    AddPresentLine(presentationData, PRESENT_AS_BAR, (U32) (*item),
@@ -332,7 +333,7 @@ void tcRepairCar(Car car, char *repairWhat)
 	DrawPresent(presentationData, 0, u_gc,
 		    (ubyte) GetNrOfNodes(presentationData));
 
-	RemoveNode(presentationData, NULL);
+	RemoveNode(presentationData, nullptr);
 
 	choice = inpWaitFor(INP_LBUTTONP | INP_TIME);
 
@@ -437,8 +438,8 @@ void tcCarGeneralOverhoul(Car car)
 
     bubble =
 	txtGoKeyAndInsert(BUSINESS_TXT, "GENERAL_OVERHOUL",
-			  (U32) ((tcCostsPerTotalRepair(car) * 255) / 8), NULL);
-    Bubble(bubble, 0, 0L, 0L);
+			  (U32) ((tcCostsPerTotalRepair(car) * 255) / 8), nullptr);
+    (void)Bubble(bubble, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
     RemoveList(bubble);
 
     choice = Say(BUSINESS_TXT, 0, MATT_PICTID, "GENERAL_OVERHOUL_QUEST");

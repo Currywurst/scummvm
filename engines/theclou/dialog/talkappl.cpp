@@ -1,22 +1,26 @@
-/*
-**	$Filename: dialog/talkAppl.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     07-04-94
-**
-**	dialog functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "dialog/talkappl.h"
 
@@ -34,10 +38,10 @@ void tcJobOffer(Person p)
 
     part = tcGetPersOffer(p, (choice + 2));
 
-    bubble = txtGoKeyAndInsert(BUSINESS_TXT, "JOB_ANSWER", (U32) part, NULL);
+    bubble = txtGoKeyAndInsert(BUSINESS_TXT, "JOB_ANSWER", (U32) part, nullptr);
 
     SetPictID(p->PictID);
-    Bubble(bubble, 0, 0L, 0L);
+    (void)Bubble(bubble, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
     RemoveList(bubble);
 
     choice = Say(BUSINESS_TXT, 0, MATT_PICTID, "NEW_THEEF");
@@ -68,7 +72,7 @@ void tcMyJobAnswer(Person p)
 
     SetPictID(p->PictID);
     CreateNode(bubble, 0L, line);
-    Bubble(bubble, 0, 0L, 0L);
+    (void)Bubble(bubble, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
 
     RemoveList(jobs);
     RemoveList(bubble);
@@ -84,7 +88,7 @@ void tcPrisonAnswer(Person p)
 
     SetPictID(p->PictID);
     CreateNode(bubble, 0L, line);
-    Bubble(bubble, 0, 0, 0);
+    (void)Bubble(bubble, 0, 0, 0); /* V1071: display-only, result intentionally discarded */
 
     RemoveList(source);
     RemoveList(bubble);
@@ -102,7 +106,7 @@ void tcAbilityAnswer(U32 personID)
 
     SetPictID(p->PictID);
 
-    Bubble(bubble, 0, 0, 0);
+    (void)Bubble(bubble, 0, 0, 0); /* V1071: display-only, result intentionally discarded */
 
     RemoveList(bubble);
 }

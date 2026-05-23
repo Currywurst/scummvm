@@ -1,32 +1,39 @@
-/*
-**      $Filename: base/base.c
-**      $Release:  0
-**      $Revision: 0.1
-**      $Date:     06-02-94
-**
-**      basic functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**          All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "base/base.h"
+#include "platform/tc_quit.h"
+#include "common/debug.h"
 #ifdef XXX
 extern unsigned _stklen = 16 * 1024;
 #endif
 
 #include "platform/tc_sdl_compat.h"
+#include "platform/tc_debug.h"
 
-void *StdBuffer0 = NULL;
-void *StdBuffer1 = NULL;
+void *StdBuffer0 = nullptr;
+void *StdBuffer1 = nullptr;
 
 void tcClearStdBuffer(void *p)
 {
@@ -106,6 +113,9 @@ static void AutoDetectVersion(void)
          "Detected Version: Der Clou! %s %s",
          setup.Profidisk ? "Profidisk" : "",
          setup.CDRom ? "CD-ROM" : "");
+    /* Always log to ScummVM console so speech issues can be diagnosed. */
+    tc_debug(1, "TheClou: version detected: Profidisk=%d CDRom=%d",
+             setup.Profidisk, setup.CDRom);
 }
 
 static char AutoDetectLanguage(void)
@@ -120,7 +130,7 @@ static char AutoDetectLanguage(void)
 
     for (i = 0; i < array_len(langs); i++) {
         char File[DSK_PATH_MAX], Path[DSK_PATH_MAX];
-    
+
         snprintf(File, sizeof(File), "tcmaine%c.txt", langs[i]);
         if (dskBuildPathName(DISK_CHECK_FILE, TEXT_DIRECTORY, File, Path)) {
             lang = langs[i];
@@ -145,7 +155,7 @@ bool tcInit(void)
     if (setup.Debug >= ERR_DEBUG) {
         pcErrOpen(ERR_OUTPUT_TO_DISK, "debug.txt");
     } else {
-        pcErrOpen(ERR_NO_OUTPUT, NULL);
+        pcErrOpen(ERR_NO_OUTPUT, nullptr);
     }
 
     InitAudio();
@@ -196,6 +206,8 @@ bool tcInit(void)
         setup.CDAudio = true;
         setup.CDAudioFromWav = true;
     }
+    tc_debug(1, "TheClou: audio setup: speechAvailable=%d CDAudio=%d CDAudioFromWav=%d CDAudioFromCD=%d",
+             speechAvailable, setup.CDAudio, setup.CDAudioFromWav, setup.CDAudioFromCD);
 
     gfxInit();
 
@@ -265,7 +277,7 @@ static void CloseData(void)
 void tcSetPermanentColors(void)
 {
     U8 palette[GFX_PALETTE_SIZE];
-    
+
     palette[248 * 3 + 0] = 116;
     palette[248 * 3 + 1] = 224;
     palette[248 * 3 + 2] = 142;
@@ -289,13 +301,13 @@ void tcSetPermanentColors(void)
     palette[253 * 3 + 0] = 104;
     palette[253 * 3 + 1] = 104;
     palette[253 * 3 + 2] = 104;
-    
+
     palette[254 * 3 + 0] = 0;
     palette[254 * 3 + 1] = 0;
     palette[254 * 3 + 2] = 0;
 
     gfxSetColorRange(248, 254);
-    gfxChangeColors(NULL, 0, GFX_BLEND_UP, palette);
+    gfxChangeColors(nullptr, 0, GFX_BLEND_UP, palette);
 }
 
 static void SetFullEnviroment(void)
@@ -522,7 +534,7 @@ static ubyte StartupMenu(void)
     inpTurnFunctionKey(0);
     inpTurnESC(0);
 
-    activ = Menu(menu, 7L, 0, NULL, 0L);
+    activ = Menu(menu, 7L, 0, nullptr, 0L);
 
     inpTurnESC(1);
     inpTurnFunctionKey(1);
@@ -566,14 +578,14 @@ void tcDo(void)
 	    -1, -1);
 
     /* mouse to white - assume we need to set 15 and 16 */
-    gfxSetRGB(NULL, 15, 63, 63, 63);
-    gfxSetRGB(NULL, 16, 63, 63, 63);
+    gfxSetRGB(nullptr, 15, 63, 63, 63);
+    gfxSetRGB(nullptr, 16, 63, 63, 63);
 
     SetBubbleType(SPEAK_BUBBLE);
 
     ShowMenuBackground();
 
-    while (sceneId == SCENE_NEW_GAME) {
+    while (sceneId == SCENE_NEW_GAME && !tc_ShouldQuit()) {
 	ubyte ret = 0;
 
 	if (!(GamePlayMode & GP_DEMO))
@@ -581,7 +593,7 @@ void tcDo(void)
 	else
 	    InitStory(STORY_DAT_DEMO);
 
-	while (!ret)
+	while (!ret && !tc_ShouldQuit())
 	    ret = StartupMenu();
 
 	if (ret != 2) {
@@ -606,10 +618,11 @@ static bool OptionSet(const char *str, char c)
 struct Setup setup;
 
 static const char aboutString[] =
-    "Der Clou! - SDL Port\n"
+    "Der Clou! (ScummVM)\n"
     "\n"
     "Original version by neo Software Produktions GmbH\n"
-    "Port by Vasco Alexandre da Silva Costa\n"
+    "SDL port by Vasco Alexandre da Silva Costa\n"
+    "ScummVM integration by the ScummVM team\n"
     "\n\n"
     "Copyright (c) 1993,1994 neo Software Produktions GmbH\n"
     "Copyright (c) 2005 Vasco Alexandre da Silva Costa\n"
@@ -704,15 +717,13 @@ void parseOptions(int argc, char *argv[])
                 break;
 
             case 'h':
-                puts(aboutString);
-                puts(syntaxString);
-                exit(0);
+                debug(0, "%s", aboutString);
+                debug(0, "%s", syntaxString);
                 return;
 
             default:
-                puts(aboutString);
-                puts(syntaxString);
-                exit(1);
+                debug(0, "%s", aboutString);
+                debug(0, "%s", syntaxString);
                 return;
             }
         }

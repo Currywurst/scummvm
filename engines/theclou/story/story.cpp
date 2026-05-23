@@ -1,22 +1,26 @@
-/*
-**	$Filename: story/story.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-02-94
-**
-**
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "story/story.h"
 #include "platform/tc_debug.h"
@@ -1518,10 +1522,13 @@ static void tcDoneFirstTimeLonelyInSouth(void)
     tcAsDaysGoBy(713518L, 30);
     startTime = GetDay * 1440 + GetMinute;
 
+    /* V1044: 'ende' is set after the time condition (startTime + 2100 minutes)
+     * is met. Choices 1-3 advance game time each iteration; the loop exits when
+     * the time threshold is crossed (approx. 35 in-game hours after arrival). */
     while (!ende) {
 	inpTurnFunctionKey(0);
 	inpTurnESC(0);
-	activ = Menu(menu, 46, activ, NULL, 0L);
+	activ = Menu(menu, 46, activ, nullptr, 0L);
 	inpTurnESC(1);
 	inpTurnFunctionKey(1);
 
@@ -1628,7 +1635,7 @@ void tcDoneSouthhampton(void)
     while ((activ != 0) && (SceneArgs.ReturnValue == 0)) {
 	inpTurnESC(0);
 	inpTurnFunctionKey(1);
-	activ = Menu(menu, 127, activ, NULL, 0L);
+	activ = Menu(menu, 127, activ, nullptr, 0L);
 	inpTurnFunctionKey(0);
 	inpTurnESC(1);
 
@@ -1779,7 +1786,7 @@ S32 tcDoTowerBurglary(void)
     tcInitTowerBurglary();
 
     /* und los gehts! */
-    burglary = plPlayer(Building_Tower_of_London, 0, NULL);
+    burglary = plPlayer(Building_Tower_of_London, 0, nullptr);
 
     if (burglary) {
 	if (has(Person_Matt_Stuvysunt, Loot_Kronjuwelen))
@@ -1863,7 +1870,7 @@ void tcDoneKaserne(void)
     /* und los gehts! */
     while ((!burglary) && (!successor)) {
 	inpTurnESC(0);
-	activ = Menu(menu, 15, activ, NULL, 0L);
+	activ = Menu(menu, 15, activ, nullptr, 0L);
 	inpTurnESC(1);
 
 	/* change possibilites in PatchStory too! */
@@ -1893,7 +1900,7 @@ void tcDoneKaserne(void)
 	    case 3:
 		StopAnim();
 		Search.KaserneOk = 0;
-		if (!(burglary = plPlayer(Building_Starford_Kaserne, 0, NULL)))
+		if (!(burglary = plPlayer(Building_Starford_Kaserne, 0, nullptr)))
 		    tcMattGoesTo(66);	/* refresh! */
 		break;
 	    default:

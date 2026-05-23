@@ -1,27 +1,31 @@
-/*
-**	$Filename: landscap/landscap.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-04-94
-**
-**	landscap functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "base/base.h"
 
 #include "landscap/landscap.h"
-#include "landscap/landscap.ph"
+#include "landscap/landscap_internal.h"
 
 U32 ConsistOfRelationID = 0;
 U32 hasLockRelationID = 0;
@@ -31,7 +35,7 @@ U32 hasLootRelationID = 0;
 U32 hasRoomRelationID = 0;
 U32 FloorLinkRelationID = 0;
 
-struct LandScape *gLandscapeState = NULL;
+struct LandScape *gLandscapeState = nullptr;
 
 void lsSafeRectFill(U16 x0, U16 y0, U16 x1, U16 y1, U8 color)
 {
@@ -177,9 +181,9 @@ void lsBuildScrollWindow(void)
 
 	if (lsShowOneObject(lso, LS_STD_COORDS, LS_STD_COORDS, LS_SHOW_DOOR)) {
 	    if (!(lso->ul_Status & 1 << Const_tcOPEN_CLOSE_BIT))
-		lsTurnObject(OL_DATA(node), lso->uch_Visible, LS_COLLISION);
+		lsTurnObject((LSObject)OL_DATA(node), lso->uch_Visible, LS_COLLISION);
 	    else
-		lsTurnObject(OL_DATA(node), lso->uch_Visible, LS_NO_COLLISION);
+		lsTurnObject((LSObject)OL_DATA(node), lso->uch_Visible, LS_NO_COLLISION);
 	}
     }
 
@@ -205,13 +209,13 @@ void lsBuildScrollWindow(void)
 	palette[i - 64 * 3] /= 2;	/* dark */
     }
 
-    gfxChangeColors(NULL, 5, GFX_BLEND_UP, palette);
+    gfxChangeColors(nullptr, 5, GFX_BLEND_UP, palette);
 
     /* now show colours of the maxis */
     gfxPrepareColl(137);
     gfxGetPalette(137, palette);
     gfxSetColorRange(128, 191);
-    gfxChangeColors(NULL, 0, GFX_BLEND_UP, palette);
+    gfxChangeColors(nullptr, 0, GFX_BLEND_UP, palette);
 
     /* and just to be safe also set the menu colours */
     tcSetPermanentColors();
@@ -603,7 +607,7 @@ void lsInitDoorRefresh(U32 ObjId)
         }
 
 	drn = (struct LSDoorRefreshNode *)
-	    CreateNode(gLandscapeState->p_DoorRefreshList, sizeof(*drn), NULL);
+	    CreateNode(gLandscapeState->p_DoorRefreshList, sizeof(*drn), nullptr);
 
 	drn->lso = lso;
 

@@ -1,29 +1,32 @@
-/*
-**	$Filename: present/present.h
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-02-94
-**
-**	basic functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "present/present.h"
-#include "present/present.ph"
+#include "present/present_internal.h"
 
-struct PresentControl PresentControl = { NULL, 0, 0 };
+struct PresentControl PresentControl = { nullptr, 0, 0, 0, 0, 0 };
 
-#include "present/presenta.cpp"
 
 void DrawPresent(LIST * present, U8 firstLine, GC *gc, U8 max)
 {
@@ -91,7 +94,7 @@ void DrawPresent(LIST * present, U8 firstLine, GC *gc, U8 max)
     gfxScreenThaw(gc, 88, 3, 228, 46);
 }
 
-U8 Present(U32 nr, char *presentationText,
+U8 Present(U32 nr, const char *presentationText,
 	   void (*initPresentation) (U32, LIST *, LIST *))
 {
     U8 firstVis = 0;
@@ -151,7 +154,7 @@ U8 Present(U32 nr, char *presentationText,
 	if ((action & INP_MOUSE)) {
 	    U16 y;
 
-	    gfxGetMouseXY(u_gc, NULL, &y);
+	    gfxGetMouseXY(u_gc, nullptr, &y);
 
 	    while (y < 9 && firstVis > 0) {	/* Scroll up */
 		firstVis--;
@@ -159,7 +162,7 @@ U8 Present(U32 nr, char *presentationText,
 
 		gfxWaitTOS();
 
-		gfxGetMouseXY(u_gc, NULL, &y);
+		gfxGetMouseXY(u_gc, nullptr, &y);
 	    }
 
 	    while (y > 50 && y <= 59 && firstVis < (max - NRBLINES)) {	/* Scroll down */
@@ -168,7 +171,7 @@ U8 Present(U32 nr, char *presentationText,
 
 		gfxWaitTOS();
 
-		gfxGetMouseXY(u_gc, NULL, &y);
+		gfxGetMouseXY(u_gc, nullptr, &y);
 	    }
 	} else {
 	    if ((action & INP_UP)) {
@@ -203,7 +206,7 @@ U8 Present(U32 nr, char *presentationText,
 static struct presentationInfo *AddPresentInfo(LIST * l, U32 max,
 					       LIST * texts, U16 textNr)
 {
-    char *name = NULL;
+    char *name = nullptr;
     struct presentationInfo *p;
 
     if (textNr != ((U16) - 1))
@@ -214,7 +217,7 @@ static struct presentationInfo *AddPresentInfo(LIST * l, U32 max,
 					       name);
 
 	if (!p)
-	    return NULL;
+	    return nullptr;
 
 	p->extendedText[0] = EOS;
 	p->extendedNr = 0;

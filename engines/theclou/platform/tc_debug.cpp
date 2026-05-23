@@ -19,11 +19,11 @@
  */
 
 /*
- * tc_debug.cpp — C-callable bridges to ScummVM's debug()/warning().
+ * tc_debug.cpp — C-callable bridges to ScummVM's debug() / warning().
  *
- * C source files in the engine cannot call debug()/warning() directly
- * (C++ linkage).  These thin wrappers expose them with extern "C" so
- * every .c file can use them after including platform/tc_debug.h.
+ * Implements the tc_debug / tc_warning functions declared in tc_debug.h.
+ * Pure-C++ code can alternatively include TcDebug.h for the inline
+ * TheClou::tcDebug / TheClou::tcWarning variants.
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf

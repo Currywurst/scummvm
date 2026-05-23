@@ -1,22 +1,27 @@
-/*
-**	$Filename: scenes/scenes.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-04-94
-**
-**	standard scenes for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
 #include "scenes/scenes.h"
 
 uword CurrentBackground = BGD_LONDON;
@@ -39,7 +44,7 @@ static ubyte tcDisplayInfoAboutPerson(U32 objID)
 	bubble = txtGoKey(LOOK_TXT, name);
 
 	SetBubbleType(THINK_BUBBLE);
-	Bubble(bubble, 0, 0L, 0L);
+	(void)Bubble(bubble, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
 	RemoveList(bubble);
     }
 
@@ -111,7 +116,7 @@ U32 Go(LIST * succ)
 
 	prob = (1 << prob) - 1;
 
-	prob = Menu(succ, prob, 0, NULL, 0L);
+	prob = Menu(succ, prob, 0, nullptr, 0L);
 
 	succ_eventnr =
 	    ((struct TCEventNode *) GetNthNode(succ, (U32) prob))->EventNr;
@@ -121,7 +126,7 @@ U32 Go(LIST * succ)
 
 	for (node = (struct TCEventNode *) LIST_HEAD(succ); NODE_SUCC(node);
 	     node = (struct TCEventNode *) NODE_SUCC(node))
-	    NODE_NAME(node) = NULL;
+	    NODE_NAME(node) = nullptr;
     } else {
 	succ_eventnr = (U32) ((struct TCEventNode *)
 			      GetNthNode(succ, 0L))->EventNr;
@@ -279,7 +284,7 @@ void Information(void)
 
 void Look(U32 locNr)
 {
-    LIST *menu, *bubble = NULL;
+    LIST *menu, *bubble = nullptr;
     ubyte choice = 0, choice1 = 0;
     char enough[TXT_KEY_LENGTH];
     U32 objID;

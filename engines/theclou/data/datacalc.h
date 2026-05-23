@@ -1,44 +1,35 @@
-/*
- * dataCalc.h
- * (c) 1993 by Helmut Gaberschek & Kaweh Kazemi, ...and avoid panic by
- * All rights reserved.
+/* ScummVM - Graphic Adventure Engine
  *
- * 
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * Rev   Date        Comment
- * 1     08-09-93    defines for cars
- * 2     09-09-93    defines for buidlings, player
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
-
-/*
- * set : changes absolutely 
- */
-
-/* defines for random numbers */
-
-#ifndef MODULE_DATACALC
-#define MODULE_DATACALC
+#ifndef ENGINES_THECLOU_DATA_DATACALC_H
+#define ENGINES_THECLOU_DATA_DATACALC_H
 
 #include "theclou.h"
 
-#ifndef __STDARG_H
 #include <stdarg.h>
-#endif
-
-#ifndef MODULE_LIST
 #include "list/list.h"
-#endif
-
-#ifndef MODULE_RANDOM
 #include "random/random.h"
-#endif
 
 #define   tcDerivation(min,max)          (CalcRandomNr(min,max))
 
@@ -46,4 +37,4 @@ S32 Round(S32 v, S32 p);
 S32 CalcValue(S32 value, S32 min, S32 max, S32 fact, S32 perc);
 S32 ChangeAbs(S32 item, S32 value, S32 min, S32 max);
 
-#endif
+#endif  // ENGINES_THECLOU_DATA_DATACALC_H

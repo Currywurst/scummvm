@@ -1,22 +1,34 @@
-/*
-**	$Filename: organisation/display.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-02-94
-**
-**	display functions for organisation of "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek, K. Kazemi
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+#include "base/base.h"
+#include "organisa/organisa.h"
+
+/* Forward declarations for functions defined later in this file */
+static void tcDisplayCommon(void);
+static void tcDisplayPerson(U32 displayMode);
+static void tcDisplayAbilities(U32 personNr, U32 displayData);
 
 #define   ORG_DISP_GUY_Y           60
 #define   ORG_DISP_ABILITIES_Y     75
@@ -63,11 +75,11 @@ void tcDisplayOrganisation(void)
     gfxScreenThaw(l_gc, 0, 0, 320, 140);
 }
 
-void tcDisplayCommon(void)
+static void tcDisplayCommon(void)
 {
     LIST *texts;
     char line[TXT_KEY_LENGTH], name[TXT_KEY_LENGTH];
-    Building building = NULL;
+    Building building = nullptr;
 
     texts = txtGoKey(BUSINESS_TXT, "PLAN_COMMON_DATA");
 
@@ -189,7 +201,7 @@ void tcDisplayCommon(void)
     RemoveList(texts);
 }
 
-void tcDisplayPerson(U32 displayMode)
+static void tcDisplayPerson(U32 displayMode)
 {
     U32 objNr, i;
     NODE *node;
@@ -224,7 +236,7 @@ void tcDisplayPerson(U32 displayMode)
     RemoveList(guys);
 }
 
-void tcDisplayAbilities(U32 personNr, U32 displayData)
+static void tcDisplayAbilities(U32 personNr, U32 displayData)
 {
     LIST *abilities;
     NODE *node;

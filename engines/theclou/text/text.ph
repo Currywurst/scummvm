@@ -64,7 +64,7 @@ struct Text {
 
 
 /* private gobals definition */
-extern char *txtLanguageMark[];
+extern const char *txtLanguageMark[];
 extern struct TextControl *txtBase;
 extern char keyBuffer[];
 

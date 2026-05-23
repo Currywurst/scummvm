@@ -1,28 +1,33 @@
-/*
-**	$Filename: scenes/dealer.c
-**	$Release:
-**	$Revision:
-**	$Date:
-**
-** "dealer" functions for "Der Clou!"
-**
-**	(C) 1993, 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "scenes/scenes.h"
 
 void tcDealerDlg(void)
 {
     U32 locNr = GetObjNrOfLocation(GetLocation);
-    Person dealer = NULL;
+    Person dealer = nullptr;
     ubyte dealerNr, choice = 0;
 
     if (locNr == Location_Parker) {
@@ -129,7 +134,7 @@ void tcDealerSays(Person dealer, ubyte textNr, S32 perc)
 	CreateNode(dealerOffer, 0L, NODE_NAME(GetNthNode(dealerText, 5)));
 
 	SetPictID(dealer->PictID);
-	Bubble(dealerOffer, 0, 0L, 0L);
+	(void)Bubble(dealerOffer, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
     } else {
 	hasAll(Person_Matt_Stuvysunt, OLF_NORMAL, Object_Loot);
 	perc = tcGetDealerPerc(dealer, perc);
@@ -142,7 +147,7 @@ void tcDealerSays(Person dealer, ubyte textNr, S32 perc)
 	    offer = tcGetDealerOffer(price, perc);
 	    offer = max(offer, 1);
 
-	    RemoveNode(dealerOffer, NULL);
+	    RemoveNode(dealerOffer, nullptr);
 
 	    if ((loot->Type) == textNr) {
 		if (loot->Name) {
@@ -168,7 +173,7 @@ void tcDealerSays(Person dealer, ubyte textNr, S32 perc)
 		}
 
 		SetPictID(dealer->PictID);
-		Bubble(dealerOffer, 0, 0L, 0L);
+		(void)Bubble(dealerOffer, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
 
 		if (!(Say(BUSINESS_TXT, 0, MATT_PICTID, "DEALER_ANSWER"))) {
 		    S32 mattsMoney;

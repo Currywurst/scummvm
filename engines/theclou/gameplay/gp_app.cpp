@@ -1,26 +1,31 @@
-/*
-**	$Filename: gameplay/gp_app.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     08-04-94
-**
-**
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "gameplay/gp_app.h"
+#include "platform/tc_quit.h"
 
-#include <assert.h>
+#include <cassert>
 
 void tcAsTimeGoesBy(U32 untilMinute)
 {
@@ -128,9 +133,9 @@ U32 tcBurglary(U32 buildingID)
     if (buildingID == Building_Seniorenheim)
 	ret = plPlayer(buildingID, 200, tcKarateOpa);
     else
-	ret = plPlayer(buildingID, 0L, NULL);
+	ret = plPlayer(buildingID, 0L, nullptr);
 
-    SetMenuTimeOutFunc(NULL);	/* sicher ist sicher... */
+    SetMenuTimeOutFunc(nullptr);	/* sicher ist sicher... */
 
     if (ret) {			/* nur wenn Einbruch stattgefunden hat! */
 	/* bei Grab nicht das Grab sondern "Highgate" aus der Taxiliste */
@@ -199,7 +204,7 @@ void StdInit(void)
     if (sc->LocationNr == GetLocation)
 	sameLocation = 1;
 
-	if ((sc->LocationNr != (U32) - 1) && (GetLocation != sc->LocationNr))
+    if ((sc->LocationNr != (U32) - 1) && (GetLocation != sc->LocationNr))
 	SetLocation(sc->LocationNr);
 
     tcRefreshLocationInTitle(sc->LocationNr);
@@ -501,7 +506,7 @@ void StdDone(void)
 
     SceneArgs.ReturnValue = 0L;
 
-    while (!SceneArgs.ReturnValue) {
+    while (!SceneArgs.ReturnValue && !tc_ShouldQuit()) {
 	if (tcPersonIsHere())
 	    if (!(SceneArgs.Moeglichkeiten & BUSINESS_TALK))
 		SceneArgs.Moeglichkeiten |=
@@ -521,7 +526,7 @@ void StdDone(void)
 	    inpTurnFunctionKey(1);
 
 	    activ =
-		Menu(menu, SceneArgs.Moeglichkeiten, (ubyte) (activ), NULL, 0L);
+		Menu(menu, SceneArgs.Moeglichkeiten, (ubyte) (activ), nullptr, 0L);
 
 	    if (activ == (ubyte) - 1) {
 		ShowTheClouRequester(No_Error);
@@ -614,68 +619,68 @@ void LinkScenes(void)
 
     SetFunc(GetScene(SCENE_KASERNE_OUTSIDE), StdInit, tcDoneKaserne);
     SetFunc(GetScene(SCENE_HOTEL_ROOM), StdInit, DoneHotelRoom);
-    SetFunc(GetScene(SCENE_CREDITS), NULL, tcDoneCredits);
-    SetFunc(GetScene(SCENE_FREIFAHRT), NULL, tcDoneFreeTicket);
-    SetFunc(GetScene(SCENE_ARRIVAL), NULL, tcDoneArrival);
-    SetFunc(GetScene(SCENE_HOTEL_1ST_TIME), NULL, tcDoneHotelReception);
-    SetFunc(GetScene(SCENE_DANNER), NULL, tcDoneDanner);
-    SetFunc(GetScene(SCENE_GLUDO_MONEY), NULL, tcDoneGludoMoney);
-    SetFunc(GetScene(SCENE_MAMI_CALLS), NULL, tcDoneMamiCalls);
-    SetFunc(GetScene(SCENE_FST_MEET_BRIGGS), NULL, tcDoneMeetBriggs);
+    SetFunc(GetScene(SCENE_CREDITS), nullptr, tcDoneCredits);
+    SetFunc(GetScene(SCENE_FREIFAHRT), nullptr, tcDoneFreeTicket);
+    SetFunc(GetScene(SCENE_ARRIVAL), nullptr, tcDoneArrival);
+    SetFunc(GetScene(SCENE_HOTEL_1ST_TIME), nullptr, tcDoneHotelReception);
+    SetFunc(GetScene(SCENE_DANNER), nullptr, tcDoneDanner);
+    SetFunc(GetScene(SCENE_GLUDO_MONEY), nullptr, tcDoneGludoMoney);
+    SetFunc(GetScene(SCENE_MAMI_CALLS), nullptr, tcDoneMamiCalls);
+    SetFunc(GetScene(SCENE_FST_MEET_BRIGGS), nullptr, tcDoneMeetBriggs);
     SetFunc(GetScene(SCENE_FAHNDUNG), tcInitFahndung, tcDoneFahndung);
-    SetFunc(GetScene(SCENE_GLUDO_SAILOR), NULL, tcDoneGludoAsSailor);
-    SetFunc(GetScene(SCENE_CALL_BRIGGS), NULL, tcDoneCallFromBriggs);
-    SetFunc(GetScene(SCENE_1ST_BURG), NULL, tcDone1stBurglary);
-    SetFunc(GetScene(SCENE_2ND_BURG), NULL, tcDone2ndBurglary);
-    SetFunc(GetScene(SCENE_3RD_BURG), NULL, tcDone3rdBurglary);
-    SetFunc(GetScene(SCENE_4TH_BURG), NULL, tcDone4thBurglary);
-    SetFunc(GetScene(SCENE_5TH_BURG), NULL, tcDone5thBurglary);
-    SetFunc(GetScene(SCENE_6TH_BURG), NULL, tcDone6thBurglary);
-    SetFunc(GetScene(SCENE_7TH_BURG), NULL, tcDone7thBurglary);
-    SetFunc(GetScene(SCENE_8TH_BURG), NULL, tcDone8thBurglary);
-    SetFunc(GetScene(SCENE_9TH_BURG), NULL, tcDone9thBurglary);
-    SetFunc(GetScene(SCENE_ARRESTED_MATT), NULL, tcDoneMattIsArrested);
+    SetFunc(GetScene(SCENE_GLUDO_SAILOR), nullptr, tcDoneGludoAsSailor);
+    SetFunc(GetScene(SCENE_CALL_BRIGGS), nullptr, tcDoneCallFromBriggs);
+    SetFunc(GetScene(SCENE_1ST_BURG), nullptr, tcDone1stBurglary);
+    SetFunc(GetScene(SCENE_2ND_BURG), nullptr, tcDone2ndBurglary);
+    SetFunc(GetScene(SCENE_3RD_BURG), nullptr, tcDone3rdBurglary);
+    SetFunc(GetScene(SCENE_4TH_BURG), nullptr, tcDone4thBurglary);
+    SetFunc(GetScene(SCENE_5TH_BURG), nullptr, tcDone5thBurglary);
+    SetFunc(GetScene(SCENE_6TH_BURG), nullptr, tcDone6thBurglary);
+    SetFunc(GetScene(SCENE_7TH_BURG), nullptr, tcDone7thBurglary);
+    SetFunc(GetScene(SCENE_8TH_BURG), nullptr, tcDone8thBurglary);
+    SetFunc(GetScene(SCENE_9TH_BURG), nullptr, tcDone9thBurglary);
+    SetFunc(GetScene(SCENE_ARRESTED_MATT), nullptr, tcDoneMattIsArrested);
 
-    SetFunc(GetScene(SCENE_POOLY_AFRAID), NULL, tcDoneDealerIsAfraid);
-    SetFunc(GetScene(SCENE_MALOYA_AFRAID), NULL, tcDoneDealerIsAfraid);
-    SetFunc(GetScene(SCENE_PARKER_AFRAID), NULL, tcDoneDealerIsAfraid);
-    SetFunc(GetScene(SCENE_RAID), NULL, tcDoneRaidInWalrus);
-    SetFunc(GetScene(SCENE_DART), NULL, tcDoneDartJager);
-    SetFunc(GetScene(SCENE_CALL_FROM_POOLY), NULL, tcDoneCallFromPooly);
+    SetFunc(GetScene(SCENE_POOLY_AFRAID), nullptr, tcDoneDealerIsAfraid);
+    SetFunc(GetScene(SCENE_MALOYA_AFRAID), nullptr, tcDoneDealerIsAfraid);
+    SetFunc(GetScene(SCENE_PARKER_AFRAID), nullptr, tcDoneDealerIsAfraid);
+    SetFunc(GetScene(SCENE_RAID), nullptr, tcDoneRaidInWalrus);
+    SetFunc(GetScene(SCENE_DART), nullptr, tcDoneDartJager);
+    SetFunc(GetScene(SCENE_CALL_FROM_POOLY), nullptr, tcDoneCallFromPooly);
 
-    SetFunc(GetScene(SCENE_GLUDO_BURNS), NULL, tcDoneGludoBurnsOffice);
-    SetFunc(GetScene(SCENE_MORNING), NULL, tcDoneBeautifullMorning);
-    SetFunc(GetScene(SCENE_VISITING), NULL, tcDoneVisitingSabien);
-    SetFunc(GetScene(SCENE_A_DREAM), NULL, tcDoneADream);
-    SetFunc(GetScene(SCENE_ROSENBLATT), NULL, tcMeetingRosenblatt);
-    SetFunc(GetScene(SCENE_BRIGGS_ANGRY), NULL, tcBriggsAngry);
-    SetFunc(GetScene(SCENE_SABIEN_WALRUS), NULL, tcSabienInWalrus);
-    SetFunc(GetScene(SCENE_SABIEN_DINNER), NULL, tcSabienDinner);
-    SetFunc(GetScene(SCENE_TOMBOLA), NULL, tcWalrusTombola);
-    SetFunc(GetScene(SCENE_PRESENT_HOTEL), NULL, tcPresentInHotel);
-    SetFunc(GetScene(SCENE_INFO_TOWER), NULL, tcPoliceInfoTower);
-    SetFunc(GetScene(SCENE_RAINY_EVENING), NULL, tcRainyEvening);
-    SetFunc(GetScene(SCENE_MEETING_AGAIN), NULL, tcDoneMeetingAgain);
+    SetFunc(GetScene(SCENE_GLUDO_BURNS), nullptr, tcDoneGludoBurnsOffice);
+    SetFunc(GetScene(SCENE_MORNING), nullptr, tcDoneBeautifullMorning);
+    SetFunc(GetScene(SCENE_VISITING), nullptr, tcDoneVisitingSabien);
+    SetFunc(GetScene(SCENE_A_DREAM), nullptr, tcDoneADream);
+    SetFunc(GetScene(SCENE_ROSENBLATT), nullptr, tcMeetingRosenblatt);
+    SetFunc(GetScene(SCENE_BRIGGS_ANGRY), nullptr, tcBriggsAngry);
+    SetFunc(GetScene(SCENE_SABIEN_WALRUS), nullptr, tcSabienInWalrus);
+    SetFunc(GetScene(SCENE_SABIEN_DINNER), nullptr, tcSabienDinner);
+    SetFunc(GetScene(SCENE_TOMBOLA), nullptr, tcWalrusTombola);
+    SetFunc(GetScene(SCENE_PRESENT_HOTEL), nullptr, tcPresentInHotel);
+    SetFunc(GetScene(SCENE_INFO_TOWER), nullptr, tcPoliceInfoTower);
+    SetFunc(GetScene(SCENE_RAINY_EVENING), nullptr, tcRainyEvening);
+    SetFunc(GetScene(SCENE_MEETING_AGAIN), nullptr, tcDoneMeetingAgain);
 
-    SetFunc(GetScene(SCENE_SABIEN_CALL), NULL, tcDoneSabienCall);
-    SetFunc(GetScene(SCENE_BIRTHDAY), NULL, tcDoneBirthday);
-    SetFunc(GetScene(SCENE_WALK_WITH), NULL, tcWalkWithSabien);
-    SetFunc(GetScene(SCENE_AGENT), NULL, tcDoneAgent);
-    SetFunc(GetScene(SCENE_JAGUAR), NULL, tcDoneGoAndFetchJaguar);
-    SetFunc(GetScene(SCENE_THINK_OF), NULL, tcDoneThinkOfSabien);
-    SetFunc(GetScene(SCENE_TERROR), NULL, tcDoneTerror);
-    SetFunc(GetScene(SCENE_CONFESSING), NULL, tcDoneConfessingSabien);
+    SetFunc(GetScene(SCENE_SABIEN_CALL), nullptr, tcDoneSabienCall);
+    SetFunc(GetScene(SCENE_BIRTHDAY), nullptr, tcDoneBirthday);
+    SetFunc(GetScene(SCENE_WALK_WITH), nullptr, tcWalkWithSabien);
+    SetFunc(GetScene(SCENE_AGENT), nullptr, tcDoneAgent);
+    SetFunc(GetScene(SCENE_JAGUAR), nullptr, tcDoneGoAndFetchJaguar);
+    SetFunc(GetScene(SCENE_THINK_OF), nullptr, tcDoneThinkOfSabien);
+    SetFunc(GetScene(SCENE_TERROR), nullptr, tcDoneTerror);
+    SetFunc(GetScene(SCENE_CONFESSING), nullptr, tcDoneConfessingSabien);
 
     SetFunc(GetScene(SCENE_PRISON), tcInitPrison, tcDonePrison);
 
-    SetFunc(GetScene(SCENE_SOUTH_WITHOUT), NULL,
+    SetFunc(GetScene(SCENE_SOUTH_WITHOUT), nullptr,
 	    tcDoneSouthhamptonWithoutSabien);
-    SetFunc(GetScene(SCENE_SOUTH_UNKNOWN), NULL,
+    SetFunc(GetScene(SCENE_SOUTH_UNKNOWN), nullptr,
 	    tcDoneSouthhamptonSabienUnknown);
     SetFunc(GetScene(SCENE_SOUTHHAMPTON), StdInit, tcDoneSouthhampton);
 
-    SetFunc(GetScene(SCENE_MISSED_DATE_0), NULL, tcDoneMissedDate);
-    SetFunc(GetScene(SCENE_MISSED_DATE_1), NULL, tcDoneMissedDate);
+    SetFunc(GetScene(SCENE_MISSED_DATE_0), nullptr, tcDoneMissedDate);
+    SetFunc(GetScene(SCENE_MISSED_DATE_1), nullptr, tcDoneMissedDate);
 
     SetFunc(GetScene(SCENE_VILLA_INSIDE), StdInit, DoneInsideHouse);
     SetFunc(GetScene(SCENE_KENWO_INSIDE), StdInit, DoneInsideHouse);

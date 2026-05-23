@@ -1,13 +1,29 @@
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
-
-#ifndef MODULE_TCDATA
-#define MODULE_TCDATA
+#ifndef ENGINES_THECLOU_DATA_OBJSTD_TCDATA_H
+#define ENGINES_THECLOU_DATA_OBJSTD_TCDATA_H
 
 #include "theclou.h"
 
@@ -139,7 +155,7 @@
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wkeyword-macro"
-#endif
+#endif  // ENGINES_THECLOU_DATA_OBJSTD_TCDATA_H
 #define breakP(l,r,p,c)     AskP   (dbGetObject (l), 11, dbGetObject (r), p, c)
 #define break(l,r)          AskP   (dbGetObject (l), 11, dbGetObject (r), NO_PARAMETER, CMP_NO)
 #define breakAll(l,f,t)     { SetObjectListAttr (f,t); AskAll (dbGetObject (l), 11, BuildObjectList); }
@@ -149,7 +165,7 @@
 #define breakGet(l,r)       GetP   (dbGetObject (l), 11, dbGetObject (r))
 #ifdef __clang__
 #pragma clang diagnostic pop
-#endif
+#endif  // ENGINES_THECLOU_DATA_OBJSTD_TCDATA_H
 
 #define Relation_hurt      12
 #define hurtP(l,r,p,c)     AskP   (dbGetObject (l), 12, dbGetObject (r), p, c)

@@ -1,26 +1,32 @@
-/*
-**	$Filename: gameplay/loadsave.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     08-04-94
-**
-**
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "gameplay/gp.h"
 #include "gameplay/gp_app.h"
 #include "organisa/organisa.h"
+#include "platform/tc_fs.h"
+#include "platform/tc_debug.h"
 
 void tcSaveTheClou(void)
 {
@@ -46,7 +52,7 @@ void tcSaveTheClou(void)
     if (ReadList(games, 0L, pathname)) {
 	inpTurnESC(1);
 	inpTurnFunctionKey(0);
-	activ = (uword) Menu(games, 15L, 0, NULL, 0L);
+	activ = (uword) Menu(games, 15L, 0, nullptr, 0L);
 	inpTurnFunctionKey(1);
 
 	/* Name erstellen */
@@ -110,6 +116,19 @@ ubyte tcLoadIt(char activ)
     char pathname[DSK_PATH_MAX];
     char line[TXT_KEY_LENGTH];
     ubyte loaded = 0;
+
+    /* Pre-check: verify the main save file actually exists on disk.
+     * GAMES.LST can become stale (e.g. after a crash during save) and show a
+     * slot as "saved" even though the data files were never written.
+     * Without this guard, dbLoadAllObjects() fails, loaded stays 0, and
+     * tcRefreshAfterLoad(0) would call ErrorMsg → tc_QuitGame(). */
+    snprintf(line, sizeof(line), "%s%d%s", MAIN_DATA_NAME, (int) activ, GAME_DATA_EXT);
+    if (!dskBuildPathName(DISK_CHECK_FILE, DATADISK, line, pathname)
+        || !tc_fs_exists(pathname)) {
+        tc_warning("TheClou: tcLoadIt slot %d: save data not found ('%s') — aborting load",
+                   (int) activ, pathname);
+        return 0;
+    }
 
     ShowMenuBackground();
     txtGetFirstLine(THECLOU_TXT, "LOADING", line);
@@ -177,7 +196,7 @@ ubyte tcLoadTheClou(void)
 
 	inpTurnFunctionKey(0);
 	inpTurnESC(1);
-	activ = (U32) Menu(games, 15L, 0, NULL, 0L);
+	activ = (U32) Menu(games, 15L, 0, nullptr, 0L);
 	inpTurnFunctionKey(1);
 
 	if ((activ != GET_OUT)
@@ -223,9 +242,33 @@ void tcRefreshAfterLoad(ubyte loaded)
     Player player = (Player)dbGetObject(Player_Player_1);	/* muss hier geholt werden -> sonst alte Adresse */
 
     if (!loaded) {
-	if (player)
-	    player->CurrScene = 0L;
-	ErrorMsg(Disk_Defect, ERROR_MODULE_LOADSAVE, 2);
+	/* Do NOT call ErrorMsg here — it calls tc_QuitGame() which would
+	 * terminate the whole engine.  The pre-check in tcLoadIt aborts
+	 * before any game state is modified, so the previously loaded game
+	 * (e.g. slot 1) is still fully intact.
+	 *
+	 * Mirror what tcLoadTheClou does for the "not saved / GET_OUT" case:
+	 *   - show the NOT_LOADING status message
+	 *   - force a location refresh via SetLocation(-1)
+	 *   - restore CurrScene and SceneArgs.ReturnValue from the live
+	 *     film state so the scene loop continues correctly.
+	 *
+	 * Crucially: do NOT set player->CurrScene = 0 — that would corrupt
+	 * the intact slot-1 state and cause Data errors on the next scene. */
+	tc_warning("TheClou: tcRefreshAfterLoad: load failed, returning to game without crashing");
+	{
+	    char line[TXT_KEY_LENGTH];
+	    ShowMenuBackground();
+	    txtGetFirstLine(THECLOU_TXT, "NOT_LOADING", line);
+	    PrintStatus(line);
+	    inpWaitFor(INP_LBUTTONP);
+	    ShowMenuBackground();
+	    SetLocation(-1);
+	}
+	if (player && film && film->act_scene) {
+	    player->CurrScene       = film->act_scene->EventNr;
+	    SceneArgs.ReturnValue   = film->act_scene->EventNr;
+	}
     } else {
 	if (player) {
 	    SetDay(player->CurrDay);

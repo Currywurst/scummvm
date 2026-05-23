@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef THECLOU_TC_QUIT_H
-#define THECLOU_TC_QUIT_H
+#ifndef ENGINES_THECLOU_PLATFORM_TC_QUIT_H
+#define ENGINES_THECLOU_PLATFORM_TC_QUIT_H
 
 /*
  * tc_quit.h — Clean-quit mechanism for the TheClou engine.
@@ -28,50 +28,45 @@
  * input handler, quit menu).  Inside ScummVM an engine must never call
  * exit(); it must return from Engine::run() so the launcher can continue.
  *
- * ScummVM builds with -fno-exceptions, so C++ throw/catch is unavailable.
- * Instead we use setjmp/longjmp, isolated in this module so that the
- * mechanism is not scattered across base.c as it was originally.
+ * Mechanism (flag-based, no setjmp/longjmp):
  *
- * Usage:
- *   1. theclou_run() (base/theclou_run.cpp) calls setjmp(g_tcQuitJmp) and
- *      sets g_tcQuitJmpValid = 1 before entering the game loop.
- *   2. Any game-code site that needs to quit calls tc_QuitGame().
- *   3. tc_QuitGame() longjmps back to the setjmp site in theclou_run().
- *   4. theclou_run() calls tcDone() for orderly cleanup and returns.
+ *   1. Any game-code site that needs to quit calls tc_QuitGame().
+ *   2. tc_QuitGame() sets g_tcShouldQuit = true and calls g_engine->quitGame()
+ *      so ScummVM's own event loop also sees the quit request.
+ *   3. All long-running game loops call tc_ShouldQuit() and break/return
+ *      when it returns true.  The key chokepoint is inpWaitFor() in
+ *      inphdl/inphdl.cpp — every interactive wait passes through it.
+ *   4. theclou_run() (base/theclou_run.cpp) calls tcDone() for orderly
+ *      cleanup after tcDo() returns.
  *
- * Safety:
- *   longjmp is safe here because there are no C++ objects with non-trivial
- *   destructors on the stack between the setjmp and the longjmp sites —
- *   the frames in between are all plain C functions (tcInit, tcDo, ...).
- *   tc_QuitGame() must NOT be called from background threads.
+ * tc_QuitGame() is safe to call from any C or C++ translation unit.
+ * It must NOT be called from background threads.
  */
 
-#include <setjmp.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/** Jump buffer — set up by theclou_run() before the game loop starts. */
-extern jmp_buf          g_tcQuitJmp;
-
-/** Non-zero while the jump buffer above is valid (i.e. inside theclou_run). */
-extern volatile int     g_tcQuitJmpValid;
+/**
+ * Set by tc_QuitGame(); read by tc_ShouldQuit().
+ * Declared volatile so the compiler does not cache the value across
+ * loop iterations in game-loop hot paths.
+ */
+extern volatile int g_tcShouldQuit;
 
 /**
  * Request an immediate, clean exit from the game loop.
+ * Sets g_tcShouldQuit and signals ScummVM's engine via g_engine->quitGame().
+ * Must NOT be called from background threads.
  *
- * longjmps back to theclou_run() (base/theclou_run.cpp).
- * tcDone() is always called after the longjmp so all resources are freed
- * before control returns to the ScummVM launcher.
- *
- * Safe to call from any C or C++ game-code context (error handler,
- * input handler, quit menu, …).  Must NOT be called from background threads.
+ * Declared extern "C" so callers across translation units get a stable,
+ * unmangled symbol regardless of include order.
  */
-void tc_QuitGame(void);
+extern "C" void tc_QuitGame();
 
-#ifdef __cplusplus
-}
-#endif
+/**
+ * Returns non-zero if the engine should stop.
+ * Checks both g_tcShouldQuit (set by tc_QuitGame) and ScummVM's own
+ * shouldQuit flag (set when the user closes the window or presses
+ * Return-to-Launcher in the ScummVM GUI).
+ * Use this in all long-running game loops.
+ */
+extern "C" int tc_ShouldQuit();
 
-#endif /* THECLOU_TC_QUIT_H */
+#endif /* ENGINES_THECLOU_PLATFORM_TC_QUIT_H */

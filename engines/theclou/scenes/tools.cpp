@@ -1,22 +1,26 @@
-/*
-**	$Filename: scenes/evidence.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-02-94
-**
-**	 functions for evidence for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "scenes/scenes.h"
 
@@ -50,7 +54,7 @@ ubyte tcBuyTool(ubyte choice)
 	   OLF_ADD_SUCC_STRING, Object_Tool);
     tools = ObjectListPrivate;
 
-    ObjectListSuccString = NULL;
+    ObjectListSuccString = nullptr;
     ObjectListWidth = 0;
 
     txtGetFirstLine(BUSINESS_TXT, "THANKS", exp);
@@ -106,7 +110,7 @@ ubyte tcDescTool(ubyte choice)
     tools = ObjectListPrivate;
 
     ObjectListWidth = 0;
-    ObjectListSuccString = NULL;
+    ObjectListSuccString = nullptr;
 
     txtGetFirstLine(BUSINESS_TXT, "THANKS", exp);
     ExpandObjectList(tools, exp);
@@ -124,7 +128,7 @@ ubyte tcDescTool(ubyte choice)
 	    desc = txtGoKey(TOOLS_TXT, line);
 
 	    SetPictID(mary->PictID);
-	    Bubble(desc, 0, 0L, 0L);
+	    (void)Bubble(desc, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
 
 	    RemoveList(desc);
 	} else
@@ -152,7 +156,7 @@ ubyte tcShowTool(ubyte choice)
 	   OLF_ADD_SUCC_STRING, Object_Tool);
     tools = ObjectListPrivate;
 
-    ObjectListSuccString = NULL;
+    ObjectListSuccString = nullptr;
     ObjectListWidth = 0;
 
     txtGetFirstLine(BUSINESS_TXT, "THANKS", exp);
@@ -207,7 +211,7 @@ void tcSellTool(void)
 	ExpandObjectList(tools, exp);
 
 	SetPictID(MATT_PICTID);
-	if (ChoiceOk(choice = Bubble(tools, 0, NULL, 0L), GET_OUT, tools)) {
+	if (ChoiceOk(choice = Bubble(tools, 0, nullptr, 0L), GET_OUT, tools)) {
 	    ubyte choice2 = 0;
 
 	    node = (NODE *)GetNthNode(tools, (U32) choice);
@@ -219,7 +223,7 @@ void tcSellTool(void)
 	    bubble = txtGoKeyAndInsert(BUSINESS_TXT, "ANGEBOT_WERKZ", price);
 
 	    SetPictID(mary->PictID);
-	    Bubble(bubble, 0, 0L, 0L);
+	    (void)Bubble(bubble, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
 	    RemoveList(bubble);
 
 	    bubble = txtGoKey(BUSINESS_TXT, "VERKAUF");

@@ -19,16 +19,34 @@
  *
  */
 
-#ifndef THECLOU_ENGINE_H
-#define THECLOU_ENGINE_H
+#ifndef ENGINES_THECLOU_ENGINE_H
+#define ENGINES_THECLOU_ENGINE_H
 
 #include "engines/engine.h"
 #include "common/error.h"
+#include "common/scummsys.h"
 
 struct ADGameDescription;
 
+// Forward-declare subsystems so the header stays lean.
+namespace TheClou {
+class DiskManager;
+}
+
 namespace TheClou {
 
+/**
+ * TheClouEngine — the ScummVM engine class for Der Clou! / The Clou!
+ *
+ * Ownership model (ScummVM convention):
+ *   Subsystem objects are heap-allocated in the constructor and deleted in
+ *   the destructor.  Every subsystem pointer starts as nullptr so the
+ *   destructor can safely delete even on a partially-constructed engine.
+ *
+ * Global singletons (e.g. g_diskManager in disk/DiskManager.h) are set to
+ * point at the respective member in run() and cleared on destruction.
+ * This ensures C game code that accesses subsystems via the global still works.
+ */
 class TheClouEngine : public Engine {
 public:
 	TheClouEngine(OSystem *syst, const ADGameDescription *gd);
@@ -39,10 +57,24 @@ public:
 
 	const ADGameDescription *_gameDescription;
 
+	// ----------------------------------------------------------------
+	// Subsystem accessors
+	// ----------------------------------------------------------------
+
+	/** Returns the disk/path manager.  Never nullptr after construction. */
+	DiskManager *getDiskManager() { return _diskManager; }
+
 protected:
 	void pauseEngineIntern(bool pause) override;
+
+private:
+	// ----------------------------------------------------------------
+	// Owned subsystems
+	// ----------------------------------------------------------------
+
+	DiskManager *_diskManager; ///< Path management and file I/O
 };
 
 } // End of namespace TheClou
 
-#endif // THECLOU_ENGINE_H
+#endif // ENGINES_THECLOU_ENGINE_H

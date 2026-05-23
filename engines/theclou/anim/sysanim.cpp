@@ -1,22 +1,26 @@
-/*
-**	$Filename: anim/sysanim.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-02-94
-**
-**	anim functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "inphdl/inphdl.h"
 
@@ -112,7 +116,7 @@ void ContinueAnim(void)
  * prepare...
  */
 
-static void PrepareAnim(char *AnimID)
+static void PrepareAnim(const char *AnimID)
 /* initializes various values and afterwards copies anim phases into memory */
 {
     char pict_list[TXT_KEY_LENGTH];
@@ -161,7 +165,7 @@ static void PrepareAnim(char *AnimID)
  * StopAnim
  */
 
-void PlayAnim(char *AnimID, U16 how_often, U32 mode)
+void PlayAnim(const char *AnimID, U16 how_often, U32 mode)
 {
     char pict_list[TXT_KEY_LENGTH];
     U16 pict_id = 0, rate;
@@ -252,7 +256,7 @@ void StopAnim(void)
  * GetAnim
  */
 
-void GetAnim(char *AnimID, char *Dest)
+void GetAnim(const char *AnimID, char *Dest)
 {
     int i;
     char ID[TXT_KEY_LENGTH];

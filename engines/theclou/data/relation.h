@@ -1,20 +1,30 @@
-/*
- * Relation.h
- * (c) 1993 by Kaweh Kazemi
- * All rights reserved.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+#ifndef ENGINES_THECLOU_DATA_RELATION_H
+#define ENGINES_THECLOU_DATA_RELATION_H
 
-#ifndef MODULE_RELATION
-#define MODULE_RELATION
-
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -81,4 +91,4 @@ int SaveRelations(char *, U32, U32, U16 disk_id);
 int LoadRelations(char *, U16 disk_id);
 void RemRelations(U32, U32);
 
-#endif
+#endif  // ENGINES_THECLOU_DATA_RELATION_H

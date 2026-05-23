@@ -1,26 +1,31 @@
-/*
-**	$Filename: gameplay/gp.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     08-04-94
-**
-**
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "gameplay/gp.h"
 #include "gameplay/gamefunc.h"
 #include "platform/tc_debug.h"
+#include "platform/tc_quit.h"
 
 void InitLocations(void);
 void FreeLocations(void);
@@ -42,7 +47,7 @@ struct Scene *GetStoryScene(struct Scene *scene);
 U32 GamePlayMode = 0;
 ubyte RefreshMode = 0;
 
-struct Film *film = NULL;
+struct Film *film = nullptr;
 struct SceneArgs SceneArgs;
 
 
@@ -81,7 +86,7 @@ void CloseStory(void)
 
 	TCFreeMem(film, sizeof(*film));
 
-	film = NULL;
+	film = nullptr;
     }
 }
 
@@ -143,13 +148,13 @@ void PatchStory(void)
 	GetLocScene(65)->std_succ = CreateList();
 	node =
 	    (struct TCEventNode *) CreateNode(GetLocScene(65)->std_succ,
-					      sizeof(*node), NULL);
+					      sizeof(*node), nullptr);
 	node->EventNr = SCENE_KASERNE_OUTSIDE;	/* wurscht... */
 
 	GetLocScene(66)->std_succ = CreateList();
 	node =
 	    (struct TCEventNode *) CreateNode(GetLocScene(66)->std_succ,
-					      sizeof(*node), NULL);
+					      sizeof(*node), nullptr);
 	node->EventNr = SCENE_KASERNE_INSIDE;	/* wurscht... */
 
 	film->StartScene = SCENE_STATION;
@@ -158,7 +163,7 @@ void PatchStory(void)
 
 U32 PlayStory(void)
 {
-    struct Scene *curr, *next = NULL;
+    struct Scene *curr, *next = nullptr;
     struct Scene *story_scene = 0;
     U8 interr_allowed = 1, first = 1;
 
@@ -177,7 +182,8 @@ U32 PlayStory(void)
     SetLocation(-2);
 
     while ((curr->EventNr != SCENE_THE_END)
-	   && (curr->EventNr != SCENE_NEW_GAME)) {
+	   && (curr->EventNr != SCENE_NEW_GAME)
+	   && !tc_ShouldQuit()) {
 	if (!CheckConditions(curr))
 	    ErrorMsg(Internal_Error, ERROR_MODULE_GAMEPLAY, 2);
 
@@ -296,7 +302,7 @@ struct Scene *GetStoryScene(struct Scene *curr)
 struct Scene *GetScene(U32 EventNr)
 {
     U32 i;
-    struct Scene *sc = NULL;
+    struct Scene *sc = nullptr;
 
     for (i = 0; i < film->AmountOfScenes; i++)
 	if (EventNr == film->gameplay[i].EventNr)
@@ -392,11 +398,18 @@ void PrepareStory(const char *filename)
     TC_FILE *file;
     char pathname[DSK_PATH_MAX];
 
-    dskBuildPathName(DISK_CHECK_FILE, DATA_DIRECTORY, filename, pathname);
+    if (!dskBuildPathName(DISK_CHECK_FILE, DATA_DIRECTORY, filename, pathname)) {
+        ErrorMsg(Disk_Defect, ERROR_MODULE_GAMEPLAY, 7);
+        return;
+    }
 
     /* StoryHeader laden ! */
 
     file = dskOpen(pathname, "rb");
+    if (!file) {
+        ErrorMsg(Disk_Defect, ERROR_MODULE_GAMEPLAY, 7);
+        return;
+    }
 
     dskRead(file, SH.StoryName, sizeof(SH.StoryName));
 
@@ -437,7 +450,7 @@ void PrepareStory(const char *filename)
 	if (NS.NewOrt == (U32) -1 || NS.AnzahlderEvents || NS.AnzahlderN_Events)	/* Storyszene ? */
 	    InitConditions(scene, &NS);	/* ja ! -> Bedingungen eintragen */
 	else
-	    film->gameplay[i].bed = NULL;	/* Spielablaufszene : keine Bedingungen ! */
+	    film->gameplay[i].bed = nullptr;	/* Spielablaufszene : keine Bedingungen ! */
 
 	/* Scene Struktur füllen : */
 	scene->Done = StdDone;
@@ -459,15 +472,15 @@ void PrepareStory(const char *filename)
 		node =
 		    (struct TCEventNode *) CreateNode(scene->std_succ,
 						      sizeof(*node),
-						      NULL);
+						      nullptr);
 
 		node->EventNr = NS.nachfolger[j];
 	    }
 
-	    if (NS.nachfolger)
-		TCFreeMem(NS.nachfolger, sizeof(U32) * NS.AnzahlderNachfolger);
+	    /* V547: NS.nachfolger already guaranteed non-null by outer if-condition */
+	    TCFreeMem(NS.nachfolger, sizeof(U32) * NS.AnzahlderNachfolger);
 	} else
-	    scene->std_succ = NULL;
+	    scene->std_succ = nullptr;
     }
 
     /* von den Events muß nichts geladen werden ! */
@@ -490,15 +503,15 @@ void InitConditions(struct Scene *scene, struct NewScene *ns)
 	    for (i = 0; i < ns->AnzahlderEvents; i++) {
 		node =
 		    (struct TCEventNode *) CreateNode(bed->events, sizeof(*node),
-					      NULL);
+					      nullptr);
 
 		node->EventNr = ns->events[i];
 	    }
 
-	    if (ns->events)
-		TCFreeMem(ns->events, sizeof(U32) * (ns->AnzahlderEvents));
+	    /* V547: ns->events already guaranteed non-null by outer if-condition */
+	    TCFreeMem(ns->events, sizeof(U32) * (ns->AnzahlderEvents));
 	} else
-	    bed->events = NULL;
+	    bed->events = nullptr;
 
 	if (ns->AnzahlderN_Events && ns->n_events) {
 	    bed->n_events = CreateList();
@@ -506,15 +519,15 @@ void InitConditions(struct Scene *scene, struct NewScene *ns)
 	    for (i = 0; i < ns->AnzahlderN_Events; i++) {
 		node =
 		    (struct TCEventNode *) CreateNode(bed->n_events,
-					      sizeof(*node), NULL);
+					      sizeof(*node), nullptr);
 
 		node->EventNr = ns->n_events[i];
 	    }
 
-	    if (ns->n_events)
-		TCFreeMem(ns->n_events, sizeof(U32) * (ns->AnzahlderN_Events));
+	    /* V547: ns->n_events already guaranteed non-null by outer if-condition */
+	    TCFreeMem(ns->n_events, sizeof(U32) * (ns->AnzahlderN_Events));
 	} else
-	    bed->n_events = NULL;
+	    bed->n_events = nullptr;
 
     scene->bed = bed;
 }
@@ -529,7 +542,7 @@ void FreeConditions(struct Scene *scene)
 
 	TCFreeMem(scene->bed, sizeof(struct Bedingungen));
 
-	scene->bed = NULL;
+	scene->bed = nullptr;
     }
 }
 
@@ -539,7 +552,7 @@ static U32 *gpAllocAndReadEvents(TC_FILE *file, U32 count, U32 errorCode)
 	U32 *buffer;
 
 	if (!count)
-		return NULL;
+		return nullptr;
 
 	buffer = (U32 *) TCAllocMem(sizeof(U32) * count, 0);
 
@@ -550,7 +563,7 @@ static U32 *gpAllocAndReadEvents(TC_FILE *file, U32 count, U32 errorCode)
 		for (i = 0; i < count; i++)
 			dskRead_U32LE(file, &dummy);
 
-		return NULL;
+		return nullptr;
 	}
 
 	for (i = 0; i < count; i++)
@@ -629,7 +642,7 @@ void SetCurrentScene(struct Scene *scene)
 
 struct Scene *GetCurrentScene(void)
 {
-    return (film ? film->act_scene : NULL);
+    return (film ? film->act_scene : nullptr);
 }
 
 struct Scene *GetLocScene(U32 locNr)
@@ -642,15 +655,17 @@ struct Scene *GetLocScene(U32 locNr)
 	    return (sc);
 
     ErrorMsg(Internal_Error, ERROR_MODULE_GAMEPLAY, 12);
-    return NULL;
+    return nullptr;
 }
 
 void FormatDigit(U32 digit, char *s)
 {
+    /* V579: s is a pointer — sizeof(s) would give pointer size, not buffer size.
+     * All callers pass a TXT_KEY_LENGTH buffer, so use that directly. */
     if (digit < 10)
-	snprintf(s, sizeof(s), "0%" PRIu32, digit);
+	snprintf(s, TXT_KEY_LENGTH, "0%" PRIu32, digit);
     else
-	snprintf(s, sizeof(s), "%" PRIu32, digit);
+	snprintf(s, TXT_KEY_LENGTH, "%" PRIu32, digit);
 }
 
 char *BuildTime(U32 min, char *time)
@@ -661,7 +676,7 @@ char *BuildTime(U32 min, char *time)
     min = min % 60;
 
     FormatDigit(h, s);
-    snprintf(time, sizeof(time), "%s:", s);
+    snprintf(time, TXT_KEY_LENGTH, "%s:", s); /* V579: time is a pointer, not array */
     FormatDigit(min, s);
     strcat(time, s);
 
@@ -677,6 +692,7 @@ char *BuildDate(U32 days, char *date)
     for (i = 0, p_year = 0; i < 12; i++)
 	p_year += days_per_month[i];
 
+    if (p_year == 0) p_year = 365; /* V609: defensive guard — hardcoded values always sum to 365 */
     year = days / p_year;	/* which daywelches Jahr ? */
     days = days % p_year;	/* wieviele Tage noch in diesem Jahr */
 
@@ -709,7 +725,7 @@ char *GetCurrLocName(void)
 	U32 index;
 
 	if (!scene)
-		return NULL;
+		return nullptr;
 
 	index = scene->LocationNr;
 

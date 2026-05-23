@@ -1,22 +1,26 @@
-/*
-**	$Filename: scenes/invest.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     06-02-94
-**
-**	 functions for investigations for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "scenes/scenes.h"
 
@@ -32,7 +36,7 @@ static U32 tcShowPatrol(LIST * bubble_l, char *c_time, char *patr, ubyte first,
 
     SetBubbleType(THINK_BUBBLE);
 
-    Bubble(bubble_l, (ubyte) first, 0, 140L);
+    (void)Bubble(bubble_l, (ubyte) first, 0, 140L); /* V1071: display-only, result intentionally discarded */
     choice = GetExtBubbleActionInfo();
 
     tcAddBuildExactlyness(bui, raise);
@@ -59,7 +63,7 @@ void Investigate(char *location)
         if (buiID == Building_Buckingham_Palace) {
 	    bubble_l = txtGoKey(INVESTIGATIONS_TXT, "BuckinghamBeobachtet");
 	    SetBubbleType(THINK_BUBBLE);
-	    Bubble(bubble_l, 0, 0L, 0L);
+	    (void)Bubble(bubble_l, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
 	    RemoveList(bubble_l);
 	    return;
         }
@@ -147,7 +151,7 @@ void Investigate(char *location)
 
 		SetBubbleType(THINK_BUBBLE);
 
-		Bubble(bubble_l, (ubyte) first++, 0, 140L);
+		(void)Bubble(bubble_l, (ubyte) first++, 0, 140L); /* V1071: display-only, result intentionally discarded */
 		choice = GetExtBubbleActionInfo();
 
 		tcAddBuildExactlyness(bui, raise);
@@ -178,7 +182,7 @@ void Investigate(char *location)
     if (minutes >= 1440) {	/* wurde 24 Stunden lang beobachtet ? */
 	bubble_l = txtGoKey(INVESTIGATIONS_TXT, "24StundenBeobachtet");
 	SetBubbleType(THINK_BUBBLE);
-	Bubble(bubble_l, 0, 0L, 0L);
+	(void)Bubble(bubble_l, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
 	RemoveList(bubble_l);
     }
 
@@ -215,7 +219,7 @@ void Investigate(char *location)
 
 	inpWaitFor(INP_LBUTTONP);
 
-	gfxChangeColors(l_gc, 0, GFX_FADE_OUT, NULL);
+	gfxChangeColors(l_gc, 0, GFX_FADE_OUT, nullptr);
 	gfxClearArea(l_gc);
 	gfxChangeColors(l_gc, 0, GFX_BLEND_UP, palette);
 

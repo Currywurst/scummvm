@@ -1,22 +1,26 @@
-/*
-**      $Filename: planing/system.c
-**      $Release:  1
-**      $Revision: 0
-**      $Date:     23-04-94
-**
-**      planing.system for "Der Clou!"
-**
-** (c) 1994 ...and avoid panic by, Kaweh Kazemi
-**      All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #define FILE_SYSTEM_ID      "SYS "	/* SYStem plan start */
 #define FILE_HANDLER_ID     "HAND"	/* HANDler x needed  */
@@ -50,7 +54,7 @@ static void sysFreeHandlerActions(struct Handler *h)
 
 	CorrectMem(h->Actions);
 	RemoveList(h->Actions);
-	h->Actions = NULL;
+	h->Actions = nullptr;
 }
 
 size_t plGetUsedMem(void)
@@ -70,7 +74,7 @@ struct Handler *FindHandler(struct System *sys, U32 id)
 	}
     }
 
-    return NULL;
+    return nullptr;
 }
 
 struct System *InitSystem(void)
@@ -82,11 +86,11 @@ struct System *InitSystem(void)
 	sys->Handlers = CreateList();
 	sys->Signals = CreateList();
 
-	sys->ActivHandler = NULL;
+	sys->ActivHandler = nullptr;
 
 	if (!sys->Handlers || !sys->Signals) {
 	    CloseSystem(sys);
-	    sys = NULL;
+	    sys = nullptr;
 	}
     }
 
@@ -110,7 +114,7 @@ void SetActivHandler(struct System *sys, U32 id)
     if ((h = FindHandler(sys, id)))
 	sys->ActivHandler = (NODE *) h;
     else
-	sys->ActivHandler = NULL;
+	sys->ActivHandler = nullptr;
 }
 
 void SaveSystem(TC_FILE * fh, struct System *sys)
@@ -158,9 +162,9 @@ LIST *LoadSystem(TC_FILE * fh, struct System *sys)
 
     if (foundAll) {
 	RemoveList(l);
-	l = NULL;
+	l = nullptr;
     } else {
-	LIST *extList = NULL;
+	LIST *extList = nullptr;
 	NODE *n;
 	U32 missingHandlers = (handlerNr > knowsSomebody) ?
 	    (U32) (handlerNr - knowsSomebody) : 0;
@@ -186,20 +190,20 @@ LIST *LoadSystem(TC_FILE * fh, struct System *sys)
 
 struct Handler *InitHandler(struct System *sys, U32 id, U32 flags)
 {
-    struct Handler *h = NULL;
+    struct Handler *h = nullptr;
 
     if (sys && !FindHandler(sys, id)) {
 	if ((h =
-	     (struct Handler *) CreateNode(sys->Handlers, sizeof(*h), NULL))) {
+	     (struct Handler *) CreateNode(sys->Handlers, sizeof(*h), nullptr))) {
 	    h->Id = id;
 	    h->Timer = 0L;
 	    h->Flags = flags;
-	    h->CurrentAction = NULL;
+	    h->CurrentAction = nullptr;
 
 	    if (!(h->Actions = CreateList())) {
 		RemNode(h);
 		FreeNode(h);
-		h = NULL;
+		h = nullptr;
 	    }
 
 	    sys->ActivHandler = (NODE *) h;
@@ -231,11 +235,14 @@ struct Handler *ClearHandler(struct System *sys, U32 id)
 	if (!(h->Actions = CreateList())) {
 	    RemNode(h);
 	    FreeNode(h);
-	    h = NULL;
+	    h = nullptr;
 	}
 
-	h->Timer = 0L;
-	h->CurrentAction = NULL;
+	/* V522: h may be NULL here if CreateList() failed above */
+	if (h) {
+	    h->Timer = 0L;
+	    h->CurrentAction = nullptr;
+	}
     }
 
     return h;
@@ -370,7 +377,7 @@ struct Action *InitAction(struct System *sys, uword type, U32 data1, U32 data2,
 			  U32 time)
 {
     struct Handler *h;
-    struct Action *a = NULL;
+    struct Action *a = nullptr;
 
     if (sys && (h = (struct Handler *) sys->ActivHandler)) {
 	if ((sysUsedMem + sizeof(struct Action) + sizeofAction[type]) <=
@@ -380,7 +387,7 @@ struct Action *InitAction(struct System *sys, uword type, U32 data1, U32 data2,
 	    if ((a =
 		 (struct Action *) CreateNode(h->Actions,
 					      sizeof(struct Action) +
-					      sizeofAction[type], NULL))) {
+					      sizeofAction[type], nullptr))) {
 		a->Type = type;
 		a->TimeNeeded = time;
 		a->Timer = time;
@@ -422,7 +429,7 @@ struct Action *CurrentAction(struct System *sys)
     if (sys && (h = (struct Handler *) sys->ActivHandler))
 	return (struct Action *) h->CurrentAction;
 
-    return NULL;
+    return nullptr;
 }
 
 struct Action *GoFirstAction(struct System *sys)
@@ -435,12 +442,12 @@ struct Action *GoFirstAction(struct System *sys)
 	    ((struct Action *) h->CurrentAction)->Timer = 0;
 	    h->Timer = 0;
 	} else
-	    h->CurrentAction = NULL;
+	    h->CurrentAction = nullptr;
 
 	return (struct Action *) h->CurrentAction;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 struct Action *GoLastAction(struct System *sys)
@@ -454,12 +461,12 @@ struct Action *GoLastAction(struct System *sys)
 		((struct Action *) h->CurrentAction)->TimeNeeded;
 	    h->Timer = GetMaxTimer(sys);
 	} else
-	    h->CurrentAction = NULL;
+	    h->CurrentAction = nullptr;
 
 	return (struct Action *) h->CurrentAction;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 struct Action *NextAction(struct System *sys)
@@ -486,7 +493,7 @@ struct Action *NextAction(struct System *sys)
 			    ((struct Action *) h->CurrentAction)->TimeNeeded;
 			h->Timer = GetMaxTimer(sys);
 
-			return NULL;
+			return nullptr;
 		    }
 		}
 	    } else {
@@ -498,7 +505,7 @@ struct Action *NextAction(struct System *sys)
 	return (struct Action *) h->CurrentAction;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 struct Action *PrevAction(struct System *sys)
@@ -525,7 +532,7 @@ struct Action *PrevAction(struct System *sys)
 			((struct Action *) h->CurrentAction)->Timer = 0;
 			h->Timer = 0;
 
-			return NULL;
+			return nullptr;
 		    }
 		}
 	    } else {
@@ -537,7 +544,7 @@ struct Action *PrevAction(struct System *sys)
 	return (struct Action *) h->CurrentAction;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 ubyte ActionStarted(struct System * sys)
@@ -614,11 +621,11 @@ void IgnoreAction(struct System *sys)
 
 struct plSignal *InitSignal(struct System *sys, U32 sender, U32 receiver)
 {
-    struct plSignal *s = NULL;
+    struct plSignal *s = nullptr;
 
     if (sys) {
 	if ((s =
-	     (struct plSignal *) CreateNode(sys->Signals, sizeof(*s), NULL))) {
+	     (struct plSignal *) CreateNode(sys->Signals, sizeof(*s), nullptr))) {
 	    s->SenderId = sender;
 	    s->ReceiverId = receiver;
 	}
@@ -647,7 +654,7 @@ struct plSignal *IsSignal(struct System *sys, U32 sender, U32 receiver)
 	}
     }
 
-    return NULL;
+    return nullptr;
 }
 
 U32 CurrentTimer(struct System * sys)

@@ -20,9 +20,11 @@
  */
 
 #include "theclou/engine.h"
+#include "theclou/disk/DiskManager.h"
 
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/fs.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/savefile.h"
@@ -37,16 +39,22 @@ extern "C" {
 	void tc_SetPaused(int paused);             /* platform/tc_platform.cpp */
 	void tc_InitPlatform(void);                /* platform/tc_platform.cpp */
 }
-// dskSetSavePath is plain C++ (defined in disk/disk.cpp).
-void dskSetSavePath(const char *savePath);
 
 namespace TheClou {
 
 TheClouEngine::TheClouEngine(OSystem *syst, const ADGameDescription *gd)
-	: Engine(syst), _gameDescription(gd) {
+	: Engine(syst), _gameDescription(gd),
+	  _diskManager(new DiskManager()) {
+	/* Publish the DiskManager as the global singleton so C game code
+	 * (which still calls dskSetRootPath / dskOpen etc.) works without changes. */
+	g_diskManager = _diskManager;
 }
 
 TheClouEngine::~TheClouEngine() {
+	/* Clear the global before deleting so dangling use-after-free is obvious. */
+	g_diskManager = nullptr;
+	delete _diskManager;
+	_diskManager = nullptr;
 }
 
 bool TheClouEngine::hasFeature(EngineFeature f) const {
@@ -68,11 +76,29 @@ Common::Error TheClouEngine::run() {
 	Common::String rootPath = ConfMan.get("path");
 	debug(1, "TheClou: starting, root path = '%s'", rootPath.c_str());
 
+	// Quick sanity-check: the DATA sub-directory must exist under rootPath.
+	// If not, the path is misconfigured (user pointed at the wrong folder).
+	{
+		Common::FSNode rootNode(Common::Path(rootPath, Common::Path::kNativeSeparator));
+		Common::FSNode dataNode = rootNode.getChild("DATA");
+		if (!dataNode.exists()) {
+			dataNode = rootNode.getChild("data");
+		}
+		if (!dataNode.exists()) {
+			warning("TheClou: DATA sub-directory not found under '%s'."
+			        " Make sure the game path points to the DER CLOU! root"
+			        " (the folder that contains DATA/, DATADISK/, TEXTS/ etc.).",
+			        rootPath.c_str());
+		} else {
+			debug(1, "TheClou: DATA directory found at '%s'", dataNode.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		}
+	}
+
 	// Redirect save files to ScummVM's dedicated save directory so saves
 	// appear in the launcher and work with cloud sync / ScummVM backups.
 	Common::String savePath = ConfMan.get("savepath");
 	if (!savePath.empty()) {
-		dskSetSavePath(savePath.c_str());
+		_diskManager->setSavePath(savePath.c_str());
 		debug(1, "TheClou: save path = '%s'", savePath.c_str());
 	}
 

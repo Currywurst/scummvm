@@ -1,10 +1,26 @@
-/****************************************************************************
-  Copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "cdrom/cdrom.h"
 
@@ -24,7 +40,7 @@ int CDRomInstalled = 0;
 
 #if !defined(THECLOU_DISABLE_SDL_CDROM)
 
-static SDL_CD *CDROM_Device = NULL;
+static SDL_CD *CDROM_Device = nullptr;
 static int CDROM_DriveNr = -1;
 static char CDDrive[256] = "X:\\";
 
@@ -70,7 +86,7 @@ int CDROM_Install(void)
         DebugMsg(ERR_WARNING, ERROR_MODULE_BASE,
                  "SDL_CDStatus error: %s", SDL_GetError());
         SDL_CDClose(CDROM_Device);
-        CDROM_Device = NULL;
+        CDROM_Device = nullptr;
         CDROM_DriveNr = -1;
         SDL_QuitSubSystem(SDL_INIT_CDROM);
         return -1;
@@ -84,7 +100,7 @@ void CDROM_UnInstall(void)
 {
     if (CDROM_Device) {
         SDL_CDClose(CDROM_Device);
-        CDROM_Device = NULL;
+        CDROM_Device = nullptr;
     }
 
     if (SDL_WasInit(SDL_INIT_CDROM)) {

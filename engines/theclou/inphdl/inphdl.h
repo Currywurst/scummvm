@@ -1,36 +1,34 @@
-/*
-**	$Filename: inphdl/inphdl.h
-**	$Release:
-**	$Revision:
-**	$Date:
-**
-**	include file for input handling
-**
-**	(C) 1993 ...and avoid panic by
-**	    All Rights Reserved
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code (c) 1993 ...and avoid panic by
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/** @file inphdl/inphdl.h — Input handling for Der Clou! */
 
-/* defines f�r  WaitFor */
-
-#ifndef INPHDL_MODULE
-#define INPHDL_MODULE
+#ifndef ENGINES_THECLOU_INPHDL_INPHDL_H
+#define ENGINES_THECLOU_INPHDL_INPHDL_H
 
 #include "theclou.h"
-
-#ifndef MODULE_GFX
 #include "gfx/gfx.h"
-#endif
-
-#ifndef MODULE_ANIM
 #include "anim/sysanim.h"
-#endif
 
 #define INP_AS_FAST_AS_POSSIBLE		1
 
@@ -78,4 +76,4 @@ extern void inpSetKeyRepeat(unsigned char rate);
 
 extern void inpClearKbBuffer(void);
 
-#endif
+#endif // ENGINES_THECLOU_INPHDL_INPHDL_H

@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	data/relation.o \
 	dialog/dialog.o \
 	dialog/talkappl.o \
+	disk/DiskManager.o \
 	disk/disk.o \
 	error/error.o \
 	gameplay/gp.o \
@@ -37,6 +38,7 @@ MODULE_OBJS := \
 	living/bob.o \
 	living/living.o \
 	memory/memory.o \
+	organisa/display.o \
 	organisa/organisa.o \
 	planing/graphics.o \
 	planing/guards.o \
@@ -50,6 +52,7 @@ MODULE_OBJS := \
 	planing/system.o \
 	present/interac.o \
 	present/present.o \
+	present/presenta.o \
 	random/random.o \
 	scenes/cars.o \
 	scenes/dealer.o \
@@ -90,6 +93,21 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# On macOS (Apple ld) static archives are scanned only once, so circular
+# references between translation units inside libtheclou.a go unresolved.
+# -force_load unconditionally loads every object file from the archive —
+# the macOS equivalent of GNU ld's --start-group / --end-group.
+#
+# Apple ld (Xcode 15 / ld 921+) warns when the same library appears both
+# via -force_load and as a normal positional argument ("ignoring duplicate
+# libraries").  -no_warn_duplicate_libraries suppresses that diagnostic;
+# the flag was introduced in the same Xcode release as the warning, so it
+# is always available when the warning would fire.
+ifeq ($(MACOSX), 1)
+LDFLAGS += -Wl,-force_load,$(MODULE_LIB-$(MODULE))
+LDFLAGS += -Wl,-no_warn_duplicate_libraries
+endif
 
 # Detection objects
 DETECT_OBJS += $(MODULE)/detection.o

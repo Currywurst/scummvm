@@ -1,25 +1,30 @@
-/*
-**	$Filename: dialog/dialog.c
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     07-04-94
-**
-**	dialog functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "dialog/dialog.h"
 #include "dialog/talkappl.h"
+#include "platform/tc_debug.h"
 
 #define DLG_NO_SPEECH	((U32) -1)
 U32 StartFrame = DLG_NO_SPEECH;
@@ -135,7 +140,7 @@ static LIST *ParseTalkText(LIST * origin, LIST * bubble, ubyte known)
 
 		if (known >= nr) {
 		    keyNode =
-			CreateNode(keyWords, sizeof(struct DynDlgNode),
+			(NODE *)CreateNode(keyWords, sizeof(struct DynDlgNode),
 				   keyWord);
 
 		    ((struct DynDlgNode *) keyNode)->KnownBefore = nr;
@@ -201,7 +206,7 @@ void DynamicTalk(U32 Person1ID, U32 Person2ID, ubyte TalkMode)
 
 	if (choice < (max - stdcount)) {
 	    SetPictID(p2->PictID);
-	    Bubble(bubble, 0, 0L, 0L);
+	    (void)Bubble(bubble, 0, 0L, 0L); /* V1071: display-only, result intentionally discarded */
 	}
 
 	SetPictID(MATT_PICTID);
@@ -257,7 +262,7 @@ void DynamicTalk(U32 Person1ID, U32 Person2ID, ubyte TalkMode)
 	RemoveList(keyWords);
 	RemoveList(origin);
 	RemoveList(questions);
-	RemoveNode(bubble, NULL);
+	RemoveNode(bubble, nullptr);
     }
     while (choice != quit);
 
@@ -279,10 +284,15 @@ void PlayFromCDROM(void)
 
 	if (setup.CDAudioFromWav && SpeechClipKey[0] != '\0') {
 		sndFading(16);
+		tc_debug(1, "TheClou: speech: playing clip '%s'", SpeechClipKey);
 		if (!sndPlaySpeechSample(SpeechClipKey)) {
 			DebugMsg(ERR_WARNING, ERROR_MODULE_SOUND,
 					 "Missing speech sample: %s", SpeechClipKey);
+			tc_warning("TheClou: speech: WAV not found for clip '%s'", SpeechClipKey);
 		}
+	} else if (setup.CDAudioFromWav) {
+		/* SpeechClipKey is empty — Say() didn't set it (key not in CDROM_TXT?) */
+		tc_debug(2, "TheClou: PlayFromCDROM: CDAudioFromWav=1 but SpeechClipKey empty");
 	}
 }
 
@@ -290,6 +300,9 @@ ubyte Say(U32 TextID, ubyte activ, uword Person, const char *text)
 {
     LIST *bubble;
     ubyte choice;
+
+    tc_debug(2, "TheClou: Say('%s') CDRom=%d CDAudio=%d CDAudioFromWav=%d",
+             text ? text : "(null)", setup.CDRom, setup.CDAudio, setup.CDAudioFromWav);
 
     if (setup.CDRom) {
         bubble = txtGoKey(TextID, text);
@@ -303,6 +316,7 @@ ubyte Say(U32 TextID, ubyte activ, uword Person, const char *text)
            speech would be interrupted */
 
 		if (txtKeyExists(CDROM_TXT, text)) {
+            tc_debug(2, "TheClou: Say('%s') CDROM_TXT key found — speech armed", text);
             char keys[TXT_KEY_LENGTH];
 
             txtGetFirstLine(CDROM_TXT, text, keys);
@@ -317,13 +331,13 @@ ubyte Say(U32 TextID, ubyte activ, uword Person, const char *text)
                 (txtGetKeyAsULONG(4, keys) * 60L +
                  txtGetKeyAsULONG(5, keys)) * 75L + txtGetKeyAsULONG(6, keys);
 
-            choice = Bubble(bubble, activ, NULL, 0L);
+            choice = Bubble(bubble, activ, nullptr, 0L);
         } else {
 			StartFrame = DLG_NO_SPEECH;
 			EndFrame = DLG_NO_SPEECH;
 			SpeechClipKey[0] = '\0';
 
-            choice = Bubble(bubble, activ, NULL, 0L);
+            choice = Bubble(bubble, activ, nullptr, 0L);
         }
 
         if (setup.CDAudio) {
@@ -347,7 +361,22 @@ ubyte Say(U32 TextID, ubyte activ, uword Person, const char *text)
         if (Person != (uword) - 1)
 	    SetPictID(Person);
 
-        choice = Bubble(bubble, activ, NULL, 0L);
+        /* When WAV speech is available, arm SpeechClipKey so that
+         * PlayFromCDROM() (called from inside Bubble()) can play it. */
+        if (setup.CDAudio && setup.CDAudioFromWav && txtKeyExists(CDROM_TXT, text)) {
+            strncpy(SpeechClipKey, text, sizeof(SpeechClipKey) - 1);
+            SpeechClipKey[sizeof(SpeechClipKey) - 1] = '\0';
+            sndFading(16);
+        }
+
+        choice = Bubble(bubble, activ, nullptr, 0L);
+
+        if (setup.CDAudio && setup.CDAudioFromWav) {
+            sndStopSpeechSample();
+            sndFading(0);
+            SpeechClipKey[0] = '\0';
+        }
+
         RemoveList(bubble);
     }
 

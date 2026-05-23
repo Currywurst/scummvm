@@ -1,24 +1,35 @@
-/*
- * Relation.c
- * (c) 1993 by Kaweh Kazemi
- * All rights reserved.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
 
 #include "data/relation.h"
 
 static RELATION nrOfRelations = 1;
-static struct relationDef *relationsDefBase = NULL;
+static struct relationDef *relationsDefBase = nullptr;
 
-int (*CompareKey) (KEY, KEY) = NULL;
-KEY(*EncodeKey) (char *) = NULL;
-char *(*DecodeKey) (KEY) = NULL;
+int (*CompareKey) (KEY, KEY) = nullptr;
+KEY(*EncodeKey) (char *) = nullptr;
+char *(*DecodeKey) (KEY) = nullptr;
 
 
 static struct relationDef *FindRelation(RELATION id)
@@ -30,7 +41,7 @@ static struct relationDef *FindRelation(RELATION id)
 	    return rd;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 RELATION AddRelation(RELATION id)
@@ -45,7 +56,7 @@ RELATION AddRelation(RELATION id)
 	    rd->rd_id = id;
 	    nrOfRelations++;
 
-	    rd->rd_relationsTable = NULL;
+	    rd->rd_relationsTable = nullptr;
 
 	    return rd->rd_id;
 	}
@@ -303,7 +314,7 @@ int LoadRelations(char *file, U16 disk_id)
     char left[256];
     char right[256];
     U8 goOn;
-    TC_FILE *fh = NULL;
+    TC_FILE *fh = nullptr;
     U32 dummy;
 
     buffer[0] = '\0';

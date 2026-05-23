@@ -1,21 +1,26 @@
-/*
-**	$Filename: scenes/done.c
-**	$Release:
-**	$Revision:
-**	$Date:
-**
-**
-**
-**	(C) 1993, 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "scenes/scenes.h"
 
@@ -109,7 +114,7 @@ void DoneInsideHouse(void)
 	    inpTurnFunctionKey(0);
 	    inpTurnESC(0);
 	    activ =
-		Menu(menu, SceneArgs.Moeglichkeiten, (ubyte) (activ), NULL, 0L);
+		Menu(menu, SceneArgs.Moeglichkeiten, (ubyte) (activ), nullptr, 0L);
 	    inpTurnFunctionKey(1);
 	    inpTurnESC(1);
 
@@ -172,7 +177,7 @@ void DoneTools(void)
 
 	inpTurnFunctionKey(0);	/* dont save in tools shop */
 	inpTurnESC(0);
-	activ = Menu(menu, SceneArgs.Moeglichkeiten, (ubyte) (activ), NULL, 0L);
+	activ = Menu(menu, SceneArgs.Moeglichkeiten, (ubyte) (activ), nullptr, 0L);
 	inpTurnESC(1);
 
 	choice = (U32) 1L << (activ);
@@ -214,7 +219,7 @@ void DoneDealer(void)
     while (!SceneArgs.ReturnValue) {
 	inpTurnFunctionKey(0);	/* or call save functions in case of space */
 	inpTurnESC(0);
-	activ = Menu(menu, SceneArgs.Moeglichkeiten, (ubyte) (activ), NULL, 0L);
+	activ = Menu(menu, SceneArgs.Moeglichkeiten, (ubyte) (activ), nullptr, 0L);
 	inpTurnESC(1);
 	inpTurnFunctionKey(1);
 
@@ -309,7 +314,7 @@ void DoneGarage(void)
 	inpTurnFunctionKey(0);	/* or call save functions in case of space */
 	inpTurnESC(0);
 
-	activ = Menu(menu, SceneArgs.Moeglichkeiten, (ubyte) (activ), NULL, 0);
+	activ = Menu(menu, SceneArgs.Moeglichkeiten, (ubyte) (activ), nullptr, 0);
 
 	inpTurnESC(1);
 	inpTurnFunctionKey(1);

@@ -1,79 +1,44 @@
-/*
-**	$Filename: gameplay/gp_app.h
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     08-04-94
-**
-**
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
-
-#ifndef MODULE_GAMEPLAY_APP
-#define MODULE_GAMEPLAY_APP
+#ifndef ENGINES_THECLOU_GAMEPLAY_GP_APP_H
+#define ENGINES_THECLOU_GAMEPLAY_GP_APP_H
 
 #include "theclou.h"
-
-#ifndef MODULE_MEMORY
 #include "memory/memory.h"
-#endif
-
-#ifndef MODULE_ERROR
 #include "error/error.h"
-#endif
-
-#ifndef MODULE_LIST
 #include "list/list.h"
-#endif
-
-#ifndef MODULE_DISK
 #include "disk/disk.h"
-#endif
-
-#ifndef MODULE_GFX
 #include "gfx/gfx.h"
-#endif
-
-#ifndef MODULE_ANIM
 #include "anim/sysanim.h"
-#endif
-
-#ifndef MODULE_STORY
 #include "story/story.h"
-#endif
-
-#ifndef MODULE_DATAAPPL
 #include "data/dataappl.h"
-#endif
-
-#ifndef MODULE_RANDOM
 #include "random/random.h"
-#endif
-
-#ifndef MODULE_GAMEPLAY
 #include "gameplay/gp.h"
-#endif
-
-#ifndef MODULE_SOUND
 #include "sound/newsound.h"
-#endif
-
-#ifndef MODULE_EVIDENCE
 #include "scenes/evidence.h"
-#endif
-
-#ifndef MODULE_SCENES
 #include "scenes/scenes.h"
-#endif
 
 struct Scene;
 
@@ -88,7 +53,7 @@ extern void tcPersonGreetsMatt(void);
 extern U32 StdHandle(U32 choice);
 
 extern void SetFunc(struct Scene *sc, void (*init) (void), void (*done) (void));
-void PrintStatus(char *text);
+void PrintStatus(const char *text);
 extern void InitTaxiLocations(void);
 extern void LinkScenes(void);
 
@@ -111,4 +76,4 @@ extern void tcRefreshAfterLoad(ubyte loaded);
 
 extern void ShowMenuBackground(void);
 
-#endif
+#endif  // ENGINES_THECLOU_GAMEPLAY_GP_APP_H

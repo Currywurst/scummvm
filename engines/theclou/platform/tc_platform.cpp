@@ -1,17 +1,27 @@
-/*
- * tc_platform.cpp  —  ScummVM OSystem implementation of the tc_* platform
- * functions declared in tc_sdl_compat.h.
+/* ScummVM - Graphic Adventure Engine
  *
- * Graphics  → g_system->copyRectToScreen / updateScreen / setPalette
- * Input     → g_system->getEventManager()->pollEvent()
- * Timing    → g_system->getMillis() / delayMillis()
- * Audio     → TheClouAudioStream → Audio::Mixer (ring-buffer pull model)
- * Threading → Common::Mutex + POSIX/Win32 thread wrapper
- * Quit      → tc_QuitGame() in platform/tc_quit.cpp throws QuitException
- * Pause     → g_tcPaused flag; tc_Delay spin-waits while paused
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* ---- System headers FIRST (before ScummVM's forbidden.h macros) ---- */
 #include <stdlib.h>
 #include <string.h>
 
@@ -36,9 +46,8 @@
  * #defines don't corrupt ScummVM's own declarations.                     */
 #include "theclou/platform/tc_sdl_compat.h"
 
-/* sndMixIntoBuffer() is implemented in sound/fx.c and called from
- * TheClouAudioStream::readBuffer() on the ScummVM mixer thread.      */
-extern "C" void sndMixIntoBuffer(Uint8 *buf, int len);
+/* sndMixIntoBuffer() is implemented in sound/fx.cpp — now C++ linkage. */
+void sndMixIntoBuffer(Uint8 *buf, int len);
 
 /* ================================================================== */
 /* Forward declarations                                                */
@@ -151,7 +160,7 @@ SDL_Surface *tc_CreateSurface(int w, int h, Uint32 /*format*/) {
     s->w      = w;
     s->h      = h;
     s->pitch  = w; /* 8-bit: 1 byte/pixel */
-    s->pixels = (Uint8 *)calloc(1, (size_t)(w * h));
+    s->pixels = (Uint8 *)calloc(1, (size_t)w * (size_t)h); /* V1028: cast before multiply */
     return s;
 }
 

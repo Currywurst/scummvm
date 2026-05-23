@@ -1,63 +1,45 @@
-/*
- * dataAppl.h
- * (c) 1993 by Helmut Gaberschek & Kaweh Kazemi, ...and avoid panic by
- * All rights reserved.
+/* ScummVM - Graphic Adventure Engine
  *
- * new animation module for the PANIC-System
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
- * Rev   Date        Comment
- *  1   05-09-93
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
-
-#ifndef MODULE_DATAAPPL
-#define MODULE_DATAAPPL
+#ifndef ENGINES_THECLOU_DATA_DATAAPPL_H
+#define ENGINES_THECLOU_DATA_DATAAPPL_H
 
 #include "theclou.h"
-
-#ifndef MODULE_LIST
 #include "list/list.h"
-#endif
-
-#ifndef MODULE_TEXT
 #include "text/text.h"
-#endif
-
-#ifndef MODULE_RELATION
 #include "data/relation.h"
-#endif
-
-#ifndef MODULE_DATABASE
 #include "data/database.h"
-#endif
-
-#ifndef MODULE_DATACALC
 #include "data/datacalc.h"
-#endif
 
-#ifndef MODULE_DATAAPPL
+#ifndef ENGINES_THECLOU_DATA_DATAAPPL_H
 #include "data/dataapplh"
-#endif
+#endif  // ENGINES_THECLOU_DATA_DATAAPPL_H
 
 #include "data/objstd/tcdata.h"
-
-#ifndef MODULE_EVIDENCE
 #include "scenes/evidence.h"
-#endif
-
-#ifndef MODULE_LIVING
 #include "living/living.h"
-#endif
-
-#ifndef MODULE_LANDSCAP
 #include "landscap/landscap.h"
-#endif
 
 
 extern bool tcSpendMoney(U32 money, U8 breakAnim);
@@ -192,4 +174,4 @@ U32 tcGetBuildValues(Building bui);
 #define   tcEscapeTime(building)        (16400 / building->EscapeRouteLength)
 
 
-#endif
+#endif  // ENGINES_THECLOU_DATA_DATAAPPL_H

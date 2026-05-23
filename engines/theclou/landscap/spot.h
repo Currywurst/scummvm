@@ -1,49 +1,38 @@
-/*
-**	$Filename: landscap/spot.h
-**	$Release:  0
-**	$Revision: 0.1
-**	$Date:     19-02-94
-**
-**	spot functions for "Der Clou!"
-**
-**   (c) 1994 ...and avoid panic by, H. Gaberschek
-**	    All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
-
-#ifndef MODULE_SPOT
-#define MODULE_SPOT
+#ifndef ENGINES_THECLOU_LANDSCAP_SPOT_H
+#define ENGINES_THECLOU_LANDSCAP_SPOT_H
 
 #include "theclou.h"
-
-#ifndef MODULE_LIST
 #include "list/list.h"
-#endif
-
-#ifndef MODULE_TEXT
 #include "text/text.h"
-#endif
-
-#ifndef MODULE_GFX
 #include "gfx/gfx.h"
-#endif
-
-#ifndef MODULE_MEMORY
 #include "memory/memory.h"
-#endif
-
-#ifndef MODULE_DISK
 #include "disk/disk.h"
-#endif
 
-#define LS_SPOT_NAME					((ubyte*)"s")
+#define LS_SPOT_NAME					"s"
 
 #define LS_SPOT_SMALL_SIZE         16
 #define LS_SPOT_MEDIUM_SIZE        32
@@ -108,4 +97,4 @@ extern LIST *lsGetSpotList(void);
 extern struct Spot *lsAddSpot(uword us_Size, uword us_Speed, U32 ul_CtrlObjId);
 extern struct Spot *lsGetSpot(char *uch_Name);
 
-#endif
+#endif  // ENGINES_THECLOU_LANDSCAP_SPOT_H

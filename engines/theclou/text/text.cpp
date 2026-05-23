@@ -1,22 +1,26 @@
-/*
-**	$Filename: text\text.c
-**	$Release:  1
-**	$Revision: 0
-**	$Date:     10-03-94
-**
-**	text implementation for "Der Clou!"
-**
-** (c) 1994 ...and avoid panic by, Kaweh Kazemi
-**	All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef MODULE_TXT
 #define MODULE_TXT
@@ -26,14 +30,14 @@
 
 /* private header(s) */
 #include "text/text.eh"
-#include "text/text.ph"
+#include "text/text_internal.h"
 
 /* private globals declaration */
-char *txtLanguageMark[TXT_LANG_LAST] = {
+const char *txtLanguageMark[TXT_LANG_LAST] = {
     "d", "e", "f", "s", "d"
 };
 
-struct TextControl *txtBase = NULL;
+struct TextControl *txtBase = nullptr;
 char keyBuffer[TXT_KEY_LENGTH];
 
 
@@ -41,7 +45,7 @@ char keyBuffer[TXT_KEY_LENGTH];
 static char *txtGetLine(struct Text *txt, U8 lineNr)
 {
     U8 i;
-    char *line = NULL;
+    char *line = nullptr;
 
     if (txt && txt->txt_LastMark && lineNr) {
 	line = txt->txt_LastMark;
@@ -49,17 +53,17 @@ static char *txtGetLine(struct Text *txt, U8 lineNr)
 
 	while (i < lineNr) {
 	    if (*line == TXT_CHAR_EOF)
-		return NULL;
+		return nullptr;
 
 	    if (i > 0 && (*line == TXT_CHAR_MARK))
-		return NULL;
+		return nullptr;
 
 	    if (*line == TXT_CHAR_EOS) {
 		line++;		/* skip second EOS */
 		i++;
 
 		if (*line == TXT_CHAR_EOF)
-		    return NULL;
+		    return nullptr;
 
 		/* skip comments */
 		while (*(line + 1) == TXT_CHAR_REMARK) {
@@ -72,9 +76,9 @@ static char *txtGetLine(struct Text *txt, U8 lineNr)
 	}
 
 	if (*line == TXT_CHAR_EOF)
-	    return NULL;
+	    return nullptr;
 	if (*line == TXT_CHAR_MARK)
-	    return NULL;
+	    return nullptr;
     }
 
     return line;
@@ -85,7 +89,7 @@ void txtInit(char lang)
 {
     char txtListPath[DSK_PATH_MAX];
 
-    if ((txtBase = (struct TextControl)TCAllocMem(sizeof(*txtBase), 0))) {
+    if ((txtBase = (struct TextControl *)TCAllocMem(sizeof(*txtBase), 0))) {
 	txtBase->tc_Texts = CreateList();
 	txtBase->tc_Language = lang;
 
@@ -146,7 +150,7 @@ void txtLoad(U32 textId)
             txt->length = length;
 
 	    /* loading text into buffer */
-	    text = dskLoad(txtPath);
+	    text = (U8 *)dskLoad(txtPath);
 
 	    /* correcting text */
 	    for (ptr=text; length--; ptr++) {
@@ -193,8 +197,8 @@ void txtUnLoad(U32 textId)
 	    free(txt->txt_Handle);
 	}
 
-	txt->txt_Handle = NULL;
-	txt->txt_LastMark = NULL;
+	txt->txt_Handle = nullptr;
+	txt->txt_LastMark = nullptr;
 	txt->length = 0;
     }
 }
@@ -205,7 +209,7 @@ void txtPrepare(U32 textId)
 
     if (txt) {
 	memcpy(TXT_BUFFER_WORK, txt->txt_Handle, txt->length);
-	txt->txt_LastMark = TXT_BUFFER_WORK;
+	txt->txt_LastMark = (char *)TXT_BUFFER_WORK;
     }
 }
 
@@ -214,7 +218,7 @@ void txtUnPrepare(U32 textId)
     struct Text *txt = (struct Text *)GetNthNode(txtBase->tc_Texts, textId);
 
     if (txt)
-	txt->txt_LastMark = NULL;
+	txt->txt_LastMark = nullptr;
 }
 
 void txtReset(U32 textId)
@@ -222,7 +226,7 @@ void txtReset(U32 textId)
     struct Text *txt = (struct Text *)GetNthNode(txtBase->tc_Texts, textId);
 
     if (txt)
-	txt->txt_LastMark = TXT_BUFFER_WORK;
+	txt->txt_LastMark = (char *)TXT_BUFFER_WORK;
 }
 
 
@@ -232,14 +236,14 @@ char *txtGetKey(U16 keyNr, char *key)
     uword i;
 
     if (!key)
-	return NULL;
+	return nullptr;
 
     for (i = 1; i < keyNr; i++) {
 	while (*key && (*key != TXT_CHAR_KEY_SEPERATOR))
 	    key++;
 
 	if (!*key)
-	    return NULL;
+	    return nullptr;
 	else
 	    key++;
     }
@@ -248,7 +252,7 @@ char *txtGetKey(U16 keyNr, char *key)
 	key++;
 
     if (!*key)
-	return NULL;
+	return nullptr;
 
     for (i = 0;
 	 (i < TXT_KEY_LENGTH) && *key && (*key != TXT_CHAR_KEY_SEPERATOR); i++)
@@ -270,11 +274,11 @@ U32 txtGetKeyAsULONG(U16 keyNr, char *key)
 
 LIST *txtGoKey(U32 textId, const char *key)
 {
-    LIST *txtList = NULL;
+    LIST *txtList = nullptr;
     struct Text *txt = (struct Text *)GetNthNode(txtBase->tc_Texts, textId);
 
     if (txt) {
-	char *LastMark = NULL;
+	char *LastMark = nullptr;
 
 	/* MOD: 08-04-94 hg
          * if no key was given take the next one
@@ -328,10 +332,10 @@ LIST *txtGoKey(U32 textId, const char *key)
     return txtList;
 }
 
-LIST *txtGoKeyAndInsert(U32 textId, char *key, ...)
+LIST *txtGoKeyAndInsert(U32 textId, const char *key, ...)
 {
     va_list argument;
-    LIST *txtList = CreateList(), *originList = NULL;
+    LIST *txtList = CreateList(), *originList = nullptr;
     NODE *node;
 
     va_start(argument, key);

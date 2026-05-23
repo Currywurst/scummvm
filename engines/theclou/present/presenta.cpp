@@ -1,15 +1,25 @@
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
-
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
-/*
- * Module Present
+/* ScummVM - Graphic Adventure Engine
  *
- * PresentApp.c
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "present/present.h"
@@ -109,10 +119,10 @@ void InitObjectPresent(U32 nr, LIST * presentationData, LIST * texts)
     AddPresentTextLine(presentationData, data, 0, texts, 0);
 
     if (lso->uch_Chained & Const_tcCHAINED_TO_ALARM)
-	AddPresentTextLine(presentationData, NULL, 0, texts, 2);
+	AddPresentTextLine(presentationData, nullptr, 0, texts, 2);
 
     if (lso->uch_Chained & Const_tcCHAINED_TO_POWER)
-	AddPresentTextLine(presentationData, NULL, 0, texts, 1);
+	AddPresentTextLine(presentationData, nullptr, 0, texts, 1);
 
     if (lso->Type == Item_Stechuhr)
 	AddPresentLine(presentationData, PRESENT_AS_NUMBER,
@@ -121,7 +131,7 @@ void InitObjectPresent(U32 nr, LIST * presentationData, LIST * texts)
     l = tcMakeLootList(nr, hasLootRelationID);
 
     if (LIST_EMPTY(l))
-	AddPresentTextLine(presentationData, NULL, 0, texts, 3);
+	AddPresentTextLine(presentationData, nullptr, 0, texts, 3);
 
     RemoveList(l);
 }
@@ -160,7 +170,7 @@ void InitToolPresent(U32 nr, LIST * presentationData, LIST * texts)
     toolRequiresAll(nr, OLF_INCLUDE_NAME | OLF_NORMAL, Object_Ability);
 
     if (!LIST_EMPTY(ObjectList)) {
-	AddPresentTextLine(presentationData, NULL, 0, texts, 8);	/* "benoetigt Wissen ueber..." */
+	AddPresentTextLine(presentationData, nullptr, 0, texts, 8);	/* "benoetigt Wissen ueber..." */
 
 	for (n = (NODE *) LIST_HEAD(ObjectList); NODE_SUCC(n);
 	     n = (NODE *) NODE_SUCC(n)) {
@@ -177,7 +187,7 @@ void InitToolPresent(U32 nr, LIST * presentationData, LIST * texts)
     breakAll(nr, OLF_INCLUDE_NAME | OLF_NORMAL, Object_Item);
 
     if (!(LIST_EMPTY(ObjectList)))
-	AddPresentTextLine(presentationData, NULL, 0, texts, 7);
+	AddPresentTextLine(presentationData, nullptr, 0, texts, 7);
 
     for (n = (NODE *) LIST_HEAD(ObjectList); NODE_SUCC(n);
 	 n = (NODE *) NODE_SUCC(n)) {
@@ -247,7 +257,7 @@ void InitPersonPresent(U32 nr, LIST * presentationData, LIST * texts)
 {
     char data[TXT_KEY_LENGTH];
     ubyte i;
-    LIST *abilities = NULL;
+    LIST *abilities = nullptr;
     NODE *node;
     U32 abiNr;
     Person obj;
@@ -295,7 +305,7 @@ void InitPersonPresent(U32 nr, LIST * presentationData, LIST * texts)
     abilities = ObjectListPrivate;
 
     if (!(LIST_EMPTY(abilities))) {
-	AddPresentTextLine(presentationData, NULL, 0, texts, 16);
+	AddPresentTextLine(presentationData, nullptr, 0, texts, 16);
 
 	for (node = (NODE *) LIST_HEAD(abilities), i = 0; NODE_SUCC(node);
 	     node = (NODE *) NODE_SUCC(node), i++) {

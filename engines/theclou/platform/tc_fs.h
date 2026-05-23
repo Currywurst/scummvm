@@ -18,36 +18,58 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef THECLOU_TC_FS_H
-#define THECLOU_TC_FS_H
+#ifndef ENGINES_THECLOU_PLATFORM_TC_FS_H
+#define ENGINES_THECLOU_PLATFORM_TC_FS_H
 
-/*
- * tc_fs.h — C-callable wrappers around ScummVM's Common::FSNode,
- * Common::File, and Common::DumpFile.
+/**
+ * @file tc_fs.h
+ * C-callable wrappers around ScummVM's portable file-system and I/O APIs.
  *
- * C source files in the engine cannot use Common::File/FSNode directly
- * (C++ linkage and templates).  These thin wrappers expose the portable
- * ScummVM file-system and I/O APIs to every .c file.
+ * C source files cannot use Common::File / Common::FSNode directly.
+ * These thin wrappers expose them via extern "C" so every .cpp (or legacy
+ * .c) file can use TC_FILE * instead of FILE *.
+ *
+ * In C++ translation units TC_FILE is an alias for TheClou::TcFile
+ * (see platform/TcFile.h).  In pure-C translation units it is an opaque
+ * forward-declared struct — only ever used via pointer.
  *
  * File system:
- *   tc_fs_exists(path)          — test if a path exists
- *   tc_fs_isdir(path)           — test if it is a directory
- *   tc_fs_mkdir(path)           — create a directory
- *   tc_fs_filesize(path)        — get file size without opening
- *   tc_fs_copy_if_missing(s,d)  — copy src to dst when dst absent
+ *   tc_fs_exists(path)             — test if a path exists
+ *   tc_fs_isdir(path)              — test if it is a directory
+ *   tc_fs_mkdir(path)              — create a directory
+ *   tc_fs_filesize(path)           — get file size without opening
+ *   tc_fs_copy_if_missing(s,d)     — copy src to dst when dst absent
+ *   tc_fs_copy_dir_missing(sd,dd)  — copy all files from srcDir to dstDir
  *
  * File I/O (TC_FILE replaces FILE):
- *   tc_fopen(path, mode)        — open for "r"/"rb" or "w"/"wb"
- *   tc_fclose(f)                — close file
- *   tc_fread(buf, sz, n, f)     — read n items of sz bytes
- *   tc_fwrite(buf, sz, n, f)    — write n items of sz bytes
- *   tc_fgetc(f)                 — read one byte (returns -1 at EOF)
- *   tc_fgets(s, n, f)           — read a line (NULL at EOF)
- *   tc_fprintf(f, fmt, ...)     — formatted write
+ *   tc_fopen / tc_fclose / tc_fread / tc_fwrite
+ *   tc_fgetc / tc_fgets / tc_fprintf / tc_fscanf
+ *   tc_ftell / tc_feof / tc_ungetc / tc_rewind
  */
 
 #include <stddef.h>
 #include <stdarg.h>
+
+/* ------------------------------------------------------------------
+ * TC_FILE type declaration
+ *
+ * tc_fs.h is included by many game translation units that first include
+ * game headers (theclou.h etc.) defining min/max macros.  To avoid
+ * pulling common/scummsys.h into those files at the wrong moment we use
+ * a forward declaration here instead of including TcFile.h directly.
+ *
+ * Files that need to call TcFile methods should #include TcFile.h
+ * explicitly *before* any game headers.
+ *
+ *  C++ mode : forward-declare TheClou::TcFile and typedef to TC_FILE.
+ *  C mode   : opaque forward declaration (pointer use only).
+ * ------------------------------------------------------------------ */
+#ifdef __cplusplus
+namespace TheClou { class TcFile; }
+typedef TheClou::TcFile TC_FILE;
+#else
+typedef struct TC_FILE TC_FILE;         /* opaque in plain C */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,12 +99,17 @@ size_t tc_fs_filesize(const char *path);
  */
 int    tc_fs_copy_if_missing(const char *src, const char *dst);
 
-/* ------------------------------------------------------------------ */
-/* Opaque file handle — replaces FILE*                                 */
-/* ------------------------------------------------------------------ */
+/**
+ * Copies every regular file from directory srcDir into dstDir,
+ * skipping files that already exist in dstDir (idempotent).
+ * dstDir is created if it does not exist.
+ * Returns the number of files copied (0 means all were already present).
+ */
+int    tc_fs_copy_dir_missing(const char *srcDir, const char *dstDir);
 
-/** Opaque handle; defined in tc_fs.cpp, invisible to C callers. */
-typedef struct TC_FILE TC_FILE;
+/* ------------------------------------------------------------------ */
+/* File I/O (TC_FILE replaces FILE*)                                   */
+/* ------------------------------------------------------------------ */
 
 /**
  * Open a file.  mode must be one of:
@@ -161,4 +188,4 @@ int      tc_fscanf(TC_FILE *f, const char *fmt, ...);
 }
 #endif
 
-#endif /* THECLOU_TC_FS_H */
+#endif /* ENGINES_THECLOU_PLATFORM_TC_FS_H */

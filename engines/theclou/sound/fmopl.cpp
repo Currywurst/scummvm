@@ -148,7 +148,7 @@ static FILE *sample[1];
 
 /* #define LOG_CYM_FILE */
 #ifdef LOG_CYM_FILE
-	FILE * cymfile = NULL;
+	FILE * cymfile = nullptr;
 #endif
 
 
@@ -300,6 +300,13 @@ static const int slot_array[32]=
 /* table is 3dB/octave , DV converts this into 6dB/octave */
 /* 0.1875 is bit 0 weight of the envelope counter (volume) expressed in the 'decibel' scale */
 #define DV (0.1875/2.0)
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc++11-narrowing"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnarrowing"
+#endif
 static const UINT32 ksl_tab[8*16]=
 {
 	/* OCT 0 */
@@ -344,6 +351,11 @@ static const UINT32 ksl_tab[8*16]=
 	19.875/DV,20.250/DV,20.625/DV,21.000/DV
 };
 #undef DV
+#ifdef __clang__
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 /* sustain level table (3dB per step) */
 /* 0 - 15: 0, 3, 6, 9,12,15,18,21,24,27,30,33,36,39,42,93 (dB)*/
@@ -464,11 +476,23 @@ O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),
 
 /* multiple table */
 #define ML 2
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc++11-narrowing"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnarrowing"
+#endif
 static const UINT8 mul_tab[16]= {
 /* 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,10,12,12,15,15 */
    0.50*ML, 1.00*ML, 2.00*ML, 3.00*ML, 4.00*ML, 5.00*ML, 6.00*ML, 7.00*ML,
    8.00*ML, 9.00*ML,10.00*ML,10.00*ML,12.00*ML,12.00*ML,15.00*ML,15.00*ML
 };
+#ifdef __clang__
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 #undef ML
 
 /*	TL_TAB_LEN is calculated as:
@@ -597,7 +621,7 @@ static const INT8 lfo_pm_table[8*8*2] = {
 static int num_lock = 0;
 
 /* work table */
-static void *cur_chip = NULL;	/* current chip point */
+static void *cur_chip = nullptr;	/* current chip point */
 OPL_SLOT *SLOT7_1,*SLOT7_2,*SLOT8_1,*SLOT8_2;
 
 static signed int phase_modulation;		/* phase modulation input (SLOT 2) */
@@ -1702,7 +1726,7 @@ static int OPL_LockTable(void)
 
 	/* first time */
 
-	cur_chip = NULL;
+	cur_chip = nullptr;
 	/* allocate total level table (128kb space) */
 	if( !init_tables() )
 	{
@@ -1728,12 +1752,12 @@ static void OPL_UnLockTable(void)
 
 	/* last time */
 
-	cur_chip = NULL;
+	cur_chip = nullptr;
 	OPLCloseTable();
 
 #ifdef LOG_CYM_FILE
 	fclose (cymfile);
-	cymfile = NULL;
+	cymfile = nullptr;
 #endif
 
 }
@@ -1792,7 +1816,7 @@ static FM_OPL *OPLCreate(int type, int clock, int rate)
 	FM_OPL *OPL;
 	int state_size;
 
-	if (OPL_LockTable() ==-1) return NULL;
+	if (OPL_LockTable() ==-1) return nullptr;
 
 	/* calculate OPL state size */
 	state_size  = sizeof(FM_OPL);
@@ -1804,8 +1828,8 @@ static FM_OPL *OPLCreate(int type, int clock, int rate)
 	/* allocate memory block */
 	ptr = (char *)malloc(state_size);
 
-	if (ptr==NULL)
-		return NULL;
+	if (ptr==nullptr)
+		return nullptr;
 
 	/* clear */
 	memset(ptr,0,state_size);
@@ -1972,7 +1996,7 @@ int YM3812Init(int num, int clock, int rate)
 	{
 		/* emulator create */
 		OPL_YM3812[i] = OPLCreate(OPL_TYPE_YM3812,clock,rate);
-		if(OPL_YM3812[i] == NULL)
+		if(OPL_YM3812[i] == nullptr)
 		{
 			/* it's really bad - we run out of memeory */
 			YM3812NumChips = 0;
@@ -1991,7 +2015,7 @@ void YM3812Shutdown(void)
 	{
 		/* emulator shutdown */
 		OPLDestroy(OPL_YM3812[i]);
-		OPL_YM3812[i] = NULL;
+		OPL_YM3812[i] = nullptr;
 	}
 	YM3812NumChips = 0;
 }
@@ -2118,7 +2142,7 @@ int YM3526Init(int num, int clock, int rate)
 	{
 		/* emulator create */
 		OPL_YM3526[i] = OPLCreate(OPL_TYPE_YM3526,clock,rate);
-		if(OPL_YM3526[i] == NULL)
+		if(OPL_YM3526[i] == nullptr)
 		{
 			/* it's really bad - we run out of memeory */
 			YM3526NumChips = 0;
@@ -2137,7 +2161,7 @@ void YM3526Shutdown(void)
 	{
 		/* emulator shutdown */
 		OPLDestroy(OPL_YM3526[i]);
-		OPL_YM3526[i] = NULL;
+		OPL_YM3526[i] = nullptr;
 	}
 	YM3526NumChips = 0;
 }
@@ -2264,7 +2288,7 @@ int Y8950Init(int num, int clock, int rate)
 	{
 		/* emulator create */
 		OPL_Y8950[i] = OPLCreate(OPL_TYPE_Y8950,clock,rate);
-		if(OPL_Y8950[i] == NULL)
+		if(OPL_Y8950[i] == nullptr)
 		{
 			/* it's really bad - we run out of memeory */
 			Y8950NumChips = 0;
@@ -2283,7 +2307,7 @@ void Y8950Shutdown(void)
 	{
 		/* emulator shutdown */
 		OPLDestroy(OPL_Y8950[i]);
-		OPL_Y8950[i] = NULL;
+		OPL_Y8950[i] = nullptr;
 	}
 	Y8950NumChips = 0;
 }

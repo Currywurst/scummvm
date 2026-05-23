@@ -1,94 +1,52 @@
-/*
-**      $Filename: planing/guards.h
-**      $Release:  1
-**      $Revision: 0
-**      $Date:     24-04-94
-**
-**      planing.guards interface for "Der Clou!"
-**
-** (c) 1994 ...and avoid panic by, Kaweh Kazemi
-**      All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+#ifndef ENGINES_THECLOU_PLANING_GUARDS_H
+#define ENGINES_THECLOU_PLANING_GUARDS_H
 
-#ifndef MODULE_PLANING_GUARDS
-#define MODULE_PLANING_GUARDS
-
-#include <stdio.h>
 #include "theclou.h"
-
-#ifndef MODULE_MEMORY
 #include "memory/memory.h"
-#endif
-
-#ifndef MODULE_ERROR
 #include "error/error.h"
-#endif
-
-#ifndef MODULE_DISK
 #include "disk/disk.h"
-#endif
-
-#ifndef MODULE_LIST
 #include "list/list.h"
-#endif
-
-#ifndef MODULE_DATABASE
 #include "data/database.h"
-#endif
-
-#ifndef MODULE_RELATION
 #include "data/relation.h"
-#endif
 
 #include "data/objstd/tcdata.h"
-
-#ifndef MODULE_TEXT
 #include "text/text.h"
-#endif
-
-#ifndef MODULE_LANDSCAP
 #include "landscap/landscap.h"
-#endif
-
-#ifndef MODULE_PLANING_MAIN
 #include "planing/main.h"
-#endif
-
-#ifndef MODULE_PLANING_GRAPHICS
 #include "planing/graphics.h"
-#endif
-
-#ifndef MODULE_PLANING_IO
 #include "planing/io.h"
-#endif
-
-#ifndef MODULE_PLANING_PREPARE
 #include "planing/prepare.h"
-#endif
-
-#ifndef MODULE_PLANING_SUPPORT
 #include "planing/support.h"
-#endif
-
-#ifndef MODULE_PLANING_SYSTEM
 #include "planing/system.h"
-#endif
-
-#ifndef MODULE_PLANING_SYNC
 #include "planing/sync.h"
-#endif
 
-#ifndef MODULE_PLANING_GUARDS
+#ifndef ENGINES_THECLOU_PLANING_GUARDS_H
 #include "planing/guards.h"
-#endif
+#endif  // ENGINES_THECLOU_PLANING_GUARDS_H
 
 /* method definition */
 #define GUARDS_DO_SAVE     1
@@ -105,14 +63,14 @@ struct System;
 struct _GC;
 
 /* main method */
-void grdDo(TC_FILE * fh, struct System *sys, LIST * PersonsList, U32 BurglarsNr,
-	   U32 PersonsNr, ubyte grdAction);
+void grdDo(TC_FILE * fh, struct System *sys, LIST * p_PersonsList, U32 p_BurglarsNr,
+	   U32 p_PersonsNr, ubyte grdAction);
 
 /* support */
 ubyte grdAddToList(U32 bldId, LIST * l);
 ubyte grdDraw(struct _GC *gc, U32 bldId, U32 areaId);
 
 /* con- & destructor */
-ubyte grdInit(TC_FILE ** fh, char *mode, U32 bldId, U32 areaId);
+ubyte grdInit(TC_FILE ** fh, const char *mode, U32 bldId, U32 areaId);
 void grdDone(TC_FILE * fh);
-#endif
+#endif  // ENGINES_THECLOU_PLANING_GUARDS_H

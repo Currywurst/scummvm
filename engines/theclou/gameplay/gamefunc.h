@@ -1,26 +1,32 @@
-/*
- * SEdFunc.h
- * Functions to work with Stories/Events/Scenes for StoryEd
- * (c) 1992 by H.Gaberschek, K.Kazemi
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code copyright (c) 1993-2001 respective authors
+ * (see individual files for details).
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
- *
- * revision history :
- *
- * 17/08/92	first structures und functions (hg)
- * 20/08/92	changed struct Scene		 (hg)
- * 31/08/92	changed struct NewScene	(Tag) (hg)
- * 11/12/92 revised (kk)
- * 12/12/92 Nodenames changed (kk)
- */
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+#ifndef ENGINES_THECLOU_GAMEPLAY_GAMEFUNC_H
+#define ENGINES_THECLOU_GAMEPLAY_GAMEFUNC_H
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+#include "theclou.h"
+#include "list/list.h"
 
 #define SCENE_NODE              UINT8_C(100)
 #define EVENT_NODE              UINT8_C(101)
@@ -47,8 +53,8 @@ struct NewStory {
 
     struct StoryHeader *sh;
 
-    struct List *scenes;	/* Liste von SceneNodes */
-    struct List *events;
+    LIST *scenes;	/* Liste von SceneNodes */
+    LIST *events;
 
     U32 StartZeit;
     U32 StartOrt;
@@ -84,7 +90,7 @@ struct NewScene {
 };
 
 struct SceneNode {
-    struct Node Link;
+    NODE Link;
     struct NewScene ns;
 };
 
@@ -94,7 +100,7 @@ struct NewEvent {
 };
 
 struct EventNode {
-    struct Node Link;
+    NODE Link;
     struct NewEvent ne;
 };
 
@@ -123,3 +129,5 @@ char *GetName(U32 EventNr);
 
 
 extern struct NewStory *story;
+
+#endif // ENGINES_THECLOU_GAMEPLAY_GAMEFUNC_H

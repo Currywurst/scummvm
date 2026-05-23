@@ -1,45 +1,35 @@
-/*
-**	$Filename: text/text.h
-**	$Release:  1
-**	$Revision: 0
-**	$Date:     10-03-94
-**
-**	text interface for "Der Clou!"
-**
-** (c) 1994 ...and avoid panic by, Kaweh Kazemi
-**	All Rights Reserved.
-**
-*/
-/****************************************************************************
-  Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Original game code (c) 1994 Kaweh Kazemi
+ * Portions copyright (c) 2005 Vasco Alexandre da Silva Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-  Please read the license terms contained in the LICENSE and
-  publiclicensecontract.doc files which should be contained with this
-  distribution.
- ****************************************************************************/
+/** @file text/text.h — Text / localisation subsystem for Der Clou! */
 
-#ifndef MODULE_TEXT
-#define MODULE_TEXT
-
-/* includes */
-
-#ifndef __CTYPE_H
-#include <ctype.h>
-#endif
+#ifndef ENGINES_THECLOU_TEXT_TEXT_H
+#define ENGINES_THECLOU_TEXT_TEXT_H
 
 #include "theclou.h"
-
-#ifndef MODULE_ERROR
 #include "error/error.h"
-#endif
-
-#ifndef MODULE_LIST
 #include "list/list.h"
-#endif
-
-#ifndef MODULE_MEMORY
 #include "memory/memory.h"
-#endif
 
 
 /* public defines */
@@ -76,7 +66,7 @@ char *txtGetKey(U16 keyNr, char *key);
 U32 txtGetKeyAsULONG(U16 keyNr, char *key);
 
 LIST *txtGoKey(U32 textId, const char *key);
-LIST *txtGoKeyAndInsert(U32 textId, char *key, ...);
+LIST *txtGoKeyAndInsert(U32 textId, const char *key, ...);
 
 bool txtKeyExists(U32 textId, const char *key);
 U32 txtCountKey(char *key);
@@ -85,6 +75,6 @@ U32 txtCountKey(char *key);
 /* public prototypes - STRING */
 char *txtGetString(U32 textId, const char *key, char *dest);
 char *txtGetNthString(U32 textId, const char *key, U32 nth, char *dest);
-void txtPutCharacter(LIST * list, uword pos, U8 c);
+void txtPutCharacter(LIST *list, uword pos, U8 c);
 
-#endif
+#endif // ENGINES_THECLOU_TEXT_TEXT_H

@@ -18,13 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef THECLOU_TC_DEBUG_H
-#define THECLOU_TC_DEBUG_H
+#ifndef ENGINES_THECLOU_PLATFORM_TC_DEBUG_H
+#define ENGINES_THECLOU_PLATFORM_TC_DEBUG_H
 
 /*
- * C-callable wrappers around ScummVM's debug() / warning() functions.
- * C code in the engine must not call debug()/warning() directly because
- * those are C++-linkage functions.  Use these wrappers instead.
+ * tc_debug.h — C-callable wrappers around ScummVM's debug() / warning().
+ *
+ * Intentionally free of ScummVM includes so legacy game files that use
+ * forbidden symbols (strcpy, strcat, …) don't pick up common/forbidden.h
+ * through this header.  Pure-C++ files can also use TcDebug.h directly
+ * for the inline TheClou::tcDebug / TheClou::tcWarning variants.
  *
  *   tc_debug(level, fmt, ...)   — maps to ScummVM debug(level, ...)
  *   tc_warning(fmt, ...)        — maps to ScummVM warning(...)
@@ -41,4 +44,4 @@ void tc_warning(const char *format, ...);
 }
 #endif
 
-#endif /* THECLOU_TC_DEBUG_H */
+#endif /* ENGINES_THECLOU_PLATFORM_TC_DEBUG_H */
